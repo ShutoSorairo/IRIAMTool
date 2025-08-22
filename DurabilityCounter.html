@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>耐久カウンター</title>
+    <link rel="stylesheet" href="DurabilityCounter.css">
+</head>
+<body>
+    <div class="counter-container">
+        <a href="index.html" class="home-btn">ホームへ戻る</a>
+        <h1>耐久カウンター</h1>
+        <div class="input-row">
+            <label for="startValue">開始値: </label>
+            <input type="number" id="startValue" value="0" min="0">
+            <button onclick="setCounter()">セット</button>
+        </div>
+        <div id="counter">0</div>
+        <div class="btn-row">
+            <button onclick="increment()">＋</button>
+            <button onclick="decrement()">－</button>
+            <button onclick="resetCounter()">リセット</button>
+        </div>
+    </div>
+    <script src="DurabilityCounter.js"></script>
+</body>
+</html>

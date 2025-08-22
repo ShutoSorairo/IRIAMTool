@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>使用楽曲の報告</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="MusicReport.css">
+</head>
+<body>
+    <div class="container">
+        <h1>使用楽曲の報告</h1>
+        <p>
+            楽曲使用申請は
+            <a href="https://www.iriam.app/music-use-request" target="_blank" rel="noopener noreferrer">公式申請ページ</a>
+            で行ってください。<br>
+            申請には楽曲コードが必要です。<br>
+            楽曲コードは
+            <a href="https://search.nex-tone.co.jp/list?2" target="_blank" rel="noopener noreferrer">NexTone検索</a>
+            または
+            <a href="https://www2.jasrac.or.jp/eJwid/main?trxID=F00100" target="_blank" rel="noopener noreferrer">JASRAC検索</a>
+            で調べてください。<br>
+            検索結果の「管理元」「作品タイトル」「アーティスト名」「作詞者名」「作曲者名」をコピーして下のフォームに貼り付け、「追加」ボタンで登録できます。
+        </p>
+        <div style="margin: 16px 0; text-align: right;">
+            <button id="delete-mode-btn" type="button" class="trash-btn" title="削除モード">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#888" viewBox="0 0 24 24">
+                    <path d="M3 6h18v2H3V6zm2 3h14l-1.5 13h-11L5 9zm5 2v8h2v-8h-2zm-4 0v8h2v-8H6zm8 0v8h2v-8h-2z"/>
+                </svg>
+            </button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>管理元</th>
+                    <th>作品コード</th>
+                    <th>作品タイトル</th>
+                    <th>アーティスト名</th>
+                    <th>作詞者名</th>
+                    <th>作曲者名</th>
+                    <th id="delete-header" style="display:none;">削除</th>
+                </tr>
+            </thead>
+            <tbody id="music-table-body">
+                <!-- ここにデータを追加してください -->
+            </tbody>
+        </table>
+        <form id="music-form" style="margin-top:20px;">
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; width: 100%;">
+                <select id="source" required style="flex:1;">
+                    <option value="">管理元を選択</option>
+                    <option value="JASRAC">JASRAC</option>
+                    <option value="NexTone">NexTone</option>
+                </select>
+                <input type="text" id="code" placeholder="作品コード" required style="flex:1;">
+                <input type="text" id="title" placeholder="作品タイトル" required style="flex:1;">
+                <input type="text" id="artist" placeholder="アーティスト名" required style="flex:1;">
+                <input type="text" id="lyricist" placeholder="作詞者名" required style="flex:1;">
+                <input type="text" id="composer" placeholder="作曲者名" required style="flex:1;">
+            </div>
+            <div style="width:100%; display:flex; justify-content:center; margin-top:16px;">
+                <button type="submit" style="min-width:120px;">追加</button>
+            </div>
+        </form>
+        <a href="index.html" class="home-btn">ホームへ</a>
+    </div>
+    <script src="MusicReport.js"></script>
+</body>
+</html>

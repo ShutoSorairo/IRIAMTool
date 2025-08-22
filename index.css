@@ -1,0 +1,71 @@
+body {
+    background: linear-gradient(120deg, #e0f7fa 0%, #fce4ec 100%);
+    margin: 0;
+    font-family: 'Segoe UI', 'Arial', sans-serif;
+    min-height: 100vh;
+}
+
+.main-container {
+    max-width: 480px;
+    margin: 60px auto 0 auto;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    padding: 32px 24px;
+    text-align: center;
+}
+
+h1 {
+    color: #1976d2;
+    margin-bottom: 16px;
+    font-size: 2em;
+    letter-spacing: 1px;
+}
+
+.description {
+    color: #555;
+    margin-bottom: 32px;
+    font-size: 1.1em;
+}
+
+.menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu-list li {
+    margin-bottom: 20px;
+}
+
+.menu-btn {
+    display: block;
+    width: 100%;
+    padding: 16px 0;
+    background: #1976d2;
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.2em;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.menu-btn:hover {
+    background: #1565c0;
+    box-shadow: 0 4px 16px rgba(25, 118, 210, 0.15);
+}
+
+@media (max-width: 600px) {
+    .main-container {
+        max-width: 98vw;
+        padding: 16px 4vw;
+    }
+    h1 {
+        font-size: 1.4em;
+    }
+    .menu-btn {
+        font-size: 1em;
+        padding: 12px 0;
+    }
+}

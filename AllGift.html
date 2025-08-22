@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>AllGift</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .tab-container {
+            max-width: 600px;
+            margin: 30px auto 0 auto;
+            display: flex;
+            flex-wrap: nowrap; /* ここを変更 */
+            gap: 8px;
+            justify-content: center;
+            overflow-x: auto; /* 横スクロール対応 */
+        }
+        .tab-btn {
+            background: #1976d2;
+            color: #fff;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            padding: 10px 18px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .tab-btn.active, .tab-btn:hover {
+            background: #1565c0;
+        }
+        .gift-list {
+            max-width: 600px;
+            margin: 0 auto 30px auto;
+            background: #fff;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 24px;
+        }
+        .gift-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .gift-item:last-child {
+            border-bottom: none;
+        }
+        .gift-icon {
+            width: 40px;
+            height: 40px;
+            margin-right: 16px;
+            background: #eee;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        .gift-name {
+            font-size: 18px;
+            color: #555;
+        }
+        @media (max-width: 600px) {
+            .tab-container, .gift-list {
+                max-width: 98vw;
+                padding: 8px 2vw;
+            }
+            .tab-btn {
+                font-size: 0.95em;
+                padding: 8px 10px;
+            }
+            .gift-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 20px;
+                margin-right: 10px;
+            }
+            .gift-name {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>IRIAM 全ギフト一覧</h1>
+    <div class="tab-container" id="tabContainer">
+        <!-- タブボタンがここに表示されます -->
+    </div>
+    <div class="gift-list" id="giftList">
+        <!-- ギフト一覧がここに表示されます -->
+    </div>
+    <script>
+        // カテゴリ一覧
+        const categories = [
+            "New", "季節", "ネタ", "笑", "定番", "えらい", "挨拶", "ステージ", "LOVE"
+        ];
+
+        // 仮のギフトデータ（カテゴリ追加）
+        const gifts = [
+            { name: 'もういっかい！', icon: '', category: 'ネタ' },
+            { name: 'ダウト', icon: '', category: 'ネタ' },
+            { name: 'ざわ…ざわ…', icon: '', category: 'ネタ' },
+            { name: 'ファイヤー', icon: '🔥', category: 'ネタ' },
+            { name: '非常口', icon: '', category: 'ネタ' },
+            { name: 'いつもので', icon: '', category: 'ネタ' },
+            { name: 'かー', icon: '', category: 'ネタ' },
+            { name: 'つー', icon: '🎤', category: 'ネタ' },
+            { name: '一体感', icon: '', category: 'ネタ' },
+            { name: '乗りなッ！', icon: '', category: 'ネタ' },
+            { name: '降りろ…', icon: '', category: 'ネタ' },
+            { name: '一体感', icon: '', category: 'ネタ' },
+            { name: 'しーっ', icon: '', category: 'ネタ' },
+            { name: 'はて…？', icon: '', category: 'ネタ' },
+            { name: 'やれやれ', icon: '', category: 'ネタ' },
+            { name: 'ばぁ。', icon: '', category: 'ネタ' },
+            { name: '完全燃焼', icon: '', category: 'ネタ' },
+            { name: '激熱', icon: '', category: 'ネタ' },
+            { name: 'まぶしい', icon: '', category: 'ネタ' },
+            { name: '世界一', icon: '', category: 'ネタ' },
+            { name: '祭うちわ', icon: '', category: 'ネタ' },
+            { name: 'ええやん', icon: '', category: 'ネタ' },
+            { name: '最強', icon: '', category: 'ネタ' },
+            { name: 'スリスリ', icon: '', category: 'ネタ' },
+            { name: '中二病', icon: '', category: 'ネタ' },
+            { name: '拳', icon: '🤛', category: 'ネタ' },
+            { name: 'ふぅー！！', icon: '', category: 'ネタ' },
+            { name: 'メシウマ', icon: '', category: 'ネタ' },
+            { name: 'アニキー！', icon: '', category: 'ネタ' },
+            { name: '仰せのままに', icon: '', category: 'ネタ' },
+            { name: '漢', icon: '', category: 'ネタ' },
+            { name: '鉄アレイ', icon: '', category: 'ネタ' },
+            { name: 'しおしお…', icon: '', category: 'ネタ' },
+            { name: 'ヒャッホー！', icon: '', category: 'ネタ' },
+            { name: 'あざとい', icon: '', category: 'ネタ' },
+            { name: 'おもしれーやつ', icon: '', category: 'ネタ' },
+            { name: '沼', icon: '', category: 'ネタ' },
+            { name: '鳥肌注意', icon: '', category: 'ネタ' },
+            { name: 'スヤァ…', icon: '', category: 'ネタ' },
+            { name: 'やりおる', icon: '', category: 'ネタ' },
+            { name: 'あとは頼んだ', icon: '', category: 'ネタ' },
+            { name: 'おねぎします。', icon: '', category: 'ネタ' },
+            { name: 'まかセロリ', icon: '', category: 'ネタ' },
+            { name: 'ドヤッ', icon: '', category: 'ネタ' },
+            { name: 'ぱぁ', icon: '', category: 'ネタ' },
+            { name: 'チャージ！', icon: '', category: 'ネタ' },
+            { name: 'ひんやり', icon: '', category: 'ネタ' },
+            { name: 'アヂッ', icon: '', category: 'ネタ' },
+            { name: 'つむっ！！', icon: '', category: 'ネタ' },
+            { name: 'しらすまん', icon: '', category: 'ネタ' },
+            { name: 'ダウト(200pt)', icon: '', category: 'ネタ' },
+            { name: '爆弾', icon: '', category: 'ネタ' },
+            { name: '好物', icon: '', category: 'LOVE' },
+            { name: 'ハート', icon: '❤️', category: 'LOVE' },
+            { name: 'かわいい', icon: '', category: 'LOVE' },
+            { name: '照', icon: '', category: 'LOVE' },
+            { name: 'キャーッ！', icon: '', category: 'LOVE' },
+            { name: 'あざとい', icon: '', category: 'LOVE' },
+            { name: 'かわぼ', icon: '', category: 'LOVE' },
+            { name: '呼んだ？', icon: '', category: 'LOVE' },
+            { name: 'ハート(200pt)', icon: '❤️', category: 'LOVE' },
+            { name: 'すこっていい？', icon: '', category: 'LOVE' },
+            { name: '嫁に来ないか', icon: '', category: 'LOVE' }, 
+            { name: 'ずっきゅーん', icon: '', category: 'LOVE' },
+            { name: '唐突な愛', icon: '', category: 'LOVE' },
+            { name: 'ユラミー', icon: '', category: 'LOVE' },
+            { name: 'すこ', icon: '', category: 'LOVE' },    
+            { name: 'かわいい！(3,000pt)', icon: '', category: 'LOVE' },
+            { name: '尊い', icon: '', category: 'LOVE' },
+            { name: 'なでなで', icon: '', category: 'LOVE' },
+            { name: 'だいすき', icon: '', category: 'LOVE' },
+            { name: 'あふれる思い', icon: '', category: 'LOVE' }
+        ];
+
+        // タブ生成
+        const tabContainer = document.getElementById('tabContainer');
+        categories.forEach((cat, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'tab-btn' + (idx === 0 ? ' active' : '');
+            btn.textContent = cat;
+            btn.onclick = () => selectTab(cat, btn);
+            tabContainer.appendChild(btn);
+        });
+
+        // タブ選択時の処理
+        function selectTab(category, btn) {
+            // タブのactive切り替え
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            // ギフト表示
+            showGifts(category);
+        }
+
+        // ギフト表示
+        function showGifts(category) {
+            const giftList = document.getElementById('giftList');
+            giftList.innerHTML = '';
+            const filtered = gifts.filter(g => g.category === category);
+            if (filtered.length === 0) {
+                giftList.innerHTML = '<div style="text-align:center; color:#aaa;">このカテゴリのギフトはありません。</div>';
+                return;
+            }
+            filtered.forEach(gift => {
+                const item = document.createElement('div');
+                item.className = 'gift-item';
+                item.innerHTML = `
+                    <div class="gift-icon">${gift.icon}</div>
+                    <div class="gift-name">${gift.name}</div>
+                `;
+                giftList.appendChild(item);
+            });
+        }
+
+        // 初期表示
+        showGifts(categories[0]);
+    </script>
+</body>
+</html>
