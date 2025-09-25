@@ -60,6 +60,54 @@ const gifts = [
     { name: 'ダウト(200pt)', icon: '', category: 'ネタ' },
     { name: '爆弾', icon: '', category: 'ネタ' },
     
+    // えらいカテゴリ
+    { name: 'キリおめ', icon: '', category: 'えらい' },
+    { name: 'ナイギフ', icon: '', category: 'えらい' },
+    { name: 'ナイス', icon: '', category: 'えらい' },
+    { name: 'かわいい', icon: '', category: 'えらい' },
+    { name: '神', icon: '', category: 'えらい' },
+    { name: '100点', icon: '', category: 'えらい' },
+    { name: '良さそう', icon: '', category: 'えらい' },
+    { name: '世界一', icon: '', category: 'えらい' },
+    { name: 'えぐぐ', icon: '', category: 'えらい' },
+    { name: 'すごい', icon: '', category: 'えらい' },
+    { name: 'すばら', icon: '', category: 'えらい' },
+    { name: 'たのしみ', icon: '', category: 'えらい' },
+    { name: 'ええやん', icon: '', category: 'えらい' },
+    { name: '天才か！？', icon: '', category: 'えらい' },
+    { name: '最強', icon: '', category: 'えらい' },
+    { name: 'かしこ', icon: '', category: 'えらい' },
+    { name: 'はなまる', icon: '', category: 'えらい' },
+    { name: '拍手', icon: '', category: 'えらい' },
+    { name: 'エモい', icon: '', category: 'えらい' },
+    { name: 'チルい', icon: '', category: 'えらい' },
+    { name: 'かっこいい', icon: '', category: 'えらい' },
+    { name: 'イケボ', icon: '', category: 'えらい' },
+    { name: 'オサレ', icon: '', category: 'えらい' },
+    { name: 'クール', icon: '', category: 'えらい' },
+    { name: 'アニキー！', icon: '', category: 'えらい' },
+    { name: '漢', icon: '', category: 'えらい' },
+    { name: 'あざとい', icon: '', category: 'えらい' },
+    { name: 'おもしれーやつ', icon: '', category: 'えらい' },
+    { name: 'かわぼ', icon: '', category: 'えらい' },
+    { name: '癒やし～', icon: '', category: 'えらい' },
+    { name: '耳が幸せ', icon: '', category: 'えらい' },
+    { name: 'やりおる', icon: '', category: 'えらい' },
+    { name: 'よかろう', icon: '', category: 'えらい' },
+    { name: 'えらい', icon: '', category: 'えらい' },
+    { name: 'Congratulations!', icon: '', category: 'えらい' },
+    { name: 'クラッカー(200pt)', icon: '', category: 'えらい' },
+    { name: '拍手(200pt)', icon: '', category: 'えらい' },
+    { name: 'エモい(500pt)', icon: '', category: 'えらい' },
+    { name: 'たいへんよくできました', icon: '', category: 'えらい' },
+    { name: 'お見事', icon: '', category: 'えらい' },
+    { name: 'くす玉', icon: '', category: 'えらい' },
+    { name: 'ケーキ(誕生日)', icon: '', category: 'えらい' },
+    { name: 'かわいい！', icon: '', category: 'えらい' },
+    { name: '尊い', icon: '', category: 'えらい' },
+    { name: 'なでなで', icon: '', category: 'えらい' },
+    { name: 'ハッピーバースデー', icon: '', category: 'えらい' },
+    
     // ステージカテゴリ
     {name: 'クラッカー', icon: '', category: 'ステージ'},
     {name: 'サイリウム・オレンジ', icon: '', category: 'ステージ'},
@@ -195,6 +243,7 @@ function showGifts(category) {
 // 初期表示
 
 showGifts(categories[0]);
+
 
 
 
