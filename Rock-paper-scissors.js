@@ -25,15 +25,3 @@ btn.onclick = () => {
         }
     }, 80);
 };
-
-// カラーテーマ切り替え
-document.querySelectorAll('.color-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.body.classList.remove('theme-pink', 'theme-blue', 'theme-rainbow');
-        const theme = btn.getAttribute('data-theme');
-        document.body.classList.add('theme-' + theme);
-    });
-});
-
-// 初期テーマ
-document.body.classList.add('theme-pink');
