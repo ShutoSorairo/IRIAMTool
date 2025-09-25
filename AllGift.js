@@ -69,14 +69,14 @@ const gifts = [
     { name: 'あざとい', category: 'LOVE' },
     { name: 'かわぼ', category: 'LOVE' },
     { name: '呼んだ？', category: 'LOVE' },
-    { name: 'ハート(200pt)', category: 'LOVE' },
+    { name: 'ハート(大)', category: 'LOVE' },
     { name: 'すこっていい？', category: 'LOVE' },
     { name: '嫁に来ないか', category: 'LOVE' }, 
     { name: 'ずっきゅーん', category: 'LOVE' },
     { name: '唐突な愛', category: 'LOVE' },
     { name: 'ウィンクタイム', category: 'LOVE' },
     { name: 'すこ', category: 'LOVE' },    
-    { name: 'かわいい！(3,000pt)', category: 'LOVE' },
+    { name: 'かわいい！', category: 'LOVE' },
     { name: '尊い', category: 'LOVE' },
     { name: 'なでなで', category: 'LOVE' },
     { name: 'だいすき', category: 'LOVE' },
@@ -93,14 +93,14 @@ const loveGiftImages = [
     { keyword: 'あざとい', src: 'ギフト/Love/06_あざとい.jpg', alt: 'あざとい' },
     { keyword: 'かわぼ', src: 'ギフト/Love/07_かわぼ.jpg', alt: 'かわぼ' },
     { keyword: '呼んだ？', src: 'ギフト/Love/08_呼んだ？.jpg', alt: '呼んだ？' },
-    { keyword: 'ハート(200pt)', src: 'ギフト/Love/09_ハート(大)_200pt.PNG', alt: 'ハート(200pt)' },
+    { keyword: 'ハート(大)', src: 'ギフト/Love/09_ハート(大)_200pt.PNG', alt: 'ハート(大)' },
     { keyword: 'すこっていい？', src: 'ギフト/Love/10_すっこていい？_500pt.PNG', alt: '呼んだ？' },
     { keyword: '嫁に来ないか', src: 'ギフト/Love/11_嫁に来ないか・・・？_500pt.PNG', alt: '嫁に来ないか' },
     { keyword: 'ずっきゅーん', src: 'ギフト/Love/12_ズキューン_500pt.PNG', alt: 'ずっきゅーん' },
     { keyword: '唐突な愛', src: 'ギフト/Love/13_唐突な愛.jpg', alt: '唐突な愛' },
     { keyword: 'ウィンクタイム', src: 'ギフト/Love/14_ウィンクタイム.jpg', alt: 'ウィンクタイム' },
     { keyword: 'すこ', src: 'ギフト/Love/15_すこ_1,000pt.PNG', alt: 'すこ' }, 
-    { keyword:'かわいい！(3,000pt)', src: 'ギフト/Love/16_かわいい_3,000pt.PNG', alt: 'かわいい！(3,000pt)' },
+    { keyword:'かわいい！', src: 'ギフト/Love/16_かわいい_3,000pt.PNG', alt: 'かわいい！' },
     { keyword: '尊い', src: 'ギフト/Love/17_尊い_5,000pt.PNG', alt: '尊い' },
     { keyword: 'なでなで', src: 'ギフト/Love/18_なでなで_7,000pt.PNG', alt: 'なでなで' },
     { keyword: 'だいすき', src: 'ギフト/Love/19_だいすき_10,000pt.PNG', alt: 'だいすき' },
@@ -157,4 +157,5 @@ function showGifts(category) {
 // 初期表示
 
 showGifts(categories[0]);
+
 
