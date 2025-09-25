@@ -6,15 +6,15 @@ const categories = [
 // 仮のギフトデータ（カテゴリ追加）
 const gifts = [
     
-    // ネタカテゴリ
+        // ネタカテゴリ
     { name: 'もういっかい！', icon: '', category: 'ネタ' },
     { name: 'ダウト', icon: '', category: 'ネタ' },
     { name: 'ざわ…ざわ…', icon: '', category: 'ネタ' },
-    { name: 'ファイヤー', icon: '🔥', category: 'ネタ' },
+    { name: 'ファイヤー', icon: '', category: 'ネタ' },
     { name: '非常口', icon: '', category: 'ネタ' },
     { name: 'いつもので', icon: '', category: 'ネタ' },
     { name: 'かー', icon: '', category: 'ネタ' },
-    { name: 'つー', icon: '🎤', category: 'ネタ' },
+    { name: 'つー', icon: '', category: 'ネタ' },
     { name: '一体感', icon: '', category: 'ネタ' },
     { name: '乗りなッ！', icon: '', category: 'ネタ' },
     { name: '降りろ…', icon: '', category: 'ネタ' },
@@ -56,9 +56,29 @@ const gifts = [
     { name: 'ひんやり', icon: '', category: 'ネタ' },
     { name: 'アヂッ', icon: '', category: 'ネタ' },
     { name: 'つむっ！！', icon: '', category: 'ネタ' },
+    { name: 'おばけしらす', icon: '', category: 'ネタ' },
+    { name: 'オール', icon: '', category: 'ネタ' },
     { name: 'しらすまん', icon: '', category: 'ネタ' },
     { name: 'ダウト(200pt)', icon: '', category: 'ネタ' },
     { name: '爆弾', icon: '', category: 'ネタ' },
+    { name: 'カチコチ', icon: '', category: 'ネタ' },
+    { name: '蝋燭', icon: '', category: 'ネタ' },
+    { name: 'どーなつちゃうの？', icon: '', category: 'ネタ' },  
+    { name: '嫁に来ないか', icon: '', category: 'ネタ' },
+    { name: 'そういうとこだぞ', icon: '', category: 'ネタ' },
+    { name: 'ん・・・？', icon: '', category: 'ネタ' },
+    { name: 'パシャパシャ', icon: '', category: 'ネタ' },
+    { name: '集中線', icon: '', category: 'ネタ' }, 
+    { name: '警察だ！', icon: '', category: 'ネタ' },
+    { name: 'パイ投げ', icon: '', category: 'ネタ' },
+    { name: 'タライ落とし', icon: '', category: 'ネタ' },
+    { name: 'しらすレインボー', icon: '', category: 'ネタ' },
+    { name: 'ギガフルーム', icon: '', category: 'ネタ' },
+    { name: 'まだ大丈夫。。', icon: '', category: 'ネタ' },
+    { name: '気配感知', icon: '', category: 'ネタ' },
+    { name: 'REC', icon: '', category: 'ネタ' },
+    { name: 'お宝発見', icon: '', category: 'ネタ' },
+    { name: 'あちらのお客様からです', icon: '', category: 'ネタ' },
     
     // えらいカテゴリ
     { name: 'キリおめ', icon: '', category: 'えらい' },
@@ -243,6 +263,7 @@ function showGifts(category) {
 // 初期表示
 
 showGifts(categories[0]);
+
 
 
 
