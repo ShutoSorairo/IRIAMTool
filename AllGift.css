@@ -1,6 +1,6 @@
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
-    background: #f9f9f9;
+    background: linear-gradient(120deg, #e0f7fa 0%, #fce4ec 100%);
     margin: 0;
     padding: 20px;
 }
@@ -85,3 +85,4 @@ h1 {
         font-size: 1em;
     }
 }
+
