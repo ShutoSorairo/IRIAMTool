@@ -59,7 +59,45 @@ const gifts = [
     { name: 'しらすまん', icon: '', category: 'ネタ' },
     { name: 'ダウト(200pt)', icon: '', category: 'ネタ' },
     { name: '爆弾', icon: '', category: 'ネタ' },
-
+    
+    // ステージカテゴリ
+    {name: 'クラッカー', icon: '', category: 'ステージ'},
+    {name: 'サイリウム・オレンジ', icon: '', category: 'ステージ'},
+    {name: 'サイリウム・ピンク', icon: '', category: 'ステージ'},
+    {name: 'サイリウム・白', icon: '', category: 'ステージ'},
+    {name: 'サイリウム・紫', icon: '', category: 'ステージ'},
+    {name: 'サイリウム・緑', icon: '', category: 'ステージ'},
+    {name: 'サイリウム・赤', icon: '', category: 'ステージ'},
+    {name: 'サイリウム・青', icon: '', category: 'ステージ'},
+    {name: 'サイリウム・黄', icon: '', category: 'ステージ'},
+    {name: 'サイリウム・黄緑', icon: '', category: 'ステージ'},
+    {name: 'サイリウム・黒', icon: '', category: 'ステージ'},
+    {name: 'いつもので', icon: '', category: 'ステージ'},
+    {name: 'もっと', icon: '', category: 'ステージ'},
+    {name: '祭うちわ', icon: '', category: 'ステージ'},
+    {name: '拍手', icon: '', category: 'ステージ'},
+    {name: 'サイリウム・葱', icon: '', category: 'ステージ'},
+    {name: '中二病', icon: '', category: 'ステージ'},
+    {name: 'アフロしらす', icon: '', category: 'ステージ'},
+    {name: 'アンコール', icon: '', category: 'ステージ'}, 
+    {name: 'ヘドバン', icon: '', category: 'ステージ'},
+    {name: 'ふぅー！！', icon: '', category: 'ステージ'},
+    {name: 'キャーッ！', icon: '', category: 'ステージ'}, 
+    {name: '音符', icon: '', category: 'ステージ'},
+    {name: 'クラッカー(200pt)', icon: '', category: 'ステージ'},
+    {name: 'バラ(大)', icon: '', category: 'ステージ'},
+    {name: '拍手(200pt)', icon: '', category: 'ステージ'},      
+    {name: 'よーい', icon: '', category: 'ステージ'},
+    {name: 'サーチライト', icon: '', category: 'ステージ'},
+    {name: 'もういっかい(500pt)', icon: '', category: 'ステージ'}, 
+    {name: '花束', icon: '', category: 'ステージ'},
+    {name: 'スポットライト', icon: '', category: 'ステージ'},
+    {name: 'V.I.P', icon: '', category: 'ステージ'},
+    {name: 'くす玉', icon: '', category: 'ステージ'},
+    {name: 'ライト&フォグ', icon: '', category: 'ステージ'},   
+    {name: 'ライブステージ', icon: '', category: 'ステージ'},
+    {name: '花火', icon: '', category: 'ステージ'},
+    
     // LOVEカテゴリ
     { name: '好物', category: 'LOVE' },
     { name: 'ハート', category: 'LOVE' },
@@ -157,5 +195,6 @@ function showGifts(category) {
 // 初期表示
 
 showGifts(categories[0]);
+
 
 
