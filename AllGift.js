@@ -1,6 +1,6 @@
 // カテゴリ一覧
 const categories = [
-    "New", "季節", "ネタ", "笑", "定番", "えらい", "挨拶", "ステージ", "LOVE"
+    "New","ミライト復刻", "季節", "ネタ", "笑", "定番", "えらい", "挨拶", "ステージ", "LOVE"
 ];
 
 // 仮のギフトデータ（カテゴリ追加）
@@ -318,6 +318,7 @@ function showGifts(category) {
 // 初期表示
 
 showGifts(categories[0]);
+
 
 
 
