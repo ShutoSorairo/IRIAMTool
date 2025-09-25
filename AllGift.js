@@ -79,7 +79,10 @@ const gifts = [
     { name: 'REC', icon: '', category: 'ネタ' },
     { name: 'お宝発見', icon: '', category: 'ネタ' },
     { name: 'あちらのお客様からです', icon: '', category: 'ネタ' },
-
+    
+    // 専用カテゴリ
+    { name: 'わいわい投票', icon: '', category: '専用' },
+    
     // 笑カテゴリ
     { name: 'www', icon: '', category: '笑' } ,
     { name: '草', icon: '', category: '笑' },
@@ -318,6 +321,7 @@ function showGifts(category) {
 // 初期表示
 
 showGifts(categories[0]);
+
 
 
 
