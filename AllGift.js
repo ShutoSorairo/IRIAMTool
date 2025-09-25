@@ -74,7 +74,7 @@ const gifts = [
     { name: '嫁に来ないか', category: 'LOVE' }, 
     { name: 'ずっきゅーん', category: 'LOVE' },
     { name: '唐突な愛', category: 'LOVE' },
-    { name: 'ユラミー', category: 'LOVE' },
+    { name: 'ウィンクタイム', category: 'LOVE' },
     { name: 'すこ', category: 'LOVE' },    
     { name: 'かわいい！(3,000pt)', category: 'LOVE' },
     { name: '尊い', category: 'LOVE' },
@@ -155,4 +155,5 @@ function showGifts(category) {
 }
 
 // 初期表示
+
 showGifts(categories[0]);
