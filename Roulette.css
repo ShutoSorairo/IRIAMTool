@@ -1,0 +1,112 @@
+body {
+    background: linear-gradient(120deg, #e0f7fa 0%, #fce4ec 100%);
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    min-height: 100vh;
+}
+.container {
+    max-width: 600px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    padding: 32px 20px 20px 20px;
+    text-align: center;
+}
+.roulette-block {
+    border: 1.5px solid #4f8cff;
+    border-radius: 10px;
+    margin: 18px 0;
+    padding: 18px 10px 10px 10px;
+    background: #f6f8ff;
+    position: relative;
+}
+.roulette-title {
+    font-weight: bold;
+    color: #4f8cff;
+    margin-bottom: 10px;
+}
+.item-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+.item-input {
+    width: 90px;
+    padding: 4px;
+    border-radius: 5px;
+    border: 1px solid #bbb;
+}
+.add-item-btn, .remove-roulette-btn, .spin-btn {
+    margin: 0 4px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: none;
+    background: #4f8cff;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.add-item-btn:hover, .remove-roulette-btn:hover, .spin-btn:hover {
+    background: #2563eb;
+}
+.result-text {
+    margin-top: 10px;
+    font-size: 1.2em;
+    color: #e75480;
+    font-weight: bold;
+}
+.home-btn {
+    display: inline-block;
+    margin-top: 12px;
+    color: #4f8cff;
+    text-decoration: none;
+    font-size: 1rem;
+    border: 1.5px solid #4f8cff;
+    border-radius: 7px;
+    padding: 7px 20px;
+    background: #fff;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s, border 0.2s;
+}
+.home-btn:hover {
+    background: #4f8cff;
+    color: #fff;
+    border: 1.5px solid #4f8cff;
+}
+.roulette-canvas-wrap {
+    position: relative;
+    display: inline-block;
+    margin: 18px 0 8px 0;
+}
+.roulette-canvas {
+    display: block;
+    background: #fff;
+    border-radius: 50%;
+    border: 3px solid #4f8cff;
+}
+.roulette-pointer {
+    position: absolute;
+    top: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2rem;
+    color: #e75480;
+    pointer-events: none;
+    text-shadow: 0 2px 8px #fff, 0 0 2px #e75480;
+}
+.roulette-string-list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 70px;
+    background: #fff;           /* 中を白色に */
+    border-radius: 12px;
+    margin-top: 50px;           /* 上のボタンと被らないように下げる */
+    margin-bottom: 10px;
+    box-shadow: 0 2px 8px rgba(79,140,255,0.08);
+    padding: 12px 0;
+}
