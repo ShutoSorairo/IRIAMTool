@@ -1,1 +1,26 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>じゃんけん音声再生ルーレット</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>じゃんけん</h1>
+    <div id="result">?</div>
+    <button id="startBtn">スタート</button>
 
+    <audio id="audio0" src="data/ぐー.wav"></audio>
+    <audio id="audio1" src="data/ちょき.wav"></audio>
+    <audio id="audio2" src="data/ぱー.wav"></audio>
+
+    <!-- カラーピッカー -->
+    <div class="color-picker">
+        <button class="color-btn pink" title="ピンク" data-theme="pink"></button>
+        <button class="color-btn blue" title="水色" data-theme="blue"></button>
+        <button class="color-btn rainbow" title="虹色" data-theme="rainbow"></button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
