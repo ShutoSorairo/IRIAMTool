@@ -4,7 +4,7 @@ const categories = [
 ];
 
 // 仮のギフトデータ（カテゴリ追加）
-const gifts = [
+const gifts = [  
     
     // ネタカテゴリ
     { name: 'もういっかい！', icon: '', category: 'ネタ' },
@@ -318,6 +318,7 @@ function showGifts(category) {
 // 初期表示
 
 showGifts(categories[0]);
+
 
 
 
