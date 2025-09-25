@@ -97,8 +97,8 @@ const loveGiftImages = [
     { keyword: 'すこっていい？', src: 'ギフト/Love/10_すっこていい？_500pt.PNG', alt: '呼んだ？' },
     { keyword: '嫁に来ないか', src: 'ギフト/Love/11_嫁に来ないか・・・？_500pt.PNG', alt: '嫁に来ないか' },
     { keyword: 'ずっきゅーん', src: 'ギフト/Love/12_ズキューン_500pt.PNG', alt: 'ずっきゅーん' },
-    { keyword: '唐突な愛', src: 'ギフト/Love/', alt: '唐突な愛' },
-    { keyword: 'ユラミー', src: 'ギフト/Love/', alt: 'ユラミー' },
+    { keyword: '唐突な愛', src: 'ギフト/Love/13_唐突な愛.jpg', alt: '唐突な愛' },
+    { keyword: 'ウィンクタイム', src: 'ギフト/Love/14_ウィンクタイム.jpg', alt: 'ウィンクタイム' },
     { keyword: 'すこ', src: 'ギフト/Love/15_すこ_1,000pt.PNG', alt: 'すこ' }, 
     { keyword:'かわいい！(3,000pt)', src: 'ギフト/Love/16_かわいい_3,000pt.PNG', alt: 'かわいい！(3,000pt)' },
     { keyword: '尊い', src: 'ギフト/Love/17_尊い_5,000pt.PNG', alt: '尊い' },
@@ -157,3 +157,4 @@ function showGifts(category) {
 // 初期表示
 
 showGifts(categories[0]);
+
