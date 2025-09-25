@@ -28,7 +28,7 @@ h1 {
     transition: background 0.2s;
 }
 .tab-btn.active, .tab-btn:hover {
-    background: #1565c0;
+    background: #0a3a70;
 }
 .gift-list {
     max-width: 600px;
@@ -102,5 +102,6 @@ h1 {
     }
 
 }
+
 
 
