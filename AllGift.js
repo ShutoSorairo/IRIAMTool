@@ -32,7 +32,7 @@ const gifts = [
     { name: '最強', icon: '', category: 'ネタ' },
     { name: 'スリスリ', icon: '', category: 'ネタ' },
     { name: '中二病', icon: '', category: 'ネタ' },
-    { name: '拳', icon: '🤛', category: 'ネタ' },
+    { name: '拳', icon: '', category: 'ネタ' },
     { name: 'ふぅー！！', icon: '', category: 'ネタ' },
     { name: 'メシウマ', icon: '', category: 'ネタ' },
     { name: 'アニキー！', icon: '', category: 'ネタ' },
@@ -318,6 +318,7 @@ function showGifts(category) {
 // 初期表示
 
 showGifts(categories[0]);
+
 
 
 
