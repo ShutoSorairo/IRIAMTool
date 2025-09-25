@@ -165,7 +165,44 @@ const gifts = [
     {name: 'ライト&フォグ', icon: '', category: 'ステージ'},   
     {name: 'ライブステージ', icon: '', category: 'ステージ'},
     {name: '花火', icon: '', category: 'ステージ'},
-    
+
+     // 挨拶カテゴリ
+    { name: 'はろー！', icon: '', category: '挨拶' },
+    { name: 'ようこそ', icon: '', category: '挨拶' },
+    { name: 'おつかれさま', icon: '', category: '挨拶' },
+    { name: 'おはよう', icon: '', category: '挨拶' },
+    { name: 'こんばんは', icon: '', category: '挨拶' },
+    { name: 'バイバイ', icon: '', category: '挨拶' },
+    { name: '握手', icon: '', category: '挨拶' },
+    { name: 'おかえり', icon: '', category: '挨拶' },
+    { name: 'おやすみ', icon: '', category: '挨拶' },
+    { name: 'いってきます', icon: '', category: '挨拶' },  
+    { name: 'いってらっしゃい', icon: '', category: '挨拶' },
+    { name: 'いらっしゃい', icon: '', category: '挨拶' },
+    { name: 'おじゃまします', icon: '', category: '挨拶' },
+    { name: 'ただいま', icon: '', category: '挨拶' },
+    { name: 'やってる？', icon: '', category: '挨拶' },
+    { name: 'らっしゃっせい！', icon: '', category: '挨拶' }, 
+    { name: '初見さんヤッホー', icon: '', category: '挨拶' },
+    { name: '遅れた！！', icon: '', category: '挨拶' },
+    { name: 'すぐ戻る！', icon: '', category: '挨拶' },   
+    { name: 'トイレ', icon: '', category: '挨拶' },
+    { name: 'フロリダ', icon: '', category: '挨拶' },
+    { name: 'しごもど', icon: '', category: '挨拶' },
+    { name: 'ちょい落ち', icon: '', category: '挨拶' },
+    { name: 'サラダバー', icon: '', category: '挨拶' },
+    { name: 'スッ', icon: '', category: '挨拶' },
+    { name: 'ヤッホー', icon: '', category: '挨拶' },
+    { name: 'すやぁ・・・', icon: '', category: '挨拶' },
+    { name: 'やりおる', icon: '', category: '挨拶' },
+    { name: 'あとは頼んだ', icon: '', category: '挨拶' },
+    { name: 'おねぎします。', icon: '', category: '挨拶' },
+    { name: 'またね', icon: '', category: '挨拶' },
+    { name: '参上', icon: '', category: '挨拶' },
+    { name: 'こんにちは', icon: '', category: '挨拶' },
+    { name: 'また来るね！', icon: '', category: '挨拶' },
+    { name: 'おやすみ(大)', icon: '', category: '挨拶' },
+
     // LOVEカテゴリ
     { name: '好物', category: 'LOVE' },
     { name: 'ハート', category: 'LOVE' },
@@ -263,6 +300,7 @@ function showGifts(category) {
 // 初期表示
 
 showGifts(categories[0]);
+
 
 
 
