@@ -20,6 +20,15 @@ const gifts = [
     { name: 'セレブレーション', icon: '', category: 'ミライト復刻' },
     { name: '4th Anniversary!!+', icon: '', category: 'ミライト復刻' },
     { name: '5th Anniversary!!+', icon: '', category: 'ミライト復刻' },
+
+    // 季節カテゴリ
+    { name: '秋色さぼぼん', icon: '', category: '季節' },
+    { name: '秋色しらす', icon: '', category: '季節' },
+    { name: '秋色つむまる', icon: '', category: '季節' },
+    { name: '秋色ねこころ', icon: '', category: '季節' },
+    { name: '秋色ぶくちゃ', icon: '', category: '季節' },
+    { name: '秋色ホシーカ', icon: '', category: '季節' },
+    { name: '秋色ユラミィ', icon: '', category: '季節' },
     
     // ネタカテゴリ
     { name: 'もういっかい！', icon: '', category: 'ネタ' },
@@ -460,6 +469,7 @@ function showGifts(category) {
 // 初期表示
 
 showGifts(categories[0]);
+
 
 
 
