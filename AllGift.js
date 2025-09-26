@@ -432,9 +432,26 @@ const giftImagesMap = {
     "ネタ": [
 
     ],
+    
     "笑": [
-
+        { keyword: 'www', src: 'ギフト/笑/www_5pt.PNG', alt: 'www' } ,
+        { keyword: '草', src: 'ギフト/笑/草_5pt.PNG', alt: '草' },
+        { keyword: 'ドッ', src: 'ギフト/笑/ドッ_5pt.PNG', alt: 'ドッ' },
+        { keyword: 'かぷかぷ', src: 'ギフト/笑/かぷかぷ_5pt.PNG', alt: 'かぷかぷ' },
+        { keyword: 'こらえ笑い', src: 'ギフト/笑/こらえ笑い_5pt.PNG', alt: 'こらえ笑い' } ,
+        { keyword: 'ブフォッ', src: 'ギフト/笑/ブフォッ_5pt.PNG', alt: 'ブフォッ' },
+        { keyword: '微笑', src: 'ギフト/笑/微笑_5pt.PNG', alt: '微笑' },
+        { keyword: '真顔', src: 'ギフト/笑/真顔_5pt.PNG', alt: '真顔' },
+        { keyword: '草(植物)', src: 'ギフト/笑/草(植物)_5pt.PNG', alt: '草(植物)' } ,
+        { keyword: 'おもしれー', src: 'ギフト/笑/おもしれー_5pt.PNG', alt: 'おもしれー' },
+        { keyword: 'ガハハ', src: 'ギフト/笑/ガハハ_5pt.PNG', alt: 'ガハハ' },
+        { keyword: 'ズコー', src: 'ギフト/笑/ズコー_5pt.PNG', alt: 'ズコー' },
+        { keyword: '座布団', src: 'ギフト/笑/座布団_5pt.PNG', alt: '座布団' } ,
+        { keyword: 'ビタミン不足', src: 'ギフト/笑/ビタミン不足_5pt.PNG', alt: 'ビタミン不足' },
+        { keyword: 'ウケる', src: 'ギフト/笑/ウケる_5pt.PNG', alt: 'ウケる' },
+        { keyword: '草(大)', src: 'ギフト/笑/草(大)_100pt.PNG', alt: '草(大)' },
     ],
+    
     "定番": [
 
     ],
@@ -528,6 +545,7 @@ function showGifts(category) {
 
 // 初期表示
 showGifts(categories[0]);
+
 
 
 
