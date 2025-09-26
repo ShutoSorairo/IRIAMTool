@@ -419,14 +419,14 @@ const giftImagesMap = {
     ],
     
     "季節": [
-    { keyword: '秋色さぼぼん', src: 'ギフト/季節/秋色さぼぼん.jpg', alt: '秋色さぼぼん' },
-    { keyword: '秋色しらす', src: 'ギフト/季節/秋色しらす.jpg', alt: '秋色しらす' },
-    { keyword: '秋色つむまる', src: 'ギフト/季節/秋色つむまる.jpg', alt: '秋色つむまる' },
-    { keyword: '秋色ねこころ', src: 'ギフト/季節/秋色ねこころ.jpg', alt: '秋色ねこころ' },
-    { keyword: '秋色ぶくちゃ', src: 'ギフト/季節/秋色ぶくちゃ.jpg', alt: '秋色ぶくちゃ' },
-    { keyword: '秋色ホシーカ', src: 'ギフト/季節/秋色ホシーカ.jpg', alt: '秋色ホシーカ' },
-    { keyword: '秋色ユラミィ', src: 'ギフト/季節/秋色ユラミィ.jpg', alt: '秋色ユラミィ' },
-    { keyword: 'Autumn Harmony', src: 'ギフト/季節/Autumn Harmony.jpg', alt: 'Autumn Harmony' }
+    { keyword: '秋色さぼぼん', src: 'ギフト/季節/秋色さぼぼん_5pt.jpg', alt: '秋色さぼぼん' },
+    { keyword: '秋色しらす', src: 'ギフト/季節/秋色しらす_5pt.jpg', alt: '秋色しらす' },
+    { keyword: '秋色つむまる', src: 'ギフト/季節/秋色つむまる_5pt.jpg', alt: '秋色つむまる' },
+    { keyword: '秋色ねこころ', src: 'ギフト/季節/秋色ねこころ_5pt.jpg', alt: '秋色ねこころ' },
+    { keyword: '秋色ぶくちゃ', src: 'ギフト/季節/秋色ぶくちゃ_5pt.jpg', alt: '秋色ぶくちゃ' },
+    { keyword: '秋色ホシーカ', src: 'ギフト/季節/秋色ホシーカ_5pt.jpg', alt: '秋色ホシーカ' },
+    { keyword: '秋色ユラミィ', src: 'ギフト/季節/秋色ユラミィ_5pt.jpg', alt: '秋色ユラミィ' },
+    { keyword: 'Autumn Harmony', src: 'ギフト/季節/Autumn Harmony_100pt.jpg', alt: 'Autumn Harmony' }
     ],
 
     // 他のカテゴリも同様に追加
@@ -509,5 +509,6 @@ function showGifts(category) {
 
 // 初期表示
 showGifts(categories[0]);
+
 
 
