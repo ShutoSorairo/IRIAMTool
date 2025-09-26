@@ -4,7 +4,8 @@ const categories = [
 ];
 
 // 仮のギフトデータ（カテゴリ追加）
-const gifts = [  
+const gifts = [
+    
     // Newカテゴリ
     { name: '4th Anniversary!!+', icon: '', category: 'New' },
     { name: '5th Anniversary!!+', icon: '', category: 'New' },
@@ -29,7 +30,8 @@ const gifts = [
     { name: '秋色ぶくちゃ', icon: '', category: '季節' },
     { name: '秋色ホシーカ', icon: '', category: '季節' },
     { name: '秋色ユラミィ', icon: '', category: '季節' },
-    
+    { name: 'Autumn Harmony', icon: '', category: '季節' },
+
     // ネタカテゴリ
     { name: 'もういっかい！', icon: '', category: 'ネタ' },
     { name: 'ダウト', icon: '', category: 'ネタ' },
@@ -103,7 +105,7 @@ const gifts = [
     { name: 'REC', icon: '', category: 'ネタ' },
     { name: 'お宝発見', icon: '', category: 'ネタ' },
     { name: 'あちらのお客様からです', icon: '', category: 'ネタ' },
-    
+
     // 笑カテゴリ
     { name: 'www', icon: '', category: '笑' } ,
     { name: '草', icon: '', category: '笑' },
@@ -121,8 +123,8 @@ const gifts = [
     { name: 'ビタミン不足', icon: '', category: '笑' },
     { name: 'ウケる', icon: '', category: '笑' },
     { name: '草(大)', icon: '', category: '笑' },
-    
-     // 定番カテゴリ
+
+    // 定番カテゴリ
     { name: 'うんうん', icon: '', category: '定番' },
     { name: 'なるほど', icon: '', category: '定番' },
     { name: 'わかる', icon: '', category: '定番' },
@@ -248,7 +250,7 @@ const gifts = [
 
     // 専用カテゴリ
     { name: 'わいわい投票', icon: '', category: '専用' },
-    
+
     // えらいカテゴリ
     { name: 'キリおめ', icon: '', category: 'えらい' },
     { name: 'ナイギフ', icon: '', category: 'えらい' },
@@ -297,7 +299,7 @@ const gifts = [
     { name: 'なでなで', icon: '', category: 'えらい' },
     { name: 'ハッピーバースデー', icon: '', category: 'えらい' },
 
-     // 挨拶カテゴリ
+    // 挨拶カテゴリ
     { name: 'はろー！', icon: '', category: '挨拶' },
     { name: 'ようこそ', icon: '', category: '挨拶' },
     { name: 'おつかれさま', icon: '', category: '挨拶' },
@@ -371,7 +373,7 @@ const gifts = [
     {name: 'ライト&フォグ', icon: '', category: 'ステージ'},   
     {name: 'ライブステージ', icon: '', category: 'ステージ'},
     {name: '花火', icon: '', category: 'ステージ'},
-    
+
     // LOVEカテゴリ
     { name: '好物', category: 'LOVE' },
     { name: 'ハート', category: 'LOVE' },
@@ -381,60 +383,89 @@ const gifts = [
     { name: 'あざとい', category: 'LOVE' },
     { name: 'かわぼ', category: 'LOVE' },
     { name: '呼んだ？', category: 'LOVE' },
-    { name: 'ハート(大)', category: 'LOVE' },
+    { name: 'ハート(200pt)', category: 'LOVE' },
     { name: 'すこっていい？', category: 'LOVE' },
     { name: '嫁に来ないか', category: 'LOVE' }, 
     { name: 'ずっきゅーん', category: 'LOVE' },
     { name: '唐突な愛', category: 'LOVE' },
     { name: 'ウィンクタイム', category: 'LOVE' },
     { name: 'すこ', category: 'LOVE' },    
-    { name: 'かわいい！', category: 'LOVE' },
+    { name: 'かわいい！(3,000pt)', category: 'LOVE' },
     { name: '尊い', category: 'LOVE' },
     { name: 'なでなで', category: 'LOVE' },
     { name: 'だいすき', category: 'LOVE' },
     { name: 'あふれる想い', category: 'LOVE' }
 ];
 
-// ギフト名と画像ファイル名の対応リスト
-const loveGiftImages = [
-    { keyword: '好物', src: 'ギフト/Love/01_好物.PNG', alt: '好物' },
-    { keyword: 'ハート', src: 'ギフト/Love/02_ハート.PNG', alt: 'ハート' },
-    { keyword: 'かわいい', src: 'ギフト/Love/03_かわいい.PNG', alt: 'かわいい' },
-    { keyword: '照', src: 'ギフト/Love/04_照れ.PNG', alt: '照' },
-    { keyword: 'キャーッ！', src: 'ギフト/Love/05_キャーッ.jpg', alt: 'キャーッ！' },
-    { keyword: 'あざとい', src: 'ギフト/Love/06_あざとい.jpg', alt: 'あざとい' },
-    { keyword: 'かわぼ', src: 'ギフト/Love/07_かわぼ.jpg', alt: 'かわぼ' },
-    { keyword: '呼んだ？', src: 'ギフト/Love/08_呼んだ？.jpg', alt: '呼んだ？' },
-    { keyword: 'ハート(大)', src: 'ギフト/Love/09_ハート(大)_200pt.PNG', alt: 'ハート(大)' },
-    { keyword: 'すこっていい？', src: 'ギフト/Love/10_すっこていい？_500pt.PNG', alt: '呼んだ？' },
-    { keyword: '嫁に来ないか', src: 'ギフト/Love/11_嫁に来ないか・・・？_500pt.PNG', alt: '嫁に来ないか' },
-    { keyword: 'ずっきゅーん', src: 'ギフト/Love/12_ズキューン_500pt.PNG', alt: 'ずっきゅーん' },
-    { keyword: '唐突な愛', src: 'ギフト/Love/13_唐突な愛.jpg', alt: '唐突な愛' },
-    { keyword: 'ウィンクタイム', src: 'ギフト/Love/14_ウィンクタイム.jpg', alt: 'ウィンクタイム' },
-    { keyword: 'すこ', src: 'ギフト/Love/15_すこ_1,000pt.PNG', alt: 'すこ' }, 
-    { keyword:'かわいい！', src: 'ギフト/Love/16_かわいい_3,000pt.PNG', alt: 'かわいい！' },
-    { keyword: '尊い', src: 'ギフト/Love/17_尊い_5,000pt.PNG', alt: '尊い' },
-    { keyword: 'なでなで', src: 'ギフト/Love/18_なでなで_7,000pt.PNG', alt: 'なでなで' },
-    { keyword: 'だいすき', src: 'ギフト/Love/19_だいすき_10,000pt.PNG', alt: 'だいすき' },
-    { keyword: 'あふれる想い', src: 'ギフト/Love/20_あふれる想い_30,000pt.PNG', alt: 'あふれる想い' }   
-];
+// カテゴリごとの画像リスト（カテゴリ名をキーにして画像リストを用意）
+const giftImagesMap = {
+       
+    "New": [
+        { keyword: '5th Anniversary!!+', src: 'ギフト/New/5th Anniversary!+_1,000pt.jpg', alt:'5th Anniversary!!+' },
+        { keyword: '4th Anniversary!!+', src: 'ギフト/New/4th Anniversary!+_1,000pt.jpg', alt:'4th Anniversary!!+' },
+        { keyword: 'グー', src: 'ギフト/New/グー_5pt.jpg', alt: 'グー' },
+        { keyword: 'チョキ', src: 'ギフト/New/チョキ_5pt.jpg', alt: 'チョキ' },
+        { keyword: 'パー', src: 'ギフト/New/パー_5pt.jpg', alt: 'パー' },
+        { keyword: 'オール', src: 'ギフト/New/オール_99pt.jpg', alt: 'オール' },
+        { keyword: '3rd Anniversary!!+', src: 'ギフト/New/3rd Anniversary!+_1,000pt.jpg', alt: '3rd Anniversary!!+' },
+        { keyword: 'セレブレーション', src: 'ギフト/New/セレブレーション_1,000pt.jpg', alt: 'セレブレーション' }
+    ],
 
-// タブ生成
-const tabContainer = document.getElementById('tabContainer');
-categories.forEach((cat, idx) => {
-    const btn = document.createElement('button');
-    btn.className = 'tab-btn' + (idx === 0 ? ' active' : '');
-    btn.textContent = cat;
-    btn.onclick = () => selectTab(cat, btn);
-    tabContainer.appendChild(btn);
+    "ミライト復刻": [
+    { keyword: '3rd Anniversary!!+', src: 'ギフト/New/3rd Anniversary!+_1,000pt.jpg', alt: '3rd Anniversary!!+' },
+    { keyword: 'セレブレーション', src: 'ギフト/New/セレブレーション_1,000pt.jpg', alt: 'セレブレーション' },
+    { keyword: '4th Anniversary!!+', src: 'ギフト/New/4th Anniversary!+_1,000pt.jpg', alt: '4th Anniversary!!+' },
+    { keyword: '5th Anniversary!!+', src: 'ギフト/New/5th Anniversary!+_1,000pt.jpg', alt: '5th Anniversary!!+' } 
+    ],
+    
+    // 他のカテゴリも同様に追加
+    // "季節": [ ... ],
+    // ...
+
+     "LOVE": [
+        { keyword: '好物', src: 'ギフト/Love/01_好物.PNG', alt: '好物' },
+        { keyword: 'ハート', src: 'ギフト/Love/02_ハート.PNG', alt: 'ハート' },
+        { keyword: 'かわいい', src: 'ギフト/Love/03_かわいい.PNG', alt: 'かわいい' },
+        { keyword: '照', src: 'ギフト/Love/04_照れ.PNG', alt: '照' },
+        { keyword: 'キャーッ！', src: 'ギフト/Love/05_キャーッ.jpg', alt: 'キャーッ！' },
+        { keyword: 'あざとい', src: 'ギフト/Love/06_あざとい.jpg', alt: 'あざとい' },
+        { keyword: 'かわぼ', src: 'ギフト/Love/07_かわぼ.jpg', alt: 'かわぼ' },
+        { keyword: '呼んだ？', src: 'ギフト/Love/08_呼んだ？.jpg', alt: '呼んだ？' },
+        { keyword: 'ハート(200pt)', src: 'ギフト/Love/09_ハート(大)_200pt.PNG', alt: 'ハート(200pt)' },
+        { keyword: 'すこっていい？', src: 'ギフト/Love/10_すっこていい？_500pt.PNG', alt: 'すこっていい？' },
+        { keyword: '嫁に来ないか', src: 'ギフト/Love/11_嫁に来ないか・・・？_500pt.PNG', alt: '嫁に来ないか' },
+        { keyword: 'ずっきゅーん', src: 'ギフト/Love/12_ズキューン_500pt.PNG', alt: 'ずっきゅーん' },
+        { keyword: '唐突な愛', src: 'ギフト/Love/13_唐突な愛.jpg', alt: '唐突な愛' },
+        { keyword: 'ウィンクタイム', src: 'ギフト/Love/14_ウィンクタイム.jpg', alt: 'ウィンクタイム' },
+        { keyword: 'すこ', src: 'ギフト/Love/15_すこ_1,000pt.PNG', alt: 'すこ' }, 
+        { keyword:'かわいい！(3,000pt)', src: 'ギフト/Love/16_かわいい_3,000pt.PNG', alt: 'かわいい！(3,000pt)' },
+        { keyword: '尊い', src: 'ギフト/Love/17_尊い_5,000pt.PNG', alt: '尊い' },
+        { keyword: 'なでなで', src: 'ギフト/Love/18_なでなで_7,000pt.PNG', alt: 'なでなで' },
+        { keyword: 'だいすき', src: 'ギフト/Love/19_だいすき_10,000pt.PNG', alt: 'だいすき' },
+        { keyword: 'あふれる想い', src: 'ギフト/Love/20_あふれる想い_30,000pt.PNG', alt: 'あふれる想い' }
+    ]
+};
+
+// DOMContentLoadedでタブ生成・初期表示を行うよう修正
+document.addEventListener('DOMContentLoaded', () => {
+    // タブ生成
+    const tabContainer = document.getElementById('tabContainer');
+    categories.forEach((cat, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'tab-btn' + (idx === 0 ? ' active' : '');
+        btn.textContent = cat;
+        btn.onclick = () => selectTab(cat, btn);
+        tabContainer.appendChild(btn);
+    });
+
+    // 初期表示
+    showGifts(categories[0]);
 });
 
 // タブ選択時の処理
 function selectTab(category, btn) {
-    // タブのactive切り替え
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    // ギフト表示
     showGifts(category);
 }
 
@@ -447,14 +478,14 @@ function showGifts(category) {
         giftList.innerHTML = '<div style="text-align:center; color:#aaa;">このカテゴリのギフトはありません。</div>';
         return;
     }
+    // カテゴリごとの画像リストを取得
+    const images = giftImagesMap[category] || [];
     filtered.forEach(gift => {
         let iconHtml = gift.icon;
-        // LOVEカテゴリで画像対応（完全一致のみ）
-        if (category === 'LOVE') {
-            const found = loveGiftImages.find(img => gift.name === img.keyword);
-            if (found) {
-                iconHtml = `<img src="${found.src}" alt="${found.alt}" class="gift-img" style="width:40px;height:40px;">`;
-            }
+        // 画像リストから完全一致で画像を探す
+        const found = images.find(img => gift.name === img.keyword);
+        if (found) {
+            iconHtml = `<img src="${found.src}" alt="${found.alt}" class="gift-img" style="width:40px;height:40px;">`;
         }
         const item = document.createElement('div');
         item.className = 'gift-item';
@@ -467,22 +498,4 @@ function showGifts(category) {
 }
 
 // 初期表示
-
 showGifts(categories[0]);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
