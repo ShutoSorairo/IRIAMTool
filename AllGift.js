@@ -80,6 +80,24 @@ const gifts = [
     { name: 'お宝発見', icon: '', category: 'ネタ' },
     { name: 'あちらのお客様からです', icon: '', category: 'ネタ' },
     
+    // 笑カテゴリ
+    { name: 'www', icon: '', category: '笑' } ,
+    { name: '草', icon: '', category: '笑' },
+    { name: 'ドッ', icon: '', category: '笑' },
+    { name: 'かぷかぷ', icon: '', category: '笑' },
+    { name: 'こらえ笑い', icon: '', category: '笑' } ,
+    { name: 'ブフォッ', icon: '', category: '笑' },
+    { name: '微笑', icon: '', category: '笑' },
+    { name: '真顔', icon: '', category: '笑' },
+    { name: '草(植物)', icon: '', category: '笑' } ,
+    { name: 'おもしれー', icon: '', category: '笑' },
+    { name: 'ガハハ', icon: '', category: '笑' },
+    { name: 'ズコー', icon: '', category: '笑' },
+    { name: '座布団', icon: '', category: '笑' } ,
+    { name: 'ビタミン不足', icon: '', category: '笑' },
+    { name: 'ウケる', icon: '', category: '笑' },
+    { name: '草(大)', icon: '', category: '笑' },
+    
      // 定番カテゴリ
     { name: 'うんうん', icon: '', category: '定番' },
     { name: 'なるほど', icon: '', category: '定番' },
@@ -206,24 +224,6 @@ const gifts = [
 
     // 専用カテゴリ
     { name: 'わいわい投票', icon: '', category: '専用' },
-    
-    // 笑カテゴリ
-    { name: 'www', icon: '', category: '笑' } ,
-    { name: '草', icon: '', category: '笑' },
-    { name: 'ドッ', icon: '', category: '笑' },
-    { name: 'かぷかぷ', icon: '', category: '笑' },
-    { name: 'こらえ笑い', icon: '', category: '笑' } ,
-    { name: 'ブフォッ', icon: '', category: '笑' },
-    { name: '微笑', icon: '', category: '笑' },
-    { name: '真顔', icon: '', category: '笑' },
-    { name: '草(植物)', icon: '', category: '笑' } ,
-    { name: 'おもしれー', icon: '', category: '笑' },
-    { name: 'ガハハ', icon: '', category: '笑' },
-    { name: 'ズコー', icon: '', category: '笑' },
-    { name: '座布団', icon: '', category: '笑' } ,
-    { name: 'ビタミン不足', icon: '', category: '笑' },
-    { name: 'ウケる', icon: '', category: '笑' },
-    { name: '草(大)', icon: '', category: '笑' },
     
     // えらいカテゴリ
     { name: 'キリおめ', icon: '', category: 'えらい' },
@@ -445,6 +445,7 @@ function showGifts(category) {
 // 初期表示
 
 showGifts(categories[0]);
+
 
 
 
