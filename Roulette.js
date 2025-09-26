@@ -124,7 +124,7 @@ function spinStringRoulette(block, items) {
     const listDiv = block.querySelector('.roulette-string-list');
     let idx = 0;
     let count = 0;
-    let max = Math.floor(Math.random() * 10) + 30; // 30～39回
+    let max = Math.floor(Math.random() * 20) + 30; // 30～48回
 
     function renderSlot(currentIdx) {
         listDiv.innerHTML = '';
@@ -184,4 +184,5 @@ window.onload = () => {
         list.appendChild(createRouletteBlock(1));
     }
     document.getElementById('add-roulette-btn').onclick = addRoulette;
+
 };
