@@ -366,7 +366,7 @@ const gifts = [
     {name: 'もういっかい(大)', icon: '', category: 'ステージ',src: 'ギフト/ステージ/もういっかい(大)_500pt.png'  }, 
     {name: '花束', icon: '', category: 'ステージ',src: 'ギフト/ステージ/花束_500pt.png'  },
     {name: 'スポットライト', icon: '', category: 'ステージ',src: 'ギフト/ステージ/スポットライト_500pt.png'  },
-    {name: 'V.I.P', icon: '', category: 'ステージ',src: 'ギフト/ステージ/VIP_500pt.jpg'  },
+    {name: 'V.I.P', icon: '', category: 'ステージ',src: 'ギフト/ステージ/VIP_500pt.png'  },
     {name: 'くす玉', icon: '', category: 'ステージ',src: 'ギフト/ステージ/くす玉_1,000pt.png'  },
     {name: 'ライト&フォグ', icon: '', category: 'ステージ',src: 'ギフト/ステージ/ライト&フォグ_1,000pt.png'  },   
     {name: 'ライブステージ', icon: '', category: 'ステージ',src: 'ギフト/ステージ/ライブステージ_1,000pt.png'  },
@@ -437,3 +437,4 @@ function showGifts(category) {
 
 // 初期表示
 showGifts(categories[0]);
+
