@@ -419,7 +419,15 @@ const giftImagesMap = {
     ],
     
     // 他のカテゴリも同様に追加
-    // "季節": [ ... ],
+    "季節": [
+        { keyword: '秋色さぼぼん', src: '', alt: '秋色さぼぼん' },
+        { keyword: '秋色つむまる', src: '', alt: '秋色つむまる' },
+        { keyword: '秋色ねこころ', src: '', alt: '秋色ねこころ' },
+        { keyword: '秋色ぶくちゃ', src: '', alt: '秋色ぶくちゃ' },
+        { keyword: '秋色ホシーカ', src: '', alt: '秋色ホシーカ' },
+        { keyword: '秋色ユラミィ', src: '', alt: '秋色ユラミィ' },
+        { keyword: 'Autumn Harmony', src: '', alt: 'Autumn Harmony' }
+    ],
     // ...
 
      "LOVE": [
@@ -499,3 +507,4 @@ function showGifts(category) {
 
 // 初期表示
 showGifts(categories[0]);
+
