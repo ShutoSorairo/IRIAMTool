@@ -412,27 +412,46 @@ const giftImagesMap = {
     ],
 
     "ミライト復刻": [
-    { keyword: '3rd Anniversary!!+', src: 'ギフト/New/3rd Anniversary!+_1,000pt.jpg', alt: '3rd Anniversary!!+' },
-    { keyword: 'セレブレーション', src: 'ギフト/New/セレブレーション_1,000pt.jpg', alt: 'セレブレーション' },
-    { keyword: '4th Anniversary!!+', src: 'ギフト/New/4th Anniversary!+_1,000pt.jpg', alt: '4th Anniversary!!+' },
-    { keyword: '5th Anniversary!!+', src: 'ギフト/New/5th Anniversary!+_1,000pt.jpg', alt: '5th Anniversary!!+' } 
+        { keyword: '3rd Anniversary!!+', src: 'ギフト/New/3rd Anniversary!+_1,000pt.jpg', alt: '3rd Anniversary!!+' },
+        { keyword: 'セレブレーション', src: 'ギフト/New/セレブレーション_1,000pt.jpg', alt: 'セレブレーション' },
+        { keyword: '4th Anniversary!!+', src: 'ギフト/New/4th Anniversary!+_1,000pt.jpg', alt: '4th Anniversary!!+' },
+        { keyword: '5th Anniversary!!+', src: 'ギフト/New/5th Anniversary!+_1,000pt.jpg', alt: '5th Anniversary!!+' } 
     ],
     
     "季節": [
-    { keyword: '秋色さぼぼん', src: 'ギフト/季節/秋色さぼぼん_5pt.jpg', alt: '秋色さぼぼん' },
-    { keyword: '秋色しらす', src: 'ギフト/季節/秋色しらす_5pt.jpg', alt: '秋色しらす' },
-    { keyword: '秋色つむまる', src: 'ギフト/季節/秋色つむまる_5pt.jpg', alt: '秋色つむまる' },
-    { keyword: '秋色ねこころ', src: 'ギフト/季節/秋色ねこころ_5pt.jpg', alt: '秋色ねこころ' },
-    { keyword: '秋色ぶくちゃ', src: 'ギフト/季節/秋色ぶくちゃ_5pt.jpg', alt: '秋色ぶくちゃ' },
-    { keyword: '秋色ホシーカ', src: 'ギフト/季節/秋色ホシーカ_5pt.jpg', alt: '秋色ホシーカ' },
-    { keyword: '秋色ユラミィ', src: 'ギフト/季節/秋色ユラミィ_5pt.jpg', alt: '秋色ユラミィ' },
-    { keyword: 'Autumn Harmony', src: 'ギフト/季節/Autumn Harmony_100pt.jpg', alt: 'Autumn Harmony' }
+        { keyword: '秋色さぼぼん', src: 'ギフト/季節/秋色さぼぼん_5pt.jpg', alt: '秋色さぼぼん' },
+        { keyword: '秋色しらす', src: 'ギフト/季節/秋色しらす_5pt.jpg', alt: '秋色しらす' },
+        { keyword: '秋色つむまる', src: 'ギフト/季節/秋色つむまる_5pt.jpg', alt: '秋色つむまる' },
+        { keyword: '秋色ねこころ', src: 'ギフト/季節/秋色ねこころ_5pt.jpg', alt: '秋色ねこころ' },
+        { keyword: '秋色ぶくちゃ', src: 'ギフト/季節/秋色ぶくちゃ_5pt.jpg', alt: '秋色ぶくちゃ' },
+        { keyword: '秋色ホシーカ', src: 'ギフト/季節/秋色ホシーカ_5pt.jpg', alt: '秋色ホシーカ' },
+        { keyword: '秋色ユラミィ', src: 'ギフト/季節/秋色ユラミィ_5pt.jpg', alt: '秋色ユラミィ' },
+        { keyword: 'Autumn Harmony', src: 'ギフト/季節/Autumn Harmony_100pt.jpg', alt: 'Autumn Harmony' }
     ],
 
-    // 他のカテゴリも同様に追加
-    // ...
+    "ネタ": [
 
-     "LOVE": [
+    ],
+    "笑": [
+
+    ],
+    "定番": [
+
+    ],
+    "専用": [
+        { keyword: 'わいわい投票', src: 'ギフト/専用/わいわい投票_500pt.jpg', alt: 'わいわい投票' }
+    ],
+    "えらい": [
+
+    ],
+    "挨拶": [
+
+    ],
+    "ステージ": [
+
+    ],
+
+    "LOVE": [
         { keyword: '好物', src: 'ギフト/Love/01_好物.PNG', alt: '好物' },
         { keyword: 'ハート', src: 'ギフト/Love/02_ハート.PNG', alt: 'ハート' },
         { keyword: 'かわいい', src: 'ギフト/Love/03_かわいい.PNG', alt: 'かわいい' },
@@ -509,6 +528,7 @@ function showGifts(category) {
 
 // 初期表示
 showGifts(categories[0]);
+
 
 
 
