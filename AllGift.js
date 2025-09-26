@@ -5,6 +5,21 @@ const categories = [
 
 // 仮のギフトデータ（カテゴリ追加）
 const gifts = [  
+    // Newカテゴリ
+    { name: '4th Anniversary!!+', icon: '', category: 'New' },
+    { name: '5th Anniversary!!+', icon: '', category: 'New' },
+    { name: 'グー', icon: '', category: 'New' },
+    { name: 'チョキ', icon: '', category: 'New' },
+    { name: 'パー', icon: '', category: 'New' },
+    { name: 'オール', icon: '', category: 'New' },
+    { name: '3rd Anniversary!!+', icon: '', category: 'New' },
+    { name: 'セレブレーション', icon: '', category: 'New' },
+
+    // ミライト復刻カテゴリ
+    { name: '3rd Anniversary!!+', icon: '', category: 'ミライト復刻' },
+    { name: 'セレブレーション', icon: '', category: 'ミライト復刻' },
+    { name: '4th Anniversary!!+', icon: '', category: 'ミライト復刻' },
+    { name: '5th Anniversary!!+', icon: '', category: 'ミライト復刻' },
     
     // ネタカテゴリ
     { name: 'もういっかい！', icon: '', category: 'ネタ' },
@@ -445,6 +460,7 @@ function showGifts(category) {
 // 初期表示
 
 showGifts(categories[0]);
+
 
 
 
