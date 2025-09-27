@@ -210,8 +210,8 @@ const gifts = [
     { name: '寝て！', icon: '', category: '定番', src: 'ギフト/定番/寝て！_5pt.PNG'  },
     { name: '食べて！', icon: '', category: '定番', src: 'ギフト/定番/食べて！_5pt.PNG'  },
     { name: '充電中', icon: '', category: '定番', src: 'ギフト/定番/充電中_5pt.PNG'  },
-    { name: '残量100%', icon: '', category: '定番', src: 'ギフト/定番/残量100%_5pt.PNG'  },
-    { name: '残量1%', icon: '', category: '定番', src: 'ギフト/定番/残量1%_5pt.PNG'  },
+    { name: '残量100%', icon: '', category: '定番', src: 'ギフト/定番/残量100_5pt.PNG'  },
+    { name: '残量1%', icon: '', category: '定番', src: 'ギフト/定番/残量1_5pt.PNG'  },
     { name: 'グー', icon: '', category: '定番', src: 'ギフト/定番/グー_5pt.PNG'  },
     { name: 'チョキ', icon: '', category: '定番', src: 'ギフト/定番/チョキ_5pt.PNG'  },
     { name: 'パー', icon: '', category: '定番', src: 'ギフト/定番/パー_5pt.PNG'  },
@@ -437,4 +437,5 @@ function showGifts(category) {
 
 // 初期表示
 showGifts(categories[0]);
+
 
