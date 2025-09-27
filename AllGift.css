@@ -1,6 +1,6 @@
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
-    background: linear-gradient(120deg, #e0f7fa 0%, #fce4ec 100%);
+    background: #f9f9f9;
     margin: 0;
     padding: 20px;
 }
@@ -42,48 +42,27 @@ h1 {
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     padding: 24px;
 }
+
 .gift-item {
     display: flex;
     align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid #eee;
-}
-.gift-item:last-child {
-    border-bottom: none;
-}
-.gift-icon {
-    width: 40px;
-    height: 40px;
-    margin-right: 16px;
-    background: #eee;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-}
-.gift-name {
-    font-size: 18px;
-    color: #555;
+    justify-content: space-between; /* 名前とポイントを左右に分ける */
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
 }
 
-.home-btn {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    background: #1976d2;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    font-size: 1em;
-    padding: 10px 30px;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background 0.2s;
-    z-index: 100;
+.gift-icon {
+    margin-right: 8px;
 }
-.home-btn:hover {
-    background: #1565c0;
+
+.gift-name {
+    flex: 1; /* 名前部分を伸ばす */
+}
+
+.gift-points {
+    text-align: right;
+    min-width: 60px; /* ポイント幅をある程度確保するときれいに揃う */
+    color: #555;
 }
 
 @media (max-width: 600px) {
@@ -105,7 +84,3 @@ h1 {
         font-size: 1em;
     }
 }
-
-
-
-
