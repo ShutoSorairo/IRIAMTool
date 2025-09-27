@@ -6,7 +6,7 @@ const categories = [
 // 仮のギフトデータ（カテゴリ追加）
 const gifts = [
     
- // --- New ---
+    // --- New ---
     { name: '5th Anniversary!!+', category: 'New', src: 'ギフト/New/5th Anniversary!+_1,000pt.jpg' },
     { name: '4th Anniversary!!+', category: 'New', src: 'ギフト/New/4th Anniversary!+_1,000pt.jpg' },
     { name: 'グー', category: 'New', src: 'ギフト/New/グー_5pt.jpg' },
@@ -36,7 +36,7 @@ const gifts = [
     { name: 'もういっかい！', category: 'ネタ', src: 'ギフト/ネタ/もういっかい！_5pt.PNG' },
     { name: 'ダウト', category: 'ネタ', src: 'ギフト/ネタ/ダウト_5pt.PNG' },
     { name: 'ざわ…ざわ…', category: 'ネタ', src: 'ギフト/ネタ/ざわ…ざわ…_5pt.PNG' },
-    { name: '炎', category: 'ネタ', src: 'ギフト/ネタ/ファイヤー_5pt.PNG' },
+    { name: 'ファイヤー', category: 'ネタ', src: 'ギフト/ネタ/ファイヤー_5pt.PNG' },
     { name: '非常口', category: 'ネタ', src: 'ギフト/ネタ/非常口_5pt.PNG' },
     { name: 'いつもので', category: 'ネタ', src: 'ギフト/ネタ/いつもので_5pt.PNG' },
     { name: 'かー', category: 'ネタ', src: 'ギフト/ネタ/かー_5pt.PNG' },
@@ -437,5 +437,3 @@ function showGifts(category) {
 
 // 初期表示
 showGifts(categories[0]);
-
-
