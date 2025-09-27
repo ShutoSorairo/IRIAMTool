@@ -45,28 +45,24 @@ h1 {
 .gift-item {
     display: flex;
     align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid #eee;
-}
-.gift-item:last-child {
-    border-bottom: none;
-}
-.gift-icon {
-    width: 40px;
-    height: 40px;
-    margin-right: 16px;
-    background: #eee;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-}
-.gift-name {
-    font-size: 18px;
-    color: #555;
+    justify-content: space-between; /* 名前とポイントを左右に分ける */
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
 }
 
+.gift-icon {
+    margin-right: 8px;
+}
+
+.gift-name {
+    flex: 1; /* 名前部分を伸ばす */
+}
+
+.gift-points {
+    text-align: right;
+    min-width: 60px; /* ポイント幅をある程度確保するときれいに揃う */
+    color: #555;
+}
 .home-btn {
     position: absolute;
     top: 20px;
@@ -105,3 +101,4 @@ h1 {
         font-size: 1em;
     }
 }
+
