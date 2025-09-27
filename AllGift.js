@@ -374,7 +374,7 @@ const gifts = [
     {name: '花火', icon: '', category: 'ステージ',src: 'ギフト/ステージ/花火_10,000pt.PNG'  },
 
     // LOVEカテゴリ
-    { name: '好物', category: 'LOVE', src: 'ギフト/LOVE/好物_5pt.PNG' },
+    { name: '好物', category: 'LOVE', src: 'ギフト/LOVE/好物_1pt.PNG' },
     { name: 'ハート', category: 'LOVE', src: 'ギフト/LOVE/ハート_5pt.PNG' },
     { name: 'かわいい', icon: '', category: 'LOVE', src: 'ギフト/LOVE/かわいい_5pt.PNG' },
     { name: '照れ', category: 'LOVE', icon: '', src: 'ギフト/LOVE/照れ_5pt.PNG' },
@@ -438,6 +438,7 @@ function showGifts(category) {
 
 // 初期表示
 showGifts(categories[0]);
+
 
 
 
