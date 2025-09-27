@@ -373,26 +373,26 @@ const gifts = [
     {name: '花火', icon: '', category: 'ステージ',src: 'ギフト/ステージ/花火_10,000pt.PNG'  },
 
     // LOVEカテゴリ
-    { name: '好物', category: 'LOVE', src: 'ギフト/LOVE/好物_1pt.PNG' },
-    { name: 'ハート', category: 'LOVE', src: 'ギフト/LOVE/ハート_5pt.PNG' },
-    { name: 'かわいい', icon: '', category: 'LOVE', src: 'ギフト/LOVE/かわいい_5pt.PNG' },
-    { name: '照れ', category: 'LOVE', icon: '', src: 'ギフト/LOVE/照れ_5pt.PNG' },
-    { name: 'キャーッ！', category: 'LOVE', src: 'ギフト/LOVE/キャーッ！_5pt.PNG' },
-    { name: 'あざとい', category: 'LOVE', src: 'ギフト/LOVE/あざとい_5pt.PNG' },
-    { name: 'かわぼ', category: 'LOVE', src: 'ギフト/LOVE/かわぼ_5pt.PNG' },
-    { name: '呼んだ？', category: 'LOVE', src: 'ギフト/LOVE/呼んだ？_5pt.PNG' },
-    { name: 'ハート(大)', category: 'LOVE', src: 'ギフト/LOVE/ハート(大)_200pt.PNG' },
-    { name: 'すっこていい？', category: 'LOVE', src: 'ギフト/LOVE/すっこていい？_500pt.PNG' },
-    { name: '嫁に来ないか・・・？', category: 'LOVE', src: 'ギフト/LOVE/嫁に来ないか・・・？_500pt.PNG' }, 
-    { name: 'ズキューン', category: 'LOVE', src: 'ギフト/LOVE/ズキューン_500pt.PNG' },
-    { name: '唐突な愛', category: 'LOVE', src: 'ギフト/LOVE/唐突な愛_500pt.PNG' },
-    { name: 'ウィンクタイム', category: 'LOVE', src: 'ギフト/LOVE/ウィンクタイム_500pt.PNG' },
-    { name: 'すこ', category: 'LOVE', src: 'ギフト/LOVE/すこ_1,000pt.PNG' },    
-    { name: 'かわいい！', category: 'LOVE', src: 'ギフト/LOVE/かわいい！_3,000pt.PNG' },
-    { name: '尊い', category: 'LOVE', src: 'ギフト/LOVE/尊い_5,000pt.PNG' },
-    { name: 'なでなで', category: 'LOVE', src: 'ギフト/LOVE/なでなで_7,000pt.PNG' },
-    { name: 'だいすき', category: 'LOVE', src: 'ギフト/LOVE/だいすき_10,000pt.PNG' },
-    { name: 'あふれる想い', category: 'LOVE', src: 'ギフト/LOVE/あふれる想い_30,000pt.PNG' },
+    { name: '好物', category: 'LOVE', src: 'ギフト/Love/好物_1pt.PNG' },
+    { name: 'ハート', category: 'LOVE', src: 'ギフト/Love/ハート_5pt.PNG' },
+    { name: 'かわいい', icon: '', category: 'LOVE', src: 'ギフト/Love/かわいい_5pt.PNG' },
+    { name: '照れ', category: 'LOVE', icon: '', src: 'ギフト/Love/照れ_5pt.PNG' },
+    { name: 'キャーッ！', category: 'LOVE', src: 'ギフト/Love/キャーッ！_5pt.PNG' },
+    { name: 'あざとい', category: 'LOVE', src: 'ギフト/Love/あざとい_5pt.PNG' },
+    { name: 'かわぼ', category: 'LOVE', src: 'ギフト/Love/かわぼ_5pt.PNG' },
+    { name: '呼んだ？', category: 'LOVE', src: 'ギフト/Love/呼んだ？_5pt.PNG' },
+    { name: 'ハート(大)', category: 'LOVE', src: 'ギフト/Love/ハート(大)_200pt.PNG' },
+    { name: 'すっこていい？', category: 'LOVE', src: 'ギフト/Love/すっこていい？_500pt.PNG' },
+    { name: '嫁に来ないか・・・？', category: 'LOVE', src: 'ギフト/Love/嫁に来ないか・・・？_500pt.PNG' }, 
+    { name: 'ズキューン', category: 'LOVE', src: 'ギフト/Love/ズキューン_500pt.PNG' },
+    { name: '唐突な愛', category: 'LOVE', src: 'ギフト/Love/唐突な愛_500pt.PNG' },
+    { name: 'ウィンクタイム', category: 'LOVE', src: 'ギフト/Love/ウィンクタイム_500pt.PNG' },
+    { name: 'すこ', category: 'LOVE', src: 'ギフト/Love/すこ_1,000pt.PNG' },    
+    { name: 'かわいい！', category: 'LOVE', src: 'ギフト/Love/かわいい！_3,000pt.PNG' },
+    { name: '尊い', category: 'LOVE', src: 'ギフト/Love/尊い_5,000pt.PNG' },
+    { name: 'なでなで', category: 'LOVE', src: 'ギフト/Love/なでなで_7,000pt.PNG' },
+    { name: 'だいすき', category: 'LOVE', src: 'ギフト/Love/だいすき_10,000pt.PNG' },
+    { name: 'あふれる想い', category: 'LOVE', src: 'ギフト/Love/あふれる想い_30,000pt.PNG' }
 ];
 
 // --- DOM操作 ---
@@ -437,3 +437,4 @@ function showGifts(category) {
 
 // 初期表示
 showGifts(categories[0]);
+
