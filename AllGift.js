@@ -190,8 +190,8 @@ const gifts = [
     { name: 'ビクッ！？', icon: '', category: '定番', src: 'ギフト/定番/ビクッ！？_5pt.PNG'  },
     { name: 'ファイティン', icon: '', category: '定番', src: 'ギフト/定番/ファイティン_5pt.PNG'  },
     { name: '？？？', icon: '', category: '定番', src: 'ギフト/定番/？？？_5pt.PNG'  },
-    { name: 'はぁい・・・', icon: '', category: '定番', src: 'ギフト/定番/はぁい・・・_5pt.PNG'  },
-    { name: 'ふんふん・・・', icon: '', category: '定番', src: 'ギフト/定番/ふんふん・・・_5pt.PNG'  },
+    { name: 'はぁい…', icon: '', category: '定番', src: 'ギフト/定番/はぁい…_5pt.PNG'  },
+    { name: 'ふんふん…', icon: '', category: '定番', src: 'ギフト/定番/ふんふん…_5pt.PNG'  },
     { name: 'おねが～い', icon: '', category: '定番', src: 'ギフト/定番/おねが～い_5pt.PNG'  },
     { name: 'ぱぁぁ', icon: '', category: '定番', src: 'ギフト/定番/ぱぁぁ_5pt.PNG'  },
     { name: 'ぷんぷん', icon: '', category: '定番', src: 'ギフト/定番/ぷんぷん_5pt.PNG'  },
@@ -437,4 +437,5 @@ function showGifts(category) {
 
 // 初期表示
 showGifts(categories[0]);
+
 
