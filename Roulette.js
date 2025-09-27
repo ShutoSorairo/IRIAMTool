@@ -118,13 +118,16 @@ function drawRouletteString(block, highlightIdx = -1) {
     });
 }
 
-// スロット風に1つずつ中央に大きく表示して回転
+// スロット風に1つずつ中央に大きく表示して回転（改良版：完全ランダム）
 function spinStringRoulette(block, items) {
     const resultDiv = block.querySelector('.result-text');
     const listDiv = block.querySelector('.roulette-string-list');
     let idx = 0;
     let count = 0;
-    let max = Math.floor(Math.random() * 20) + 30; // 30～48回
+    let max = Math.floor(Math.random() * 20) + 30; // 30～49回
+
+    // 🎯 最終結果を完全ランダムに決定
+    const resultIdx = Math.floor(Math.random() * items.length);
 
     function renderSlot(currentIdx) {
         listDiv.innerHTML = '';
@@ -138,7 +141,6 @@ function spinStringRoulette(block, items) {
         span.style.color = '#fff';
         span.style.fontWeight = 'bold';
         span.style.fontSize = '2em';
-        span.style.transition = 'background 0.1s, color 0.1s';
         listDiv.appendChild(span);
     }
 
@@ -149,10 +151,9 @@ function spinStringRoulette(block, items) {
         if (count < max) {
             setTimeout(animate, 60 + count * 3); // 徐々に遅く
         } else {
-            const resultIdx = (idx - 1) % items.length;
+            // 🎯 最終的に完全ランダムで決めた項目を表示
             renderSlot(resultIdx);
             resultDiv.textContent = `結果: ${items[resultIdx]}`;
-            // 読み上げ
             if ('speechSynthesis' in window) {
                 const uttr = new SpeechSynthesisUtterance(items[resultIdx]);
                 uttr.lang = 'ja-JP';
@@ -184,5 +185,4 @@ window.onload = () => {
         list.appendChild(createRouletteBlock(1));
     }
     document.getElementById('add-roulette-btn').onclick = addRoulette;
-
 };
