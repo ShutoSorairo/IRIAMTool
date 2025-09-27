@@ -105,6 +105,7 @@ const gifts = [
     { name: 'お宝発見', category: 'ネタ', src: 'ギフト/ネタ/お宝発見_1,000pt.PNG' },
     { name: 'あちらのお客様からです', category: 'ネタ', src: 'ギフト/ネタ/あちらのお客様からです_3,000pt.PNG' },
 
+    // 笑カテゴリ
     { name: 'www', category: '笑', src: 'ギフト/笑/www_5pt.PNG' },
     { name: '草', category: '笑', src: 'ギフト/笑/草_5pt.PNG' },
     { name: 'ドッ', category: '笑', src: 'ギフト/笑/ドッ_5pt.PNG' },
@@ -437,4 +438,5 @@ function showGifts(category) {
 
 // 初期表示
 showGifts(categories[0]);
+
 
