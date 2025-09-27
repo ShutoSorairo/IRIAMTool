@@ -36,7 +36,7 @@ const gifts = [
     { name: 'もういっかい！', category: 'ネタ', src: 'ギフト/ネタ/もういっかい！_5pt.PNG' },
     { name: 'ダウト', category: 'ネタ', src: 'ギフト/ネタ/ダウト_5pt.PNG' },
     { name: 'ざわ…ざわ…', category: 'ネタ', src: 'ギフト/ネタ/ざわ…ざわ…_5pt.PNG' },
-    { name: 'ファイヤー', category: 'ネタ', src: 'ギフト/ネタ/ファイヤー_5pt.PNG' },
+    { name: '炎', category: 'ネタ', src: 'ギフト/ネタ/ファイヤー_5pt.PNG' },
     { name: '非常口', category: 'ネタ', src: 'ギフト/ネタ/非常口_5pt.PNG' },
     { name: 'いつもので', category: 'ネタ', src: 'ギフト/ネタ/いつもので_5pt.PNG' },
     { name: 'かー', category: 'ネタ', src: 'ギフト/ネタ/かー_5pt.PNG' },
@@ -132,7 +132,7 @@ const gifts = [
     { name: '考え中', icon: '', category: '定番' ,src: 'ギフト/定番/考え中_1pt.PNG' },
     { name: '好物', icon: '', category: '定番' ,src: 'ギフト/定番/好物_1pt.PNG' },
     { name: 'ふ～ん', icon: '', category: '定番' ,src: 'ギフト/定番/ふ～ん_5pt.PNG' },
-    { name: '…', icon: '', category: '定番' ,src: 'ギフト/定番/1…_5pt.PNG' },
+    { name: '・・・', icon: '', category: '定番' ,src: 'ギフト/定番/・・・_5pt.PNG' },
     { name: '？', icon: '', category: '定番' ,src: 'ギフト/定番/？_5pt.PNG' },
     { name: '！？', icon: '', category: '定番' ,src: 'ギフト/定番/！？_5pt.PNG' },
     { name: 'ありがとう！', icon: '', category: '定番' ,src: 'ギフト/定番/ありがとう！_5pt.PNG' },
@@ -437,6 +437,7 @@ function showGifts(category) {
 
 // 初期表示
 showGifts(categories[0]);
+
 
 
 
