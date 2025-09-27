@@ -423,6 +423,10 @@ function showGifts(category) {
         return;
     }
     filtered.forEach(gift => {
+        // src から "_◯pt" を抽出
+        const match = gift.src.match(/_(\d+(?:,\d+)*)pt/i);
+        const points = match ? match[1] + 'pt' : '';
+
         const item = document.createElement('div');
         item.className = 'gift-item';
         item.innerHTML = `
@@ -430,6 +434,7 @@ function showGifts(category) {
                 <img src="${gift.src}" alt="${gift.name}" class="gift-img" style="width:40px;height:40px;">
             </div>
             <div class="gift-name">${gift.name}</div>
+            <div class="gift-points">${points}</div>
         `;
         giftList.appendChild(item);
     });
@@ -437,6 +442,7 @@ function showGifts(category) {
 
 // 初期表示
 showGifts(categories[0]);
+
 
 
 
