@@ -250,9 +250,9 @@ const gifts = [
     { name: 'わいわい投票', icon: '', category: '専用', src: 'ギフト/専用/わいわい投票_500pt.png' },
 
     // えらいカテゴリ
-    { name: 'キリおめ', icon: '', category: 'えらい', src: 'ギフト/えらい/キリおめ_5pt.png' },
-    { name: 'ナイギフ', icon: '', category: 'えらい', src: 'ギフト/えらい/ナイギフ_5pt.png' },
-    { name: 'ナイス', icon: '', category: 'えらい', src: 'ギフト/えらい/ナイス_5pt.png' },
+    { name: 'キリおめ', icon: '', category: 'えらい', src: 'ギフト/えらい/キリおめ_5pt.PNG' },
+    { name: 'ナイギフ', icon: '', category: 'えらい', src: 'ギフト/えらい/ナイギフ_5pt.PNG' },
+    { name: 'ナイス', icon: '', category: 'えらい', src: 'ギフト/えらい/ナイス_5pt.PNG' },
     { name: 'かわいい', icon: '', category: 'えらい', src: 'ギフト/えらい/かわいい_5pt.png' },
     { name: '神', icon: '', category: 'えらい', src: 'ギフト/えらい/神_5pt.png' },
     { name: '100点', icon: '', category: 'えらい', src: 'ギフト/えらい/100点_5pt.png' },
@@ -437,4 +437,5 @@ function showGifts(category) {
 
 // 初期表示
 showGifts(categories[0]);
+
 
