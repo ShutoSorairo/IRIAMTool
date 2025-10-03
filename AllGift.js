@@ -22,7 +22,7 @@ const gifts = [
     { name: '月下のぶくちゃ', category: '季節', src: 'ギフト/季節/月下のぶくちゃ_5pt.PNG' },
     { name: '月下のホシーカ', category: '季節', src: 'ギフト/季節/月下のホシーカ_5pt.PNG' },
     { name: '月下のユラミィ', category: '季節', src: 'ギフト/季節/月下のユラミィ_5pt.PNG' },
-    { name: '---', category: '季節', src: 'ギフト/季節/---_100pt.PNG' },
+    { name: '---', category: '季節', src: 'ギフト/季節/名称不明_100pt.PNG' },
 
     // ネタカテゴリ
     { name: 'もういっかい！', category: 'ネタ', src: 'ギフト/ネタ/もういっかい！_5pt.PNG' },
@@ -451,6 +451,7 @@ function showGifts(category) {
 
 // 初期表示
 showGifts(categories[0]);
+
 
 
 
