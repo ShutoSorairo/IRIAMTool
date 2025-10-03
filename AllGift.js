@@ -254,7 +254,7 @@ const gifts = [
     { name: 'のびのび猫', icon: '', category: '専用', src: 'ギフト/専用/のびのび猫_100pt.PNG' },
     { name: 'ふわふわうさぎ', icon: '', category: '専用', src: 'ギフト/専用/ふわふわうさぎ_100pt.PNG' },
     { name: 'モナリザしらす', icon: '', category: '専用', src: 'ギフト/専用/モナリザしらす_100pt.PNG' },
-    { name: 'こたつしらす', icon: '', category: '専用', src: 'ギフト/専用/こたつしらす_100pt.PNG' },
+    { name: '年越ししらす', icon: '', category: '専用', src: 'ギフト/専用/年越ししらす_100pt.PNG' },
     { name: 'みんなで乾杯', icon: '', category: '専用', src: 'ギフト/専用/みんなで乾杯_100pt.PNG' },
     { name: 'よくできました！~10/31', icon: '', category: '専用', src: 'ギフト/専用/よくできました！_100pt.PNG' },
     { name: '神推し', icon: '', category: '専用', src: 'ギフト/専用/神推し_100pt.PNG' },
@@ -453,6 +453,7 @@ function showGifts(category) {
 
 // 初期表示
 showGifts(categories[0]);
+
 
 
 
