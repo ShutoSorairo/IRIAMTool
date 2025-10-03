@@ -1,21 +1,13 @@
 // カテゴリ一覧
 const categories = [
-    "New","ミライト復刻", "季節", "ネタ", "笑", "定番", "専用", "えらい", "挨拶", "ステージ", "LOVE"
+    "ミライト復刻", "季節", "ネタ", "笑", "定番", "専用", "えらい", "挨拶", "ステージ", "LOVE"
 ];
 
 // 仮のギフトデータ（カテゴリ追加）
 const gifts = [
-    
-    // --- New ---
-    { name: '5th Anniversary!!+', category: 'New', src: 'ギフト/New/5th Anniversary!+_1,000pt.jpg' },
-    { name: '4th Anniversary!!+', category: 'New', src: 'ギフト/New/4th Anniversary!+_1,000pt.jpg' },
-    { name: 'グー', category: 'New', src: 'ギフト/New/グー_5pt.jpg' },
-    { name: 'チョキ', category: 'New', src: 'ギフト/New/チョキ_5pt.jpg' },
-    { name: 'パー', category: 'New', src: 'ギフト/New/パー_5pt.jpg' },
-    { name: 'オール', category: 'New', src: 'ギフト/New/オール_99pt.jpg' },
-    { name: '3rd Anniversary!!+', category: 'New', src: 'ギフト/New/3rd Anniversary!+_1,000pt.jpg' },
-    { name: 'セレブレーション', category: 'New', src: 'ギフト/New/セレブレーション_1,000pt.jpg' },
 
+
+    
     // --- ミライト復刻 ---
     { name: '3rd Anniversary!!+', category: 'ミライト復刻', src: 'ギフト/New/3rd Anniversary!+_1,000pt.jpg' },
     { name: 'セレブレーション', category: 'ミライト復刻', src: 'ギフト/New/セレブレーション_1,000pt.jpg' },
@@ -23,7 +15,14 @@ const gifts = [
     { name: '5th Anniversary!!+', category: 'ミライト復刻', src: 'ギフト/New/5th Anniversary!+_1,000pt.jpg' },
 
     // --- 季節 ---
-    
+    { name: '月下のさぼぼん', category: '季節', src: 'ギフト/季節/月下のさぼぼん_5pt.PNG' },
+    { name: '月下のしらす', category: '季節', src: 'ギフト/季節/月下のしらす_5pt.PNG' },
+    { name: '月下のつむまる', category: '季節', src: 'ギフト/季節/月下のつむまる_5pt.PNG' },
+    { name: '月下のねこころ', category: '季節', src: 'ギフト/季節/月下のねこころ_5pt.PNG' },
+    { name: '月下のぶくちゃ', category: '季節', src: 'ギフト/季節/月下のぶくちゃ_5pt.PNG' },
+    { name: '月下のホシーカ', category: '季節', src: 'ギフト/季節/月下のホシーカ_5pt.PNG' },
+    { name: '月下のユラミィ', category: '季節', src: 'ギフト/季節/月下のユラミィ_5pt.PNG' },
+    { name: '---', category: '季節', src: 'ギフト/' },
 
     // ネタカテゴリ
     { name: 'もういっかい！', category: 'ネタ', src: 'ギフト/ネタ/もういっかい！_5pt.PNG' },
@@ -452,6 +451,7 @@ function showGifts(category) {
 
 // 初期表示
 showGifts(categories[0]);
+
 
 
 
