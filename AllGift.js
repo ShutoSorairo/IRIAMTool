@@ -23,14 +23,7 @@ const gifts = [
     { name: '5th Anniversary!!+', category: 'ミライト復刻', src: 'ギフト/New/5th Anniversary!+_1,000pt.jpg' },
 
     // --- 季節 ---
-    { name: '秋色さぼぼん', category: '季節', src: 'ギフト/季節/秋色さぼぼん_5pt.jpg' },
-    { name: '秋色しらす', category: '季節', src: 'ギフト/季節/秋色しらす_5pt.jpg' },
-    { name: '秋色つむまる', category: '季節', src: 'ギフト/季節/秋色つむまる_5pt.jpg' },
-    { name: '秋色ねこころ', category: '季節', src: 'ギフト/季節/秋色ねこころ_5pt.jpg' },
-    { name: '秋色ぶくちゃ', category: '季節', src: 'ギフト/季節/秋色ぶくちゃ_5pt.jpg' },
-    { name: '秋色ホシーカ', category: '季節', src: 'ギフト/季節/秋色ホシーカ_5pt.jpg' },
-    { name: '秋色ユラミィ', category: '季節', src: 'ギフト/季節/秋色ユラミィ_5pt.jpg' },
-    { name: 'Autumn Harmony', category: '季節', src: 'ギフト/季節/Autumn Harmony_100pt.jpg' },
+    
 
     // ネタカテゴリ
     { name: 'もういっかい！', category: 'ネタ', src: 'ギフト/ネタ/もういっかい！_5pt.PNG' },
@@ -442,6 +435,7 @@ function showGifts(category) {
 
 // 初期表示
 showGifts(categories[0]);
+
 
 
 
