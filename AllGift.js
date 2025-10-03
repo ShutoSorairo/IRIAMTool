@@ -240,6 +240,24 @@ const gifts = [
     { name: '缶詰タワー', icon: '', category: '定番', src: 'ギフト/定番/缶詰タワー_10,000pt.PNG'  },
 
     // 専用カテゴリ
+    { name: 'バッジおめ', icon: '', category: '専用', src: 'ギフト/専用/バッジおめ_10pt.PNG' },
+    { name: 'ナイフォロ', icon: '', category: '専用', src: 'ギフト/専用/ナイフォロ_10pt.PNG' },
+    { name: 'ナイコメ', icon: '', category: '専用', src: 'ギフト/専用/ナイコメ_10pt.PNG' },
+    { name: '未定～！', icon: '', category: '専用', src: 'ギフト/専用/未定～！_10pt.PNG' },
+    { name: 'NGですわ', icon: '', category: '専用', src: 'ギフト/専用/NGですわ_10pt.PNG' },
+    { name: 'OKですわ', icon: '', category: '専用', src: 'ギフト/専用/OKですわ_10pt.PNG' },
+    { name: 'ごきげんよう', icon: '', category: '専用', src: 'ギフト/専用/ごきげんよう_10pt.PNG' },
+    { name: 'ごめんあそばせ', icon: '', category: '専用', src: 'ギフト/専用/ごめんあそばせ_10pt.PNG' },
+    { name: 'ヤバイですわ', icon: '', category: '専用', src: 'ギフト/専用/ヤバイですわ_10pt.PNG' },
+    { name: '尊いですわ', icon: '', category: '専用', src: 'ギフト/専用/尊いですわ_10pt.PNG' },
+    { name: 'んぱぁ！', icon: '', category: '専用', src: 'ギフト/専用/'んぱぁ！_10pt },
+    { name: 'のびのび猫', icon: '', category: '専用', src: 'ギフト/専用/のびのび猫_100pt.PNG' },
+    { name: 'ふわふわうさぎ', icon: '', category: '専用', src: 'ギフト/専用/ふわふわうさぎ_100pt.PNG' },
+    { name: 'モナリザしらす', icon: '', category: '専用', src: 'ギフト/専用/モナリザしらす_100pt.PNG' },
+    { name: 'こたつしらす', icon: '', category: '専用', src: 'ギフト/専用/こたつしらす_100pt.PNG' },
+    { name: 'みんなで乾杯', icon: '', category: '専用', src: 'ギフト/専用/みんなで乾杯_100pt.PNG' },
+    { name: 'よくできました！~10/31', icon: '', category: '専用', src: 'ギフト/専用/よくできました！_100pt.PNG' },
+    { name: '神推し', icon: '', category: '専用', src: 'ギフト/専用/神推し_100pt.PNG' },
     { name: 'わいわい投票', icon: '', category: '専用', src: 'ギフト/専用/わいわい投票_500pt.PNG' },
 
     // えらいカテゴリ
@@ -435,6 +453,7 @@ function showGifts(category) {
 
 // 初期表示
 showGifts(categories[0]);
+
 
 
 
