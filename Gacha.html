@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ガチャツール</title>
+  <link rel="stylesheet" href="Gacha.css" />
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">🎲 ガチャツール</h1>
+
+    <!-- ガチャ名 -->
+    <section class="card">
+      <h2>ガチャ名設定</h2>
+      <input id="gacha-name" type="text" placeholder="ガチャ名を入力（例：イベントガチャ）" />
+    </section>
+
+    <!-- レアリティ設定 -->
+    <section class="card">
+      <h2>レアリティ設定</h2>
+      小数点以下表示桁数：
+      <input id="decimal-places" type="number" value="2" min="0" max="6" />
+      <div id="rarity-settings" class="list-area"></div>
+      <div class="row">
+        <button id="add-rarity" class="btn">＋ レアリティを追加</button>
+      </div>
+    </section>
+
+    <!-- 景品設定 -->
+    <section class="card">
+      <h2>景品設定</h2>
+      <div class="row">
+        <button id="add-item" class="btn">＋ 景品を追加</button>
+        <button id="auto-fill" class="btn">自動でサンプル追加</button>
+      </div>
+      <div id="item-settings" class="list-area"></div>
+      <p class="note">※ 出現率はレアリティごとの合計ではなく、景品ごとのウェイト（割合）です。全体合計は下に表示されます。</p>
+      <p id="total-rate" class="total-rate"></p>
+    </section>
+
+    <!-- 抽選設定 -->
+    <section class="card">
+      <h2>抽選設定</h2>
+      名前：<input id="user-name" type="text" placeholder="プレイヤー名（任意）" />
+      抽選回数：
+      <input id="draw-count" type="number" value="1" min="1" />
+      <label><input id="detailed-result" type="checkbox" /> 詳細表示（個別結果を順に表示）</label>
+      <div class="row">
+        <button id="draw-btn" class="btn primary">ガチャを引く</button>
+        <button id="draw-ten" class="btn accent">10連</button>
+      </div>
+    </section>
+
+    <!-- 結果 -->
+    <section class="card">
+      <h2>結果</h2>
+      <div id="result-summary" class="result-summary"></div>
+      <div id="result-details" class="result-details"></div>
+    </section>
+
+    <!-- 履歴 -->
+    <section class="card">
+      <h2>履歴</h2>
+      <div class="row">
+        <button id="clear-history" class="btn">履歴クリア</button>
+        <button id="export-csv" class="btn">CSVエクスポート</button>
+      </div>
+      <div id="history" class="history-area"></div>
+    </section>
+
+    <!-- 履歴集計 -->
+    <section class="card">
+      <h2>履歴集計</h2>
+      <div id="history-summary"></div>
+    </section>
+
+    <!-- ファイル保存 / 読込 -->
+    <section class="card">
+      <h2>ファイル保存 / 読込</h2>
+      <div class="row">
+        <button id="save-btn" class="btn">設定・履歴をJSONで保存</button>
+        <input id="load-file" type="file" accept=".json" />
+        <button id="load-btn" class="btn">読み込む</button>
+      </div>
+    </section>
+    <footer class="footer">空天色しゅーと — ガチャツール var.1.0</footer>
+  </div>
+
+  <script src="Gacha.js"></script>
+</body>
+</html>
