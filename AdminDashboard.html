@@ -1,81 +1,214 @@
-<div class="card">
-    <h3>📂 ギフトJSON管理</h3>
-    <p>現在のJSONデータを読み込み、追加して新しいファイルを書き出します。</p>
-    
-    <div style="background:#f9f9f9; padding:15px; border-radius:8px;">
-        <h4>① 新規ギフト入力</h4>
-        <input type="text" id="new-name" placeholder="名前" style="margin-bottom:5px;">
-        <select id="new-cat" style="margin-bottom:5px;">
-            <option value="ネタ">ネタ</option>
-            <option value="定番">定番</option>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>管理ダッシュボード</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css">
+    <style>
+        .card {
+            background: #fff;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 600px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        input, select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box; /* 枠線を含めたサイズ計算 */
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .preview-box {
+            background: #222;
+            color: #0f0;
+            padding: 10px;
+            font-family: monospace;
+            margin: 10px 0;
+            border-radius: 4px;
+            word-break: break-all;
+        }
+        .btn-add {
+            background: #2e7d32;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            font-size: 1.1em;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .btn-dl {
+            display: inline-block;
+            background: #d32f2f;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div style="text-align:center; margin-top:20px;">
+        <a href="index.html">← ホームへ戻る</a>
+    </div>
+
+    <div class="card">
+        <h3>📂 ギフト追加 & JSON更新</h3>
+        <p>リストに新しいギフトを追加し、更新用ファイルをダウンロードします。</p>
+        
+        <div style="text-align:right; font-size:0.9em; color:#666;">
+            現在の登録数: <span id="current-count">読み込み中...</span> 件
+        </div>
+
+        <div style="background:#f4faff; padding:15px; border-radius:8px; border:1px solid #d0e3f0;">
+            <label>1. ギフト名</label>
+            <input type="text" id="g-name" placeholder="例: すごいしらす">
+            
+            <label>2. カテゴリ (フォルダを自動選択)</label>
+            <select id="g-category" onchange="updatePreview()">
+                <option value="ミライト復刻">ミライト復刻 (New)</option>
+                <option value="季節">季節</option>
+                <option value="ネタ">ネタ</option>
+                <option value="笑">笑</option>
+                <option value="定番">定番</option>
+                <option value="専用">専用</option>
+                <option value="えらい">えらい</option>
+                <option value="挨拶">挨拶</option>
+                <option value="ステージ">ステージ</option>
+                <option value="LOVE">LOVE (Love)</option>
             </select>
-        <input type="text" id="new-src" placeholder="画像パス" style="width:100%;">
-        <button onclick="addAndExport()" style="margin-top:10px; background:#2e7d32; color:white; padding:8px;">
-            リストに追加してJSONを作成
-        </button>
-    </div>
-    
-    <br>
-    
-    <div style="display:none;" id="download-area">
-        <h4>② 更新ファイルのダウンロード</h4>
-        <p>下のボタンを押して <b>gifts.json</b> を保存し、フォルダ内の同名ファイルを上書きしてください。</p>
-        <a id="download-link" href="#" style="background:#d32f2f; color:white; padding:10px; text-decoration:none; border-radius:5px;">
-            gifts.json をダウンロード
-        </a>
-    </div>
-</div>
 
-<script>
-    // ページ読み込み時にサーバー上の最新JSONを取得しておく
-    let currentGifts = [];
-    
-    window.onload = async function() {
-        // 既存のloadStatus()呼び出し等は維持
-        if(typeof loadStatus === 'function') loadStatus();
+            <label>3. 画像ファイル名 (ポイント数含む)</label>
+            <input type="text" id="g-filename" placeholder="例: sugoshira_100pt.png" oninput="updatePreview()">
+            <small style="color:#666;">※「_100pt.png」などの形式にしてください。</small>
 
-        try {
-            const res = await fetch('gifts.json');
-            if(res.ok) {
-                currentGifts = await res.json();
-                console.log("現在のギフト数:", currentGifts.length);
+            <label>パスプレビュー (自動生成)</label>
+            <div id="path-preview" class="preview-box">ギフト/New/undefined</div>
+
+            <button onclick="addGiftToJSON()" class="btn-add">リストに追加する</button>
+        </div>
+        
+        <div id="dl-area" style="display:none; text-align:center; margin-top:20px; border-top:1px solid #eee; padding-top:20px;">
+            <p style="color:#2e7d32; font-weight:bold;">✅ 追加されました！</p>
+            <p>下のボタンを押して <b>gifts.json</b> を保存し、<br>サーバー(GitHub)のファイルを上書きしてください。</p>
+            <a id="json-dl-link" href="#" download="gifts.json" class="btn-dl">
+                gifts.json をダウンロード
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // ▼ フォルダ名の対応表 (重要)
+        // 左: カテゴリ名, 右: 実際のフォルダ名
+        const folderMap = {
+            "ミライト復刻": "New",    // フォルダ名が「New」の場合
+            "季節": "季節",
+            "ネタ": "ネタ",
+            "笑": "笑",
+            "定番": "定番",
+            "専用": "専用",
+            "えらい": "えらい",
+            "挨拶": "挨拶",
+            "ステージ": "ステージ",
+            "LOVE": "Love"        // フォルダ名が「Love」 (大文字小文字に注意)
+        };
+
+        let currentGifts = [];
+
+        // ページ読み込み時にサーバー上の最新JSONを取得
+        window.onload = async function() {
+            // ログインチェック
+            if (!sessionStorage.getItem('iriam_admin_logged_in')) {
+                alert("ログインしてください");
+                window.location.href = "AdminLogin.html";
+                return;
             }
-        } catch(e) {
-            console.error("JSON読み込み失敗", e);
+
+            updatePreview(); // プレビュー初期化
+
+            try {
+                const res = await fetch('gifts.json');
+                if(res.ok) {
+                    currentGifts = await res.json();
+                    document.getElementById('current-count').textContent = currentGifts.length;
+                } else {
+                    document.getElementById('current-count').textContent = "0 (新規)";
+                }
+            } catch(e) {
+                console.error("JSON読込エラー", e);
+                document.getElementById('current-count').textContent = "エラー";
+            }
+        };
+
+        // パスのプレビューを表示する機能
+        function updatePreview() {
+            const cat = document.getElementById('g-category').value;
+            const filename = document.getElementById('g-filename').value;
+            
+            // 対応表からフォルダ名を取得、なければカテゴリ名をそのまま使う
+            const folder = folderMap[cat] || cat; 
+            
+            const fullPath = `ギフト/${folder}/${filename}`;
+            document.getElementById('path-preview').textContent = fullPath;
         }
-    };
 
-    function addAndExport() {
-        const name = document.getElementById('new-name').value;
-        const cat = document.getElementById('new-cat').value;
-        const src = document.getElementById('new-src').value;
+        // リストに追加してダウンロード準備をする機能
+        function addGiftToJSON() {
+            const name = document.getElementById('g-name').value;
+            const cat = document.getElementById('g-category').value;
+            const filename = document.getElementById('g-filename').value;
 
-        if(!name || !src) {
-            alert("名前と画像パスを入力してください");
-            return;
+            if(!name || !filename) {
+                alert("名前とファイル名を入力してください");
+                return;
+            }
+
+            // 正しいパスを生成
+            const folder = folderMap[cat] || cat;
+            const fullPath = `ギフト/${folder}/${filename}`;
+
+            // 配列に追加
+            currentGifts.push({
+                name: name,
+                category: cat,
+                src: fullPath
+            });
+
+            // 画面の件数更新
+            document.getElementById('current-count').textContent = currentGifts.length;
+
+            // JSONデータを作成
+            const jsonStr = JSON.stringify(currentGifts, null, 2); // 見やすく整形
+            const blob = new Blob([jsonStr], {type: "application/json"});
+            const url = URL.createObjectURL(blob);
+            
+            // ダウンロードリンクを設定
+            const link = document.getElementById('json-dl-link');
+            link.href = url;
+
+            // ダウンロードエリアを表示
+            document.getElementById('dl-area').style.display = 'block';
+            
+            // 入力欄をクリア
+            document.getElementById('g-name').value = '';
+            document.getElementById('g-filename').value = '';
+            updatePreview();
+
+            alert(`「${name}」を追加しました。\n最後に必ずダウンロードしてアップロードしてください。`);
         }
-
-        // 配列に追加
-        currentGifts.push({
-            name: name,
-            category: cat,
-            src: src
-        });
-
-        // JSON文字列に変換
-        const jsonStr = JSON.stringify(currentGifts, null, 2); // 見やすく整形
-
-        // ダウンロードリンクを生成
-        const blob = new Blob([jsonStr], {type: "application/json"});
-        const url = URL.createObjectURL(blob);
-        
-        const link = document.getElementById('download-link');
-        link.href = url;
-        link.download = "gifts.json"; // ファイル名指定
-
-        // ダウンロードボタンを表示
-        document.getElementById('download-area').style.display = 'block';
-        
-        alert("リストに追加しました。\n下のボタンからJSONをダウンロードして更新してください。");
-    }
-</script>
+    </script>
+</body>
+</html>
