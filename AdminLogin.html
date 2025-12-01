@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>管理者ログイン</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css">
+    <style>
+        .login-box {
+            max-width: 400px;
+            margin: 100px auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        input[type="password"] {
+            width: 80%;
+            padding: 10px;
+            margin: 20px 0;
+            font-size: 1.2em;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background: #1976d2;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            font-size: 1.1em;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        button:hover { background: #1565c0; }
+        .error { color: red; display: none; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h2>管理者ログイン</h2>
+        <p>パスワードを入力してください</p>
+        <input type="password" id="password" placeholder="Pass..." onkeydown="if(event.key==='Enter') login()">
+        <br>
+        <button onclick="login()">ログイン</button>
+        <p class="error" id="error-msg">パスワードが違います</p>
+        <div style="margin-top: 20px;">
+            <a href="index.html" style="color:#888; text-decoration:none;">← ホームへ戻る</a>
+        </div>
+    </div>
+
+    <script>
+        // ▼ ここに好きなパスワードを設定してください
+        const ADMIN_PASS = "admin"; 
+
+        function login() {
+            const input = document.getElementById('password').value;
+            const errorMsg = document.getElementById('error-msg');
+
+            if (input === ADMIN_PASS) {
+                // セッションストレージに「ログイン済み」という印をつける
+                sessionStorage.setItem('iriam_admin_logged_in', 'true');
+                
+                // 管理画面へ移動
+                window.location.href = 'AdminDashboard.html';
+            } else {
+                errorMsg.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>

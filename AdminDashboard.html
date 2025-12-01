@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>管理者ダッシュボード</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css">
+    <script>
+        // ページ読み込み時にログインチェックを行う
+        if (!sessionStorage.getItem('iriam_admin_logged_in')) {
+            alert("ログインが必要です");
+            window.location.href = "AdminLogin.html";
+        }
+    </script>
+    <style>
+        .dashboard-container {
+            max-width: 600px;
+            margin: 60px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+        .card {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        .card h3 { margin-top: 0; color: #333; }
+        .danger-btn {
+            background: #e53935;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .danger-btn:hover { background: #c62828; }
+        .logout-btn {
+            background: #757575;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            float: right;
+        }
+        pre { background: #f4f4f4; padding: 10px; overflow-x: auto; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <button onclick="logout()" class="logout-btn">ログアウト</button>
+        <h1>管理者モード</h1>
+        <p>ツール内の全データを管理します。</p>
+
+        <div class="card">
+            <h3>🎵 楽曲報告データ</h3>
+            <p>保存件数: <span id="music-count">0</span> 件</p>
+            <details>
+                <summary>データの中身を見る（JSON）</summary>
+                <pre id="music-raw">なし</pre>
+            </details>
+            <br>
+            <button class="danger-btn" onclick="clearData('musicData')">このデータを全削除</button>
+        </div>
+
+        <div class="card">
+            <h3>🎁 追加ギフトデータ</h3>
+            <p>保存件数: <span id="gift-count">0</span> 件</p>
+            <details>
+                <summary>データの中身を見る（JSON）</summary>
+                <pre id="gift-raw">なし</pre>
+            </details>
+            <br>
+            <button class="danger-btn" onclick="clearData('iriam_custom_gifts')">このデータを全削除</button>
+        </div>
+        
+        <div style="text-align:center; margin-top:30px;">
+            <a href="index.html">ホームへ戻る</a>
+        </div>
+    </div>
+
+    <script>
+        // 画面表示時に現在のデータを読み込む
+        window.onload = function() {
+            loadStatus();
+        };
+
+        function loadStatus() {
+            // 楽曲データの確認
+            const musicData = localStorage.getItem('musicData');
+            const musicJson = musicData ? JSON.parse(musicData) : [];
+            document.getElementById('music-count').textContent = musicJson.length;
+            document.getElementById('music-raw').textContent = musicData || "データなし";
+
+            // ギフトデータの確認
+            const giftData = localStorage.getItem('iriam_custom_gifts');
+            const giftJson = giftData ? JSON.parse(giftData) : [];
+            document.getElementById('gift-count').textContent = giftJson.length;
+            document.getElementById('gift-raw').textContent = giftData || "データなし";
+        }
+
+        // データ削除機能
+        function clearData(key) {
+            if(confirm("本当に削除しますか？\n元に戻すことはできません。")) {
+                localStorage.removeItem(key);
+                alert("削除しました。");
+                loadStatus(); // 画面更新
+            }
+        }
+
+        // ログアウト機能
+        function logout() {
+            sessionStorage.removeItem('iriam_admin_logged_in');
+            window.location.href = "AdminLogin.html";
+        }
+    </script>
+</body>
+</html>
