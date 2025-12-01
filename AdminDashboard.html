@@ -1,121 +1,81 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>管理者ダッシュボード</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="index.css">
-    <script>
-        // ページ読み込み時にログインチェックを行う
-        if (!sessionStorage.getItem('iriam_admin_logged_in')) {
-            alert("ログインが必要です");
-            window.location.href = "AdminLogin.html";
-        }
-    </script>
-    <style>
-        .dashboard-container {
-            max-width: 600px;
-            margin: 60px auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-        }
-        .card {
-            border: 1px solid #eee;
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 20px;
-        }
-        .card h3 { margin-top: 0; color: #333; }
-        .danger-btn {
-            background: #e53935;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .danger-btn:hover { background: #c62828; }
-        .logout-btn {
-            background: #757575;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            float: right;
-        }
-        pre { background: #f4f4f4; padding: 10px; overflow-x: auto; font-size: 0.9em; }
-    </style>
-</head>
-<body>
-    <div class="dashboard-container">
-        <button onclick="logout()" class="logout-btn">ログアウト</button>
-        <h1>管理者モード</h1>
-        <p>ツール内の全データを管理します。</p>
-
-        <div class="card">
-            <h3>🎵 楽曲報告データ</h3>
-            <p>保存件数: <span id="music-count">0</span> 件</p>
-            <details>
-                <summary>データの中身を見る（JSON）</summary>
-                <pre id="music-raw">なし</pre>
-            </details>
-            <br>
-            <button class="danger-btn" onclick="clearData('musicData')">このデータを全削除</button>
-        </div>
-
-        <div class="card">
-            <h3>🎁 追加ギフトデータ</h3>
-            <p>保存件数: <span id="gift-count">0</span> 件</p>
-            <details>
-                <summary>データの中身を見る（JSON）</summary>
-                <pre id="gift-raw">なし</pre>
-            </details>
-            <br>
-            <button class="danger-btn" onclick="clearData('iriam_custom_gifts')">このデータを全削除</button>
-        </div>
-        
-        <div style="text-align:center; margin-top:30px;">
-            <a href="index.html">ホームへ戻る</a>
-        </div>
+<div class="card">
+    <h3>📂 ギフトJSON管理</h3>
+    <p>現在のJSONデータを読み込み、追加して新しいファイルを書き出します。</p>
+    
+    <div style="background:#f9f9f9; padding:15px; border-radius:8px;">
+        <h4>① 新規ギフト入力</h4>
+        <input type="text" id="new-name" placeholder="名前" style="margin-bottom:5px;">
+        <select id="new-cat" style="margin-bottom:5px;">
+            <option value="ネタ">ネタ</option>
+            <option value="定番">定番</option>
+            </select>
+        <input type="text" id="new-src" placeholder="画像パス" style="width:100%;">
+        <button onclick="addAndExport()" style="margin-top:10px; background:#2e7d32; color:white; padding:8px;">
+            リストに追加してJSONを作成
+        </button>
     </div>
+    
+    <br>
+    
+    <div style="display:none;" id="download-area">
+        <h4>② 更新ファイルのダウンロード</h4>
+        <p>下のボタンを押して <b>gifts.json</b> を保存し、フォルダ内の同名ファイルを上書きしてください。</p>
+        <a id="download-link" href="#" style="background:#d32f2f; color:white; padding:10px; text-decoration:none; border-radius:5px;">
+            gifts.json をダウンロード
+        </a>
+    </div>
+</div>
 
-    <script>
-        // 画面表示時に現在のデータを読み込む
-        window.onload = function() {
-            loadStatus();
-        };
+<script>
+    // ページ読み込み時にサーバー上の最新JSONを取得しておく
+    let currentGifts = [];
+    
+    window.onload = async function() {
+        // 既存のloadStatus()呼び出し等は維持
+        if(typeof loadStatus === 'function') loadStatus();
 
-        function loadStatus() {
-            // 楽曲データの確認
-            const musicData = localStorage.getItem('musicData');
-            const musicJson = musicData ? JSON.parse(musicData) : [];
-            document.getElementById('music-count').textContent = musicJson.length;
-            document.getElementById('music-raw').textContent = musicData || "データなし";
-
-            // ギフトデータの確認
-            const giftData = localStorage.getItem('iriam_custom_gifts');
-            const giftJson = giftData ? JSON.parse(giftData) : [];
-            document.getElementById('gift-count').textContent = giftJson.length;
-            document.getElementById('gift-raw').textContent = giftData || "データなし";
-        }
-
-        // データ削除機能
-        function clearData(key) {
-            if(confirm("本当に削除しますか？\n元に戻すことはできません。")) {
-                localStorage.removeItem(key);
-                alert("削除しました。");
-                loadStatus(); // 画面更新
+        try {
+            const res = await fetch('gifts.json');
+            if(res.ok) {
+                currentGifts = await res.json();
+                console.log("現在のギフト数:", currentGifts.length);
             }
+        } catch(e) {
+            console.error("JSON読み込み失敗", e);
+        }
+    };
+
+    function addAndExport() {
+        const name = document.getElementById('new-name').value;
+        const cat = document.getElementById('new-cat').value;
+        const src = document.getElementById('new-src').value;
+
+        if(!name || !src) {
+            alert("名前と画像パスを入力してください");
+            return;
         }
 
-        // ログアウト機能
-        function logout() {
-            sessionStorage.removeItem('iriam_admin_logged_in');
-            window.location.href = "AdminLogin.html";
-        }
-    </script>
-</body>
-</html>
+        // 配列に追加
+        currentGifts.push({
+            name: name,
+            category: cat,
+            src: src
+        });
+
+        // JSON文字列に変換
+        const jsonStr = JSON.stringify(currentGifts, null, 2); // 見やすく整形
+
+        // ダウンロードリンクを生成
+        const blob = new Blob([jsonStr], {type: "application/json"});
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.getElementById('download-link');
+        link.href = url;
+        link.download = "gifts.json"; // ファイル名指定
+
+        // ダウンロードボタンを表示
+        document.getElementById('download-area').style.display = 'block';
+        
+        alert("リストに追加しました。\n下のボタンからJSONをダウンロードして更新してください。");
+    }
+</script>
