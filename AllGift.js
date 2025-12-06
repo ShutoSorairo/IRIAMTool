@@ -1,32 +1,26 @@
 // カテゴリ一覧
 const categories = [
-   "ネタ", "笑", "定番", "専用", "えらい", "挨拶", "ステージ", "LOVE","プチギフ","ポイント別"
+    "ネタ", "笑", "定番", "専用", "えらい", "挨拶", "ステージ", "LOVE", "プチギフ", "ポイント別"
 ];
 
-// メイン処理
 document.addEventListener('DOMContentLoaded', () => {
     setupTabs();
     loadGifts();
 });
 
-// JSON読み込み
 async function loadGifts() {
     try {
         const response = await fetch('gifts.json');
         if (!response.ok) throw new Error("JSON not found");
-        
         const gifts = await response.json();
-        window.allGiftsData = gifts; // データを保存
-        
-        showGifts(categories[0]); // 初期表示
-
+        window.allGiftsData = gifts;
+        showGifts(categories[0]);
     } catch (error) {
         console.error("Load Error:", error);
         document.getElementById('giftList').innerHTML = '<p>データの読み込みに失敗しました。</p>';
     }
 }
 
-// タブ作成
 function setupTabs() {
     const tabContainer = document.getElementById('tabContainer');
     tabContainer.innerHTML = '';
@@ -39,14 +33,12 @@ function setupTabs() {
     });
 }
 
-// タブ切り替え
 function selectTab(category, btn) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     showGifts(category);
 }
 
-// ギフト表示
 function showGifts(category) {
     const giftList = document.getElementById('giftList');
     giftList.innerHTML = '';
@@ -55,32 +47,31 @@ function showGifts(category) {
 
     let filtered = [];
 
-    // ▼ ポイント別 (100pt以上 + 重複削除)
+    // ▼ ポイント別 (100pt以上)
     if (category === "ポイント別") {
-        // まず全データから対象を抽出
-        const candidates = window.allGiftsData.filter(g => {
-            return getPointValue(g.src) >= 100;
-        });
-        // 重複を削除 (srcが同じなら先にあった方を優先)
+        const candidates = window.allGiftsData.filter(g => getPointValue(g.src) >= 100);
         filtered = removeDuplicates(candidates);
     } 
-    // ▼ プチギフ (100pt未満 + 重複削除)
+    // ▼ プチギフ (100pt未満)
     else if (category === "プチギフ") {
-        const candidates = window.allGiftsData.filter(g => {
-            return getPointValue(g.src) < 100;
-        });
+        const candidates = window.allGiftsData.filter(g => getPointValue(g.src) < 100);
         filtered = removeDuplicates(candidates);
     } 
-    // ▼ 通常カテゴリ
+    // ▼ 通常カテゴリ (複数対応版)
     else {
-        filtered = window.allGiftsData.filter(g => g.category === category);
+        filtered = window.allGiftsData.filter(g => {
+            // 新仕様: categories配列を持っている場合
+            if (Array.isArray(g.categories)) {
+                return g.categories.includes(category);
+            }
+            // 旧仕様: category文字列の場合
+            return g.category === category;
+        });
     }
 
-    // ポイント順に並び替え (昇順)
+    // ポイント順に並び替え
     filtered.sort((a, b) => {
-        const ptA = getPointValue(a.src);
-        const ptB = getPointValue(b.src);
-        return ptA - ptB; 
+        return getPointValue(a.src) - getPointValue(b.src);
     });
     
     if (filtered.length === 0) {
@@ -97,7 +88,7 @@ function showGifts(category) {
         item.className = 'gift-item';
         item.innerHTML = `
             <div class="gift-icon">
-                <img src="${gift.src}" alt="${gift.name}" class="gift-img" loading="lazy" style="width:40px;height:40px;">
+                <img src="${gift.src}" alt="${gift.name}" class="gift-img" loading="lazy">
             </div>
             <div class="gift-name">${gift.name}</div>
             <div class="gift-points">${pointsStr}</div>
@@ -106,35 +97,16 @@ function showGifts(category) {
     });
 }
 
-// 画像パス(src)を元に重複を取り除く関数
 function removeDuplicates(list) {
     const seen = new Set();
     return list.filter(item => {
-        // すでに登録済み(seenにある)画像パスなら false を返して除外
-        if (seen.has(item.src)) {
-            return false;
-        }
-        // 初めて見る画像ならセットに登録して true (採用)
+        if (seen.has(item.src)) return false;
         seen.add(item.src);
         return true;
     });
 }
 
-// (getPointValue関数などはそのまま下にあればOK)
-
-// ファイルパスから数値としてのポイントを取得する関数
 function getPointValue(src) {
-    // "_1,000pt" のような部分を探す
     const match = src.match(/_(\d+(?:,\d+)*)pt/i);
-    if (match) {
-        // カンマを除去して数値に変換 (例: "1,000" -> 1000)
-        return parseInt(match[1].replace(/,/g, ''), 10);
-    }
-    return 0; // ポイント表記がない場合は0として扱う
+    return match ? parseInt(match[1].replace(/,/g, ''), 10) : 0;
 }
-
-
-
-
-
-
