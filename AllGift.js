@@ -55,21 +55,19 @@ function showGifts(category) {
 
     let filtered = [];
 
-    // ▼ ポイント別 (100pt以上 + 重複削除)
+    // ▼ ポイント別 (100pt以上) ※重複削除なし
     if (category === "ポイント別") {
-        const candidates = window.allGiftsData.filter(g => {
+        filtered = window.allGiftsData.filter(g => {
             return getPointValue(g.src) >= 100;
         });
-        filtered = removeDuplicates(candidates);
     } 
-    // ▼ プチギフ (100pt未満 + 重複削除)
+    // ▼ プチギフ (100pt未満) ※重複削除なし
     else if (category === "プチギフ") {
-        const candidates = window.allGiftsData.filter(g => {
+        filtered = window.allGiftsData.filter(g => {
             return getPointValue(g.src) < 100;
         });
-        filtered = removeDuplicates(candidates);
     } 
-    // ▼ 通常カテゴリ (複数対応版)
+    // ▼ 通常カテゴリ
     else {
         filtered = window.allGiftsData.filter(g => {
             // 新仕様: categories配列を持っている場合
@@ -108,18 +106,6 @@ function showGifts(category) {
             <div class="gift-points">${pointsStr}</div>
         `;
         giftList.appendChild(item);
-    });
-}
-
-// 画像パス(src)を元に重複を取り除く関数
-function removeDuplicates(list) {
-    const seen = new Set();
-    return list.filter(item => {
-        if (seen.has(item.src)) {
-            return false;
-        }
-        seen.add(item.src);
-        return true;
     });
 }
 
