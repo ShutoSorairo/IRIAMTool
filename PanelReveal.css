@@ -1,4 +1,4 @@
-/* 全体の背景設定（他のページと統一） */
+/* 全体の調整 */
 body {
     background: linear-gradient(120deg, #e0f7fa 0%, #fce4ec 100%);
     min-height: 100vh;
@@ -7,128 +7,126 @@ body {
 }
 
 .main-container {
-    max-width: 800px;
+    max-width: 900px;
     margin: 60px auto 20px auto;
     text-align: center;
 }
 
 h1 { color: #333; margin-bottom: 10px; }
-p { color: #666; margin-bottom: 30px; }
+p { color: #666; margin-bottom: 20px; }
 
-/* ▼ パネルを並べるグリッドコンテナ */
-.panel-grid {
-    display: grid;
-    /* スマホでは3列、PCでは最大6列で自動調整 */
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 10px; /* パネル間の隙間 */
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.5); /* 半透明の背景 */
-    border-radius: 16px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-/* ▼ パネルの基本構造（カード型） */
-.panel-item {
-    aspect-ratio: 1 / 1; /* 正方形を維持 */
-    position: relative;
-    cursor: pointer;
-    perspective: 1000px; /* 3D回転の奥行き */
-}
-
-/* パネルの中身（表と裏をまとめるラッパー） */
-.panel-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    text-align: center;
-    transition: transform 0.6s; /* 回転アニメーションの時間 */
-    transform-style: preserve-3d;
-}
-
-/* クリックされた（開いた）状態 */
-.panel-item.opened .panel-inner {
-    transform: rotateY(180deg); /* くるっと回転 */
-}
-
-/* 表と裏の共通設定 */
-.panel-front, .panel-back {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    -webkit-backface-visibility: hidden; /* 裏面を隠す */
-    backface-visibility: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 5px;
-    box-sizing: border-box;
-    border-radius: 8px;
-    font-weight: bold;
-    word-break: break-all; /* 長い単語も折り返す */
-}
-
-/* ▼ パネルの「表」（隠している側） */
-.panel-front {
-    background: #ddd; /* デフォルト色（JSで上書きされます） */
+/* 画像アップロードボタン */
+.setting-area { margin-bottom: 20px; }
+.upload-btn {
+    background: #1976d2;
     color: white;
-    font-size: 1.2em;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-    /* 不規則な多角形に見せるクリップパス（JSでランダム化） */
-    clip-path: polygon(5% 5%, 95% 0%, 100% 95%, 0% 100%);
-    transition: transform 0.2s;
+    padding: 10px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    display: inline-block;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: background 0.2s;
 }
-/* マウスホバー時に少し浮かす */
-.panel-item:not(.opened):hover .panel-front {
-    transform: scale(1.05);
-    z-index: 1;
+.upload-btn:hover { background: #1565c0; }
+
+/* ▼ ボードの構造（重要） */
+.board-wrapper {
+    position: relative; /* 重ね合わせの基準 */
+    width: 100%;
+    max-width: 800px; /* 最大幅 */
+    aspect-ratio: 4 / 3; /* 比率を固定（画像の形に合わせる） */
+    margin: 0 auto;
+    background: #fff;
+    border: 4px solid #fff;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    overflow: hidden;
 }
 
-/* ▼ パネルの「裏」（景品側） */
-.panel-back {
-    background: white;
-    color: #333;
-    transform: rotateY(180deg); /* 最初は裏向けておく */
-    border: 2px solid #eee;
-    font-size: 0.9em;
-    overflow: hidden; /* はみ出た部分を隠す */
+/* 背面の画像 */
+#hidden-image {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 枠いっぱいに表示 */
+    z-index: 1; /* 一番下 */
 }
 
-.prize-content {
+/* 前面のパネルグリッド */
+.panel-grid {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2; /* 画像の上 */
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4列 (好みに合わせて変更可) */
+    grid-template-rows: repeat(4, 1fr);    /* 4行 */
+    gap: 2px; /* パネルの隙間 */
+}
+
+/* パネル単体 */
+.panel-item {
+    background: #ffecb3; /* デフォルト色 */
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 5px;
+    justify-content: center;
+    cursor: pointer;
+    transition: opacity 0.5s, transform 0.2s;
+    padding: 5px;
+    box-sizing: border-box;
+    font-weight: bold;
+    color: #555;
+    text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
+    user-select: none;
+    border: 1px solid rgba(255,255,255,0.5);
 }
 
-.prize-category { font-size: 0.7em; color: #888; }
-.prize-name { font-size: 1em; color: #e91e63; }
-.prize-points { 
-    font-size: 0.8em; 
-    background: #fce4ec; color: #c2185b; 
-    padding: 2px 6px; border-radius: 4px;
+.panel-item:hover {
+    filter: brightness(0.95);
+}
+
+/* パネル内の文字 */
+.mission-cat {
+    font-size: 0.8em;
+    color: #e91e63;
+    margin-bottom: 4px;
+}
+.mission-text {
+    font-size: 1em;
+    line-height: 1.2;
+}
+
+/* 消えた状態 */
+.panel-item.cleared {
+    opacity: 0; /* 透明にする */
+    pointer-events: none; /* クリック不可にする */
 }
 
 /* リセットボタン */
 .reset-btn {
     margin-top: 30px;
-    padding: 10px 20px;
+    padding: 10px 30px;
     background: #fff;
     border: 2px solid #ccc;
     border-radius: 20px;
     cursor: pointer;
-    transition: all 0.3s;
+    font-weight: bold;
+    color: #555;
 }
-.reset-btn:hover {
-    background: #eee;
-}
+.reset-btn:hover { background: #eee; }
 
-/* スマホ用調整 */
+/* スマホ対応 */
 @media (max-width: 600px) {
-    .panel-grid {
-        grid-template-columns: repeat(3, 1fr); /* スマホは3列固定 */
-        gap: 8px;
-        padding: 10px;
+    .board-wrapper {
+        aspect-ratio: 3 / 4; /* スマホなら縦長にする？ */
     }
-    .panel-front { font-size: 1em; }
-    .panel-back { font-size: 0.8em; }
+    .panel-grid {
+        grid-template-columns: repeat(3, 1fr); /* 3列に変更 */
+        grid-template-rows: repeat(5, 1fr);
+    }
+    .mission-text { font-size: 0.8em; }
 }
