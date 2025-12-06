@@ -197,8 +197,25 @@
         .bg-4 { background: #e91e63; } /* UR */
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* 追加用ボタン */
+        .btn-add-row {
+            background: #1976d2;
+            color: white;
+            width: 100%;
+            padding: 10px;
+            border: 2px dashed #bbdefb;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .btn-add-row:hover {
+            background: #e3f2fd;
+            color: #1976d2;
+            border-style: solid;
+        }
         
-        /* スマホ対応 */
         @media (max-width: 600px) {
             .home-btn { padding: 8px 16px; font-size: 0.9em; }
             .main-card { margin-top: 70px; padding: 15px; }
@@ -247,8 +264,8 @@
         <div class="section-box">
             <div class="section-header closed" onclick="toggleSection('sec-prize', this)">景品設定</div>
             <div id="sec-prize" class="section-body" style="display:none;">
-                <div style="margin-bottom:10px;">
-                    <label>景品数: <input type="number" id="prize-count" value="10" min="1" style="width:60px;" onchange="updatePrizeTable()"></label>
+                <div style="margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>現在の景品数: <span id="prize-count-display" style="font-weight:bold;">0</span> 個</div>
                 </div>
                 <table>
                     <thead>
@@ -257,10 +274,12 @@
                             <th style="width:110px;">レアリティ</th>
                             <th style="width:80px;">確率</th>
                             <th>景品名</th>
+                            <th style="width:50px;">操作</th>
                         </tr>
                     </thead>
                     <tbody id="prize-tbody"></tbody>
                 </table>
+                <button class="btn-add-row" onclick="addPrize()">＋ 景品を追加</button>
             </div>
         </div>
 
@@ -334,7 +353,6 @@
             document.getElementById('gacha-title').value = config.title;
             document.getElementById('rarity-count').value = config.rarities.length;
             if(config.prizes.length === 0) initPrizes(10);
-            document.getElementById('prize-count').value = config.prizes.length;
         } else {
             initPrizes(10); 
         }
@@ -399,23 +417,19 @@
         if(field === 'name') renderPrizeTable();
     }
 
-    // --- 景品処理 ---
-    function updatePrizeTable() {
-        const count = parseInt(document.getElementById('prize-count').value);
-        if (count < 1) return;
-        const currentLen = config.prizes.length;
-        if (count > currentLen) {
-            for (let i = currentLen; i < count; i++) {
-                config.prizes.push({ name: "新規景品", rarityIndex: 0 });
-            }
-        } else if (count < currentLen) {
-            if(confirm("末尾のデータが削除されます。よろしいですか？")) {
-                config.prizes.splice(count);
-            } else {
-                document.getElementById('prize-count').value = currentLen; 
-                return;
-            }
+    // --- 景品処理 (自由追加・削除) ---
+    function addPrize() {
+        config.prizes.push({ name: "新規景品", rarityIndex: 0 });
+        saveData();
+        renderPrizeTable();
+    }
+
+    function deletePrize(index) {
+        if(config.prizes.length <= 1) {
+            alert("景品は最低1つ必要です");
+            return;
         }
+        config.prizes.splice(index, 1);
         saveData();
         renderPrizeTable();
     }
@@ -423,6 +437,8 @@
     function renderPrizeTable() {
         const tbody = document.getElementById('prize-tbody');
         tbody.innerHTML = '';
+        document.getElementById('prize-count-display').textContent = config.prizes.length;
+
         const rarityCounts = new Array(config.rarities.length).fill(0);
         config.prizes.forEach(p => {
             if(p.rarityIndex < config.rarities.length) rarityCounts[p.rarityIndex]++;
@@ -443,6 +459,7 @@
                 <td><select onchange="updatePrizeData(${index}, 'rarityIndex', this.value)">${options}</select></td>
                 <td style="color:#666; font-size:0.9em;">${individualRate}%</td>
                 <td><input type="text" class="table-input" value="${p.name}" oninput="updatePrizeData(${index}, 'name', this.value)" style="text-align:left;"></td>
+                <td><button class="btn-red" onclick="deletePrize(${index})">削除</button></td>
             `;
             tbody.appendChild(tr);
         });
