@@ -46,34 +46,50 @@ function selectTab(category, btn) {
     showGifts(category);
 }
 
-// ギフト表示（★ここを修正しました）
+// ギフト表示
 function showGifts(category) {
     const giftList = document.getElementById('giftList');
     giftList.innerHTML = '';
     
     if (!window.allGiftsData) return;
 
-    // 1. カテゴリで絞り込み
-    let filtered = window.allGiftsData.filter(g => g.category === category);
+    let filtered = [];
 
-    // 2. ポイント順に並び替え (ポイントが同じなら元の順序を維持)
+    // ▼ 条件分岐を変更しました
+    if (category === "ポイント別") {
+        // ルール: カテゴリ問わず 100pt以上
+        filtered = window.allGiftsData.filter(g => {
+            const pt = getPointValue(g.src);
+            return pt >= 100;
+        });
+    } 
+    else if (category === "プチギフ") {
+        // ルール: カテゴリ問わず 100pt未満 (pt < 100)
+        filtered = window.allGiftsData.filter(g => {
+            const pt = getPointValue(g.src);
+            return pt < 100;
+        });
+    } 
+    else {
+        // 通常ルール: そのカテゴリのものだけ
+        filtered = window.allGiftsData.filter(g => g.category === category);
+    }
+
+    // ポイント順に並び替え (昇順: 安い順)
     filtered.sort((a, b) => {
         const ptA = getPointValue(a.src);
         const ptB = getPointValue(b.src);
-        
-        // ptA - ptB だと「低い順 (昇順)」
-        // ptB - ptA だと「高い順 (降順)」になります
         return ptA - ptB; 
     });
     
+    // 表示件数が0の場合
     if (filtered.length === 0) {
-        giftList.innerHTML = '<div style="text-align:center; color:#aaa; padding:20px;">このカテゴリのギフトはありません。</div>';
+        giftList.innerHTML = '<div style="text-align:center; color:#aaa; padding:20px;">該当するギフトはありません。</div>';
         return;
     }
 
-    // 3. HTML生成
+    // HTML生成
     filtered.forEach(gift => {
-        // 表示用のポイント文字列を取得
         const match = gift.src.match(/_(\d+(?:,\d+)*)pt/i);
         const pointsStr = match ? match[1] + 'pt' : '';
 
@@ -90,7 +106,7 @@ function showGifts(category) {
     });
 }
 
-// ★追加: ファイルパスから数値としてのポイントを取得する関数
+// ファイルパスから数値としてのポイントを取得する関数
 function getPointValue(src) {
     // "_1,000pt" のような部分を探す
     const match = src.match(/_(\d+(?:,\d+)*)pt/i);
@@ -100,6 +116,7 @@ function getPointValue(src) {
     }
     return 0; // ポイント表記がない場合は0として扱う
 }
+
 
 
 
