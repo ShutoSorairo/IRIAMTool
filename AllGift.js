@@ -55,27 +55,34 @@ function showGifts(category) {
 
     let filtered = [];
 
-    // ▼ ポイント別 (100pt以上) ※重複削除なし
+    // ▼ ポイント別 (100pt以上)
     if (category === "ポイント別") {
         filtered = window.allGiftsData.filter(g => {
             return getPointValue(g.src) >= 100;
         });
     } 
-    // ▼ プチギフ (100pt未満) ※重複削除なし
+    // ▼ プチギフ (100pt未満)
     else if (category === "プチギフ") {
         filtered = window.allGiftsData.filter(g => {
             return getPointValue(g.src) < 100;
         });
     } 
-    // ▼ 通常カテゴリ
+    // ▼ 通常カテゴリ (あらゆるパターンに対応)
     else {
         filtered = window.allGiftsData.filter(g => {
-            // 新仕様: categories配列を持っている場合
-            if (Array.isArray(g.categories)) {
-                return g.categories.includes(category);
+            // パターンA: "categories" (複数形キー) が配列の場合
+            if (Array.isArray(g.categories) && g.categories.includes(category)) {
+                return true;
             }
-            // 旧仕様: category文字列の場合
-            return g.category === category;
+            // パターンB: "category" (単数形キー) が配列の場合 ["定番"]
+            if (Array.isArray(g.category) && g.category.includes(category)) {
+                return true;
+            }
+            // パターンC: "category" (単数形キー) が文字列の場合 "定番"
+            if (g.category === category) {
+                return true;
+            }
+            return false;
         });
     }
 
