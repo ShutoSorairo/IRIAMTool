@@ -3,24 +3,30 @@ const categories = [
     "ネタ", "笑", "定番", "専用", "えらい", "挨拶", "ステージ", "LOVE", "プチギフ", "ポイント別"
 ];
 
+// メイン処理
 document.addEventListener('DOMContentLoaded', () => {
     setupTabs();
     loadGifts();
 });
 
+// JSON読み込み
 async function loadGifts() {
     try {
         const response = await fetch('gifts.json');
         if (!response.ok) throw new Error("JSON not found");
+        
         const gifts = await response.json();
-        window.allGiftsData = gifts;
-        showGifts(categories[0]);
+        window.allGiftsData = gifts; // データを保存
+        
+        showGifts(categories[0]); // 初期表示
+
     } catch (error) {
         console.error("Load Error:", error);
         document.getElementById('giftList').innerHTML = '<p>データの読み込みに失敗しました。</p>';
     }
 }
 
+// タブ作成
 function setupTabs() {
     const tabContainer = document.getElementById('tabContainer');
     tabContainer.innerHTML = '';
@@ -33,12 +39,14 @@ function setupTabs() {
     });
 }
 
+// タブ切り替え
 function selectTab(category, btn) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     showGifts(category);
 }
 
+// ギフト表示
 function showGifts(category) {
     const giftList = document.getElementById('giftList');
     giftList.innerHTML = '';
@@ -47,14 +55,18 @@ function showGifts(category) {
 
     let filtered = [];
 
-    // ▼ ポイント別 (100pt以上)
+    // ▼ ポイント別 (100pt以上 + 重複削除)
     if (category === "ポイント別") {
-        const candidates = window.allGiftsData.filter(g => getPointValue(g.src) >= 100);
+        const candidates = window.allGiftsData.filter(g => {
+            return getPointValue(g.src) >= 100;
+        });
         filtered = removeDuplicates(candidates);
     } 
-    // ▼ プチギフ (100pt未満)
+    // ▼ プチギフ (100pt未満 + 重複削除)
     else if (category === "プチギフ") {
-        const candidates = window.allGiftsData.filter(g => getPointValue(g.src) < 100);
+        const candidates = window.allGiftsData.filter(g => {
+            return getPointValue(g.src) < 100;
+        });
         filtered = removeDuplicates(candidates);
     } 
     // ▼ 通常カテゴリ (複数対応版)
@@ -69,9 +81,11 @@ function showGifts(category) {
         });
     }
 
-    // ポイント順に並び替え
+    // ポイント順に並び替え (昇順)
     filtered.sort((a, b) => {
-        return getPointValue(a.src) - getPointValue(b.src);
+        const ptA = getPointValue(a.src);
+        const ptB = getPointValue(b.src);
+        return ptA - ptB; 
     });
     
     if (filtered.length === 0) {
@@ -88,7 +102,7 @@ function showGifts(category) {
         item.className = 'gift-item';
         item.innerHTML = `
             <div class="gift-icon">
-                <img src="${gift.src}" alt="${gift.name}" class="gift-img" loading="lazy">
+                <img src="${gift.src}" alt="${gift.name}" class="gift-img" loading="lazy" style="width:40px;height:40px;">
             </div>
             <div class="gift-name">${gift.name}</div>
             <div class="gift-points">${pointsStr}</div>
@@ -97,16 +111,23 @@ function showGifts(category) {
     });
 }
 
+// 画像パス(src)を元に重複を取り除く関数
 function removeDuplicates(list) {
     const seen = new Set();
     return list.filter(item => {
-        if (seen.has(item.src)) return false;
+        if (seen.has(item.src)) {
+            return false;
+        }
         seen.add(item.src);
         return true;
     });
 }
 
+// ポイント取得関数
 function getPointValue(src) {
     const match = src.match(/_(\d+(?:,\d+)*)pt/i);
-    return match ? parseInt(match[1].replace(/,/g, ''), 10) : 0;
+    if (match) {
+        return parseInt(match[1].replace(/,/g, ''), 10);
+    }
+    return 0;
 }
