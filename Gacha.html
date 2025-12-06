@@ -2,192 +2,303 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>高機能ガチャ設定</title>
+    <title>ガチャ設定</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="index.css">
     <style>
-        /* カードデザイン */
-        .card {
-            background: #fff;
+        /* AllGift.css のスタイルをベースに適用 */
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(120deg, #e0f7fa 0%, #fce4ec 100%);
+            margin: 0;
             padding: 20px;
-            margin: 20px auto;
-            max-width: 800px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            color: #333;
+            min-height: 100vh;
         }
 
-        /* セクション見出し (クリックで開閉) */
-        .section-title {
-            font-size: 1.1em;
+        /* 共通ボタン (青色) */
+        .btn-blue {
+            background: #1976d2;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 18px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-blue:hover { background: #1565c0; }
+
+        /* 赤ボタン (削除系) */
+        .btn-red {
+            background: #d32f2f;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 12px;
+            font-size: 0.9em;
+            cursor: pointer;
+        }
+        .btn-red:hover { background: #b71c1c; }
+
+        /* 緑ボタン (コピー系) */
+        .btn-green {
+            background: #2e7d32;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            font-size: 0.9em;
+            cursor: pointer;
+        }
+
+        /* ホームボタン (左上固定) */
+        .home-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: #1976d2;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 1em;
+            padding: 10px 30px;
+            text-decoration: none;
+            cursor: pointer;
+            z-index: 100;
+        }
+        .home-btn:hover { background: #1565c0; }
+
+        /* メインコンテナ (白いカード) */
+        .main-card {
+            max-width: 800px;
+            margin: 60px auto 30px auto; /* 上に余白(ホームボタン用) */
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 24px;
+        }
+
+        h1, h2, h3 { text-align: center; color: #333; margin-top: 0; }
+
+        /* セクション (開閉式) */
+        .section-box {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .section-header {
+            background: #f5f5f5;
+            padding: 12px 20px;
             font-weight: bold;
-            color: #333;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #eee;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
             user-select: none;
         }
-        .section-title:hover { color: #1976d2; }
-        .section-title::after { content: '▼'; font-size: 0.8em; color: #ccc; transition: transform 0.2s; }
-        .section-title.closed::after { transform: rotate(-90deg); }
-        .section-content { display: block; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .section-header:hover { background: #eeeeee; }
+        .section-header::after {
+            content: '▼';
+            font-size: 0.8em;
+            color: #999;
+            transition: transform 0.2s;
+        }
+        .section-header.closed::after { transform: rotate(-90deg); }
+        
+        .section-body {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: block;
+            animation: fadeIn 0.3s;
+        }
 
         /* テーブル */
-        table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 0.95em; }
-        th, td { border: 1px solid #eee; padding: 10px; text-align: center; }
-        th { background-color: #f9f9f9; color: #555; font-weight: bold; }
-        
-        /* フォーム */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th { background-color: #f0f7ff; color: #333; }
+
+        /* 入力フォーム */
         input[type="text"], input[type="number"], select {
             padding: 8px;
-            border: 1px solid #ddd;
+            border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
         }
-        input.table-input { width: 95%; text-align: center; border: 1px solid #eee; }
-        input.table-input:focus { border-color: #1976d2; background: #fdfdfd; }
+        input.table-input { width: 90%; text-align: center; border: 1px solid #ddd; }
 
-        /* ボタン */
-        button {
-            padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer;
-            font-size: 0.95em; transition: opacity 0.2s;
+        /* ガチャ実行エリア */
+        .gacha-play-area {
+            text-align: center;
+            background: #fafafa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #eee;
         }
-        button:hover { opacity: 0.8; }
-        .btn-primary { background: #1976d2; color: white; }
-        .btn-danger { background: #d32f2f; color: white; }
-        .btn-success { background: #2e7d32; color: white; } /* コピー用 */
-        
-        .btn-draw { 
-            padding: 12px 30px; font-size: 1.1em; font-weight: bold; border-radius: 30px;
-            background: linear-gradient(135deg, #42a5f5, #1976d2); color: white;
+        .btn-draw {
+            background: linear-gradient(135deg, #42a5f5, #1976d2);
+            color: white;
+            padding: 12px 30px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
             box-shadow: 0 4px 10px rgba(25, 118, 210, 0.3);
+            margin: 5px;
+            transition: transform 0.1s;
         }
+        .btn-draw:active { transform: scale(0.98); }
 
         /* 結果エリア */
         #result-area {
-            margin-top: 15px; max-height: 400px; overflow-y: auto;
-            border: 1px solid #eee; border-radius: 4px; background: #fafafa; padding: 10px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            background: #fff;
         }
         .result-item {
-            display: flex; align-items: center; padding: 8px;
-            border-bottom: 1px solid #eee; background: #fff;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #f0f0f0;
         }
         .result-item:last-child { border-bottom: none; }
-        
-        /* レアリティ色 */
-        .rarity-tag {
-            display: inline-block; width: 50px; text-align: center; font-weight: bold;
-            font-size: 0.85em; margin-right: 10px; padding: 2px 5px;
-            border-radius: 3px; color: #fff;
+
+        /* レアリティバッジ */
+        .rarity-badge {
+            display: inline-block;
+            width: 50px;
+            text-align: center;
+            padding: 2px 0;
+            margin-right: 10px;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.85em;
         }
-        .bg-0 { background: #9e9e9e; }
-        .bg-1 { background: #4caf50; }
-        .bg-2 { background: #03a9f4; }
-        .bg-3 { background: #ff9800; }
-        .bg-4 { background: #e91e63; }
+        .bg-0 { background: #9e9e9e; } /* N */
+        .bg-1 { background: #4caf50; } /* R */
+        .bg-2 { background: #03a9f4; } /* SR */
+        .bg-3 { background: #ff9800; } /* SSR */
+        .bg-4 { background: #e91e63; } /* UR */
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        /* スマホ対応 */
+        @media (max-width: 600px) {
+            .home-btn { padding: 8px 16px; font-size: 0.9em; }
+            .main-card { margin-top: 70px; padding: 15px; }
+        }
     </style>
 </head>
 <body>
 
-    <div style="text-align:center; margin-top:20px;">
-        <a href="index.html" style="color:#666; text-decoration:none;">← ホームへ戻る</a>
-    </div>
+    <a href="index.html" class="home-btn">ホームへ戻る</a>
 
-    <div class="card">
-        <div class="section-title closed" onclick="toggleSection('sec-basic', this)">基本設定・データ管理</div>
-        <div id="sec-basic" class="section-content" style="display:none;">
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                <div>
-                    <label>ガチャ名: <input type="text" id="gacha-title" value="マイガチャ" oninput="saveData()"></label>
+    <div class="main-card">
+        <h1>ガチャ設定・抽選</h1>
+
+        <div class="section-box">
+            <div class="section-header closed" onclick="toggleSection('sec-basic', this)">基本設定・データ管理</div>
+            <div id="sec-basic" class="section-body" style="display:none;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                    <div>
+                        <label>ガチャ名: <input type="text" id="gacha-title" value="マイガチャ" oninput="saveData()"></label>
+                    </div>
+                    <button class="btn-red" onclick="resetAll()">履歴全削除</button>
                 </div>
-                <button class="btn-danger" onclick="resetAll()">履歴全削除</button>
             </div>
         </div>
-    </div>
 
-    <div class="card">
-        <div class="section-title closed" onclick="toggleSection('sec-rarity', this)">レアリティ設定</div>
-        <div id="sec-rarity" class="section-content" style="display:none;">
-            <div style="margin-bottom:10px;">
-                <label>レアリティ数: <input type="number" id="rarity-count" value="5" min="1" max="5" style="width:60px;" onchange="updateRarityTable()"></label>
-                <span style="font-size:0.8em; color:#888; margin-left:10px;">※変更すると確率がリセットされます</span>
+        <div class="section-box">
+            <div class="section-header closed" onclick="toggleSection('sec-rarity', this)">レアリティ設定</div>
+            <div id="sec-rarity" class="section-body" style="display:none;">
+                <div style="margin-bottom:10px;">
+                    <label>レアリティ数: <input type="number" id="rarity-count" value="5" min="1" max="5" style="width:60px;" onchange="updateRarityTable()"></label>
+                    <span style="font-size:0.8em; color:#888; margin-left:10px;">※変更すると確率がリセットされます</span>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr><th>名称</th><th>出現率 (%)</th><th>色</th></tr>
+                    </thead>
+                    <tbody id="rarity-tbody"></tbody>
+                </table>
+                <div style="text-align:right; font-size:0.9em;">
+                    合計: <span id="total-prob" style="font-weight:bold;">0</span>%
+                </div>
             </div>
-            <table>
-                <thead>
-                    <tr><th>名称</th><th>出現率 (%)</th><th>色</th></tr>
-                </thead>
-                <tbody id="rarity-tbody"></tbody>
-            </table>
-            <div style="text-align:right; font-size:0.9em; color:#666;">
-                合計: <span id="total-prob" style="font-weight:bold;">0</span>%
+        </div>
+
+        <div class="section-box">
+            <div class="section-header closed" onclick="toggleSection('sec-prize', this)">景品設定</div>
+            <div id="sec-prize" class="section-body" style="display:none;">
+                <div style="margin-bottom:10px;">
+                    <label>景品数: <input type="number" id="prize-count" value="10" min="1" style="width:60px;" onchange="updatePrizeTable()"></label>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width:40px;">No</th>
+                            <th style="width:110px;">レアリティ</th>
+                            <th style="width:80px;">確率</th>
+                            <th>景品名</th>
+                        </tr>
+                    </thead>
+                    <tbody id="prize-tbody"></tbody>
+                </table>
             </div>
         </div>
-    </div>
 
-    <div class="card">
-        <div class="section-title closed" onclick="toggleSection('sec-prize', this)">景品設定</div>
-        <div id="sec-prize" class="section-content" style="display:none;">
-            <div style="margin-bottom:10px;">
-                <label>景品数: <input type="number" id="prize-count" value="10" min="1" style="width:60px;" onchange="updatePrizeTable()"></label>
+        <div class="gacha-play-area">
+            <h2 style="margin-bottom:20px;">ガチャ抽選</h2>
+            
+            <div style="margin-bottom:20px;">
+                <input type="text" id="user-name" placeholder="名前を入力 (省略可)" style="width:200px; text-align:center;">
             </div>
-            <table>
-                <thead>
-                    <tr><th style="width:40px;">No</th><th style="width:100px;">レアリティ</th><th style="width:80px;">確率</th><th>景品名</th></tr>
-                </thead>
-                <tbody id="prize-tbody"></tbody>
-            </table>
-        </div>
-    </div>
 
-    <div class="card">
-        <h2 style="text-align:center; color:#333; margin-top:0;">ガチャ抽選</h2>
-        <div style="text-align:center; margin-bottom:20px;">
-            <input type="text" id="user-name" placeholder="名前を入力" style="width:200px; text-align:center;">
+            <div style="display:flex; justify-content:center; gap:15px; flex-wrap:wrap;">
+                <button class="btn-draw" onclick="drawGacha(1)">1回</button>
+                <button class="btn-draw" onclick="drawGacha(10)">10連</button>
+            </div>
+            
+            <div style="margin-top:20px; display:flex; justify-content:center; align-items:center; gap:10px;">
+                 <span style="font-size:0.9em; color:#555;">回数指定:</span>
+                 <input type="number" id="custom-draw-count" value="100" style="width:70px; padding:6px; text-align:center;">
+                 <button class="btn-blue" style="padding:6px 15px;" onclick="drawCustom()">回す</button>
+            </div>
         </div>
 
-        <div style="display:flex; justify-content:center; gap:15px; flex-wrap:wrap;">
-            <button class="btn-draw" onclick="drawGacha(1)">1回</button>
-            <button class="btn-draw" onclick="drawGacha(10)">10連</button>
-        </div>
-        
-        <div style="text-align:center; margin-top:15px;">
-             <small style="color:#666;">回数指定: </small>
-             <input type="number" id="custom-draw-count" value="100" style="width:60px; padding:5px;">
-             <button class="btn-primary" style="padding:5px 10px; font-size:0.9em;" onclick="drawCustom()">回す</button>
-        </div>
-
-        <h3 style="margin-top:30px; margin-bottom:10px; font-size:1em; color:#555;">抽選結果</h3>
-        
         <div id="result-area">
             <div style="text-align:center; color:#ccc; padding:20px;">
-                ボタンを押すとここに結果が出ます
+                ここに結果が表示されます
             </div>
         </div>
 
-        <div id="copy-area" style="text-align:center; margin-top:15px; display:none;">
-            <button class="btn-success" onclick="copyResult()">📋 結果をテキストでコピー</button>
+        <div id="copy-area" style="text-align:center; margin-top:20px; display:none;">
+            <button class="btn-green" onclick="copyResult()">📋 結果をテキストでコピー</button>
         </div>
+
     </div>
 
 <script>
-    // グローバル変数: 最新の結果を保持する
+    // --- 変数・初期化 ---
     let lastResults = [];
     let lastDrawCount = 0;
-
-    function toggleSection(id, titleEl) {
-        const el = document.getElementById(id);
-        if (el.style.display === 'none') {
-            el.style.display = 'block';
-            titleEl.classList.remove('closed');
-        } else {
-            el.style.display = 'none';
-            titleEl.classList.add('closed');
-        }
-    }
 
     let config = {
         title: "マイガチャ",
@@ -203,6 +314,19 @@
 
     window.onload = function() { loadData(); };
 
+    // --- セクション開閉 ---
+    function toggleSection(id, headerEl) {
+        const el = document.getElementById(id);
+        if (el.style.display === 'none') {
+            el.style.display = 'block';
+            headerEl.classList.remove('closed');
+        } else {
+            el.style.display = 'none';
+            headerEl.classList.add('closed');
+        }
+    }
+
+    // --- データ保存・読み込み ---
     function loadData() {
         const stored = localStorage.getItem('iriam_highspec_gacha');
         if (stored) {
@@ -211,7 +335,9 @@
             document.getElementById('rarity-count').value = config.rarities.length;
             if(config.prizes.length === 0) initPrizes(10);
             document.getElementById('prize-count').value = config.prizes.length;
-        } else { initPrizes(10); }
+        } else {
+            initPrizes(10); 
+        }
         renderRarityTable();
         renderPrizeTable();
     }
@@ -229,6 +355,7 @@
         saveData();
     }
 
+    // --- レアリティ処理 ---
     function updateRarityTable() {
         const count = parseInt(document.getElementById('rarity-count').value);
         if (count < 1) return;
@@ -255,7 +382,7 @@
             tr.innerHTML = `
                 <td><input type="text" class="table-input" value="${r.name}" oninput="updateRarityData(${index}, 'name', this.value)"></td>
                 <td><input type="number" class="table-input" value="${r.rate}" oninput="updateRarityData(${index}, 'rate', this.value)"></td>
-                <td><span class="rarity-tag bg-${index % 5}">Color</span></td>
+                <td><span class="rarity-badge bg-${index % 5}">Color</span></td>
             `;
             tbody.appendChild(tr);
         });
@@ -272,6 +399,7 @@
         if(field === 'name') renderPrizeTable();
     }
 
+    // --- 景品処理 ---
     function updatePrizeTable() {
         const count = parseInt(document.getElementById('prize-count').value);
         if (count < 1) return;
@@ -327,6 +455,7 @@
         if (field === 'rarityIndex') renderPrizeTable(); 
     }
 
+    // --- ガチャロジック ---
     function drawCustom() {
         const count = parseInt(document.getElementById('custom-draw-count').value);
         drawGacha(count);
@@ -339,7 +468,7 @@
             return;
         }
         if (config.prizes.length === 0) {
-            alert("景品がありません。");
+            alert("景品が設定されていません。");
             return;
         }
 
@@ -369,55 +498,47 @@
             }
         }
 
-        // 結果をグローバル変数に保存
         lastResults = results;
         lastDrawCount = times;
 
-        // 表示
+        // 結果表示
         let html = "";
         const userName = document.getElementById('user-name').value || "名無し";
         const date = new Date().toLocaleString();
         
-        html += `<div style="padding:10px; border-bottom:1px solid #ddd; margin-bottom:10px; background:#f0f0f0;">
-            <strong>${userName}</strong> さんの結果 (${times}回) <span style="font-size:0.8em; color:#888;">${date}</span>
+        html += `<div style="padding:10px; border-bottom:1px solid #ddd; margin-bottom:10px; background:#f9f9f9; text-align:center;">
+            <strong>${userName}</strong> さんの結果 (${times}回) <br><span style="font-size:0.8em; color:#888;">${date}</span>
         </div>`;
 
         results.forEach((r, idx) => {
             html += `<div class="result-item">
-                <span style="color:#aaa; font-size:0.8em; margin-right:10px; width:20px;">${idx+1}</span>
-                <span class="rarity-tag bg-${r.rIdx % 5}">${r.rName}</span>
+                <span style="color:#aaa; font-size:0.8em; margin-right:10px; width:25px;">${idx+1}</span>
+                <span class="rarity-badge bg-${r.rIdx % 5}">${r.rName}</span>
                 <span style="font-weight:bold;">${r.name}</span>
             </div>`;
         });
         document.getElementById('result-area').innerHTML = html;
-        
-        // コピーボタンを表示
         document.getElementById('copy-area').style.display = 'block';
     }
 
-    // ★追加: コピー機能
+    // --- コピー機能 ---
     function copyResult() {
         if (lastResults.length === 0) return;
-
         const userName = document.getElementById('user-name').value || "名無し";
         const title = config.title;
-        let text = `【${title}】${userName}さんの抽選結果 (${lastDrawCount}回)\n`;
-        
+        let text = `【${title}】${userName}さんの結果 (${lastDrawCount}回)\n`;
         lastResults.forEach((r) => {
             text += `[${r.rName}] ${r.name}\n`;
         });
         
-        // クリップボードへコピー
         if (navigator.clipboard) {
             navigator.clipboard.writeText(text).then(() => {
-                alert("結果をコピーしました！\nX(Twitter)などに貼り付けてください。");
+                alert("結果をコピーしました！");
             }).catch(err => {
-                console.error("コピー失敗", err);
-                alert("コピーに失敗しました。");
+                alert("コピーに失敗しました");
             });
         } else {
-            // 古いブラウザ用など
-            alert("このブラウザではコピー機能が制限されています。");
+            alert("このブラウザでは対応していません");
         }
     }
 
