@@ -6,36 +6,30 @@ const categories = [
 // メイン処理
 document.addEventListener('DOMContentLoaded', () => {
     setupTabs();
-    loadGifts(); // データを読み込み開始
+    loadGifts();
 });
 
-// JSONを読み込んで表示する関数
+// JSON読み込み
 async function loadGifts() {
     try {
-        // gifts.json を取得
         const response = await fetch('gifts.json');
-        if (!response.ok) {
-            throw new Error("JSONデータの読み込みに失敗しました");
-        }
+        if (!response.ok) throw new Error("JSON not found");
         
-        // JSONデータをJavaScriptの配列に変換
         const gifts = await response.json();
-
-        // 最初のタブを表示（データ渡し）
-        showGifts(categories[0], gifts);
+        window.allGiftsData = gifts; // データを保存
         
-        // タブ切り替え時のためにデータを保持しておく仕組みが必要なら
-        // グローバル変数に入れるか、都度フィルタリングします
-        window.allGiftsData = gifts; 
+        showGifts(categories[0]); // 初期表示
 
     } catch (error) {
-        console.error(error);
+        console.error("Load Error:", error);
         document.getElementById('giftList').innerHTML = '<p>データの読み込みに失敗しました。</p>';
     }
 }
 
+// タブ作成
 function setupTabs() {
     const tabContainer = document.getElementById('tabContainer');
+    tabContainer.innerHTML = '';
     categories.forEach((cat, idx) => {
         const btn = document.createElement('button');
         btn.className = 'tab-btn' + (idx === 0 ? ' active' : '');
@@ -45,42 +39,64 @@ function setupTabs() {
     });
 }
 
+// タブ切り替え
 function selectTab(category, btn) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    
-    // 読み込み済みのデータを使って再表示
-    if (window.allGiftsData) {
-        showGifts(category, window.allGiftsData);
-    }
+    showGifts(category);
 }
 
-function showGifts(category, giftsData) {
+// ギフト表示（★ここを修正しました）
+function showGifts(category) {
     const giftList = document.getElementById('giftList');
     giftList.innerHTML = '';
     
-    // カテゴリでフィルタリング
-    const filtered = giftsData.filter(g => g.category === category);
+    if (!window.allGiftsData) return;
+
+    // 1. カテゴリで絞り込み
+    let filtered = window.allGiftsData.filter(g => g.category === category);
+
+    // 2. ポイント順に並び替え (ポイントが同じなら元の順序を維持)
+    filtered.sort((a, b) => {
+        const ptA = getPointValue(a.src);
+        const ptB = getPointValue(b.src);
+        
+        // ptA - ptB だと「低い順 (昇順)」
+        // ptB - ptA だと「高い順 (降順)」になります
+        return ptA - ptB; 
+    });
     
     if (filtered.length === 0) {
-        giftList.innerHTML = '<div style="text-align:center; color:#aaa;">このカテゴリのギフトはありません。</div>';
+        giftList.innerHTML = '<div style="text-align:center; color:#aaa; padding:20px;">このカテゴリのギフトはありません。</div>';
         return;
     }
 
+    // 3. HTML生成
     filtered.forEach(gift => {
-        // src から "_◯pt" を抽出
+        // 表示用のポイント文字列を取得
         const match = gift.src.match(/_(\d+(?:,\d+)*)pt/i);
-        const points = match ? match[1] + 'pt' : '';
+        const pointsStr = match ? match[1] + 'pt' : '';
 
         const item = document.createElement('div');
         item.className = 'gift-item';
         item.innerHTML = `
             <div class="gift-icon">
-                <img src="${gift.src}" alt="${gift.name}" class="gift-img" style="width:40px;height:40px;">
+                <img src="${gift.src}" alt="${gift.name}" class="gift-img" loading="lazy">
             </div>
             <div class="gift-name">${gift.name}</div>
-            <div class="gift-points">${points}</div>
+            <div class="gift-points">${pointsStr}</div>
         `;
         giftList.appendChild(item);
     });
+}
+
+// ★追加: ファイルパスから数値としてのポイントを取得する関数
+function getPointValue(src) {
+    // "_1,000pt" のような部分を探す
+    const match = src.match(/_(\d+(?:,\d+)*)pt/i);
+    if (match) {
+        // カンマを除去して数値に変換 (例: "1,000" -> 1000)
+        return parseInt(match[1].replace(/,/g, ''), 10);
+    }
+    return 0; // ポイント表記がない場合は0として扱う
 }
