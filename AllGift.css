@@ -82,23 +82,38 @@ h1 {
     background: #1565c0;
 }
 
+/* AllGift.css の末尾 */
+
 @media (max-width: 600px) {
-    .tab-container, .gift-list {
-        max-width: 98vw;
-        padding: 8px 2vw;
+    /* スマホ表示時のボタン設定 */
+    .home-btn {
+        position: static; /* 絶対配置を解除 */
+        display: inline-block;
+        margin-bottom: 15px; /* 下のカードとの隙間 */
+        padding: 8px 16px;
+        font-size: 0.9em;
+        /* top, left は position:static なので無効化されます */
     }
-    .tab-btn {
-        font-size: 0.95em;
-        padding: 8px 10px;
+
+    .main-card {
+        margin-top: 0; /* ボタンがスペースを取るのでマージンは不要 */
+        padding: 15px;
     }
+
+    .gift-list {
+        grid-template-columns: 1fr; /* 1列表示 */
+    }
+    
     .gift-icon {
         width: 32px;
         height: 32px;
         font-size: 20px;
         margin-right: 10px;
     }
+    
     .gift-name {
         font-size: 1em;
     }
 }
+
 
