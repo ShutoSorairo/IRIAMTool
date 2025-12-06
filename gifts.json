@@ -1520,19 +1520,19 @@
   {
     "name": "かわいい！",
     "icon": "",
-    "category": "えらい",
+    "category": ["えらい","LOVE"],
     "src": "ギフト/えらい/かわいい！_3,000pt.PNG"
   },
   {
     "name": "尊い",
     "icon": "",
-    "category": "えらい",
+    "category": ["えらい","LOVE"],
     "src": "ギフト/えらい/尊い_5,000pt.PNG"
   },
   {
     "name": "なでなで",
     "icon": "",
-    "category": "えらい",
+    "category": ["えらい","LOVE"],
     "src": "ギフト/えらい/なでなで_7,000pt.PNG"
   },
   {
@@ -2037,21 +2037,6 @@
     "name": "すこ",
     "category": "LOVE",
     "src": "ギフト/Love/すこ_1,000pt.PNG"
-  },
-  {
-    "name": "かわいい！",
-    "category": "LOVE",
-    "src": "ギフト/Love/かわいい！_3,000pt.PNG"
-  },
-  {
-    "name": "尊い",
-    "category": "LOVE",
-    "src": "ギフト/Love/尊い_5,000pt.PNG"
-  },
-  {
-    "name": "なでなで",
-    "category": "LOVE",
-    "src": "ギフト/Love/なでなで_7,000pt.PNG"
   },
   {
     "name": "だいすき",
