@@ -5,117 +5,16 @@
     <title>管理ダッシュボード</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="index.css">
-    <style>
-        .card {
-            background: #fff;
-            padding: 20px;
-            margin: 20px auto;
-            max-width: 600px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        input, select {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        label {
-            font-weight: bold;
-            display: block;
-            margin-top: 15px;
-            margin-bottom: 5px;
-            color: #333;
-        }
-        .input-group {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .fixed-text {
-            color: #666;
-            font-weight: bold;
-            background: #eee;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-            white-space: nowrap;
-        }
-        .preview-box {
-            background: #222;
-            color: #0f0;
-            padding: 10px;
-            font-family: monospace;
-            margin: 10px 0;
-            border-radius: 4px;
-            word-break: break-all;
-        }
-        .btn-add {
-            background: #2e7d32;
-            color: white;
-            border: none;
-            padding: 12px;
-            width: 100%;
-            font-size: 1.1em;
-            cursor: pointer;
-            border-radius: 5px;
-            margin-top: 20px;
-        }
-        .btn-dl {
-            display: inline-block;
-            background: #d32f2f;
-            color: white;
-            padding: 12px 30px;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-            margin-top: 15px;
-        }
-        
-        .gift-list-box {
-            margin-top: 10px;
-            max-height: 400px;
-            overflow-y: auto;
-            border: 1px solid #eee;
-            border-radius: 4px;
-        }
-        .list-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            background: #fff;
-        }
-        .list-item:nth-child(even) {
-            background: #f9f9f9;
-        }
-        .list-info {
-            font-size: 0.9em;
-        }
-        .btn-delete {
-            background: #ff5252;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.8em;
-        }
-        .btn-delete:hover {
-            background: #d32f2f;
-        }
-    </style>
+    <link rel="stylesheet" href="AdminDashboard.css">
 </head>
 <body>
-    <div style="text-align:center; margin-top:20px;">
-        <a href="index.html">← ホームへ戻る</a>
-    </div>
 
-    <div class="card" style="text-align:center; background:#e8f5e9; border:1px solid #c8e6c9;">
-        <h3>💾 設定を保存する</h3>
-        <p>作業が終わったら必ずダウンロードしてください。</p>
-        <button onclick="downloadJSON()" class="btn-dl" style="margin-top:0;">
+    <a href="index.html" class="home-btn">ホームへ戻る</a>
+
+    <div class="card" style="text-align:center; background:#fff3e0; border:2px dashed #ffb74d;">
+        <h3 style="color:#e65100; margin-top:0;">💾 設定を保存する</h3>
+        <p style="font-size:0.9em;">作業が終わったら必ずダウンロードしてください。</p>
+        <button onclick="downloadJSON()" class="btn-dl">
             gifts.json をダウンロード
         </button>
     </div>
@@ -124,11 +23,11 @@
         <h3>📂 ギフト追加 (独立入力版)</h3>
         <p>ギフト名とファイル名は別々に入力します。<br>拡張子は <b>.PNG</b> で固定されます。</p>
         
-        <div style="text-align:right; font-size:0.9em; color:#666;">
-            現在の登録数: <span id="current-count">読み込み中...</span> 件
+        <div style="text-align:right; font-size:0.9em; color:#666; margin-bottom:10px;">
+            現在の登録数: <span id="current-count" style="font-weight:bold;">読み込み中...</span> 件
         </div>
 
-        <div style="background:#f4faff; padding:15px; border-radius:8px; border:1px solid #d0e3f0;">
+        <div style="background:#f4faff; padding:20px; border-radius:8px; border:1px solid #d0e3f0;">
             <label>1. ギフト名 (表示名)</label>
             <input type="text" id="g-name" placeholder="例: すごいしらす" style="width:100%;">
             
@@ -148,7 +47,7 @@
             <div style="margin-bottom:5px; font-size:0.85em; color:#666;">※半角英数字推奨。拡張子は不要です。</div>
             <div class="input-group">
                 <input type="text" id="g-filebase" placeholder="ファイル名 (例: sugoshira)" oninput="updatePreview()" style="flex:2;">
-                <span style="font-weight:bold;">_</span>
+                <span style="font-weight:bold; color:#555;">_</span>
                 <input type="number" id="g-points" placeholder="PT" oninput="updatePreview()" style="width:80px; text-align:right;">
                 <div class="fixed-text">pt.PNG</div>
             </div>
@@ -164,119 +63,11 @@
         <h3>🗑️ 登録済みギフトの管理</h3>
         <p>名前で検索して削除できます。</p>
         <input type="text" id="search-box" placeholder="🔍 名前で検索..." oninput="renderGiftList()" style="width:100%; margin-bottom:10px;">
-        <div id="gift-list-container" class="gift-list-box"></div>
+        <div id="gift-list-container" class="gift-list-box">
+            <div style="text-align:center; padding:20px; color:#aaa;">読み込み中...</div>
+        </div>
     </div>
 
-    <script>
-        // ▼ マップからも削除しました
-        const folderMap = {
-            "ネタ": "ネタ", "笑": "笑", "定番": "定番",
-            "専用": "専用", "えらい": "えらい", "挨拶": "挨拶", "ステージ": "ステージ", "LOVE": "Love"
-        };
-
-        let currentGifts = [];
-
-        window.onload = async function() {
-            if (!sessionStorage.getItem('iriam_admin_logged_in')) {
-                alert("ログインしてください");
-                window.location.href = "AdminLogin.html";
-                return;
-            }
-            try {
-                const res = await fetch('gifts.json');
-                if(res.ok) {
-                    currentGifts = await res.json();
-                    document.getElementById('current-count').textContent = currentGifts.length;
-                    renderGiftList();
-                }
-            } catch(e) { console.error("JSON読込エラー", e); }
-            updatePreview();
-        };
-
-        function updatePreview() {
-            const cat = document.getElementById('g-category').value;
-            const filebase = document.getElementById('g-filebase').value;
-            const points = document.getElementById('g-points').value;
-            const folder = folderMap[cat] || cat;
-            const ptStr = points ? points : ""; 
-            const fullPath = `ギフト/${folder}/${filebase}_${ptStr}pt.PNG`;
-            document.getElementById('path-preview').textContent = fullPath;
-        }
-
-        function addGift() {
-            const name = document.getElementById('g-name').value;
-            const cat = document.getElementById('g-category').value;
-            const filebase = document.getElementById('g-filebase').value;
-            const points = document.getElementById('g-points').value;
-
-            if(!name || !filebase || !points) {
-                alert("すべての項目を入力してください");
-                return;
-            }
-
-            const folder = folderMap[cat] || cat;
-            const fullPath = `ギフト/${folder}/${filebase}_${points}pt.PNG`;
-
-            currentGifts.push({
-                name: name,
-                category: cat,
-                src: fullPath
-            });
-
-            afterUpdate(`「${name}」を追加しました。`);
-        }
-
-        function deleteGift(index) {
-            const target = currentGifts[index];
-            if(confirm(`「${target.name}」を本当に削除しますか？`)) {
-                currentGifts.splice(index, 1);
-                afterUpdate(`「${target.name}」を削除しました。`);
-            }
-        }
-
-        function renderGiftList() {
-            const container = document.getElementById('gift-list-container');
-            const searchText = document.getElementById('search-box').value.toLowerCase();
-            container.innerHTML = '';
-
-            currentGifts.forEach((gift, index) => {
-                if (gift.name.toLowerCase().includes(searchText)) {
-                    const div = document.createElement('div');
-                    div.className = 'list-item';
-                    div.innerHTML = `
-                        <div class="list-info">
-                            <b>${gift.name}</b> <span style="color:#888; font-size:0.8em;">(${gift.category})</span><br>
-                            <small style="color:#aaa;">${gift.src}</small>
-                        </div>
-                        <button onclick="deleteGift(${index})" class="btn-delete">削除</button>
-                    `;
-                    container.appendChild(div);
-                }
-            });
-        }
-
-        function afterUpdate(msg) {
-            document.getElementById('current-count').textContent = currentGifts.length;
-            document.getElementById('g-name').value = '';
-            document.getElementById('g-filebase').value = '';
-            document.getElementById('g-points').value = '';
-            updatePreview();
-            renderGiftList();
-            alert(msg + "\n一番上のボタンからJSONをダウンロードして保存してください。");
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function downloadJSON() {
-            const jsonStr = JSON.stringify(currentGifts, null, 2);
-            const blob = new Blob([jsonStr], {type: "application/json"});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = "gifts.json";
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        }
-    </script>
+    <script src="AdminDashboard.js"></script>
 </body>
 </html>
