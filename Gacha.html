@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="index.css">
     <style>
-        /* 他のページと共通のカードデザイン */
+        /* カードデザイン */
         .card {
             background: #fff;
             padding: 20px;
             margin: 20px auto;
-            max-width: 800px; /* ガチャ画面は少し広めに */
+            max-width: 800px;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
@@ -30,125 +30,65 @@
             align-items: center;
             user-select: none;
         }
-        .section-title:hover {
-            color: #1976d2;
-        }
-        .section-title::after {
-            content: '▼';
-            font-size: 0.8em;
-            color: #ccc;
-            transition: transform 0.2s;
-        }
-        .section-title.closed::after {
-            transform: rotate(-90deg);
-        }
-        
-        /* 閉じたときの中身 */
-        .section-content {
-            display: block;
-            animation: fadeIn 0.3s;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+        .section-title:hover { color: #1976d2; }
+        .section-title::after { content: '▼'; font-size: 0.8em; color: #ccc; transition: transform 0.2s; }
+        .section-title.closed::after { transform: rotate(-90deg); }
+        .section-content { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* テーブルデザイン */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 10px;
-            font-size: 0.95em;
-        }
-        th, td {
-            border: 1px solid #eee;
-            padding: 10px;
-            text-align: center;
-        }
-        th {
-            background-color: #f9f9f9;
-            color: #555;
-            font-weight: bold;
-        }
+        /* テーブル */
+        table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 0.95em; }
+        th, td { border: 1px solid #eee; padding: 10px; text-align: center; }
+        th { background-color: #f9f9f9; color: #555; font-weight: bold; }
         
-        /* 入力フォーム */
+        /* フォーム */
         input[type="text"], input[type="number"], select {
             padding: 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
             box-sizing: border-box;
         }
-        input.table-input {
-            width: 95%;
-            text-align: center;
-            border: 1px solid #eee;
-        }
-        input.table-input:focus {
-            border-color: #1976d2;
-            background: #fdfdfd;
-        }
+        input.table-input { width: 95%; text-align: center; border: 1px solid #eee; }
+        input.table-input:focus { border-color: #1976d2; background: #fdfdfd; }
 
         /* ボタン */
         button {
-            padding: 8px 16px;
-            border-radius: 4px;
-            border: none;
-            cursor: pointer;
-            font-size: 0.95em;
-            transition: opacity 0.2s;
+            padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer;
+            font-size: 0.95em; transition: opacity 0.2s;
         }
         button:hover { opacity: 0.8; }
+        .btn-primary { background: #1976d2; color: white; }
+        .btn-danger { background: #d32f2f; color: white; }
+        .btn-success { background: #2e7d32; color: white; } /* コピー用 */
         
-        .btn-primary { background: #1976d2; color: white; } /* 青 */
-        .btn-danger { background: #d32f2f; color: white; }  /* 赤 */
         .btn-draw { 
-            padding: 12px 30px; 
-            font-size: 1.1em; 
-            font-weight: bold;
-            border-radius: 30px;
-            background: linear-gradient(135deg, #42a5f5, #1976d2);
-            color: white;
+            padding: 12px 30px; font-size: 1.1em; font-weight: bold; border-radius: 30px;
+            background: linear-gradient(135deg, #42a5f5, #1976d2); color: white;
             box-shadow: 0 4px 10px rgba(25, 118, 210, 0.3);
         }
 
         /* 結果エリア */
         #result-area {
-            margin-top: 15px;
-            max-height: 400px;
-            overflow-y: auto;
-            border: 1px solid #eee;
-            border-radius: 4px;
-            background: #fafafa;
-            padding: 10px;
+            margin-top: 15px; max-height: 400px; overflow-y: auto;
+            border: 1px solid #eee; border-radius: 4px; background: #fafafa; padding: 10px;
         }
         .result-item {
-            display: flex;
-            align-items: center;
-            padding: 8px;
-            border-bottom: 1px solid #eee;
-            background: #fff;
+            display: flex; align-items: center; padding: 8px;
+            border-bottom: 1px solid #eee; background: #fff;
         }
         .result-item:last-child { border-bottom: none; }
         
         /* レアリティ色 */
         .rarity-tag {
-            display: inline-block;
-            width: 50px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 0.85em;
-            margin-right: 10px;
-            padding: 2px 5px;
-            border-radius: 3px;
-            color: #fff;
+            display: inline-block; width: 50px; text-align: center; font-weight: bold;
+            font-size: 0.85em; margin-right: 10px; padding: 2px 5px;
+            border-radius: 3px; color: #fff;
         }
-        .bg-0 { background: #9e9e9e; } /* N */
-        .bg-1 { background: #4caf50; } /* R */
-        .bg-2 { background: #03a9f4; } /* SR */
-        .bg-3 { background: #ff9800; } /* SSR */
-        .bg-4 { background: #e91e63; } /* UR */
-
+        .bg-0 { background: #9e9e9e; }
+        .bg-1 { background: #4caf50; }
+        .bg-2 { background: #03a9f4; }
+        .bg-3 { background: #ff9800; }
+        .bg-4 { background: #e91e63; }
     </style>
 </head>
 <body>
@@ -176,14 +116,9 @@
                 <label>レアリティ数: <input type="number" id="rarity-count" value="5" min="1" max="5" style="width:60px;" onchange="updateRarityTable()"></label>
                 <span style="font-size:0.8em; color:#888; margin-left:10px;">※変更すると確率がリセットされます</span>
             </div>
-            
             <table>
                 <thead>
-                    <tr>
-                        <th>名称</th>
-                        <th>出現率 (%)</th>
-                        <th>色</th>
-                    </tr>
+                    <tr><th>名称</th><th>出現率 (%)</th><th>色</th></tr>
                 </thead>
                 <tbody id="rarity-tbody"></tbody>
             </table>
@@ -201,12 +136,7 @@
             </div>
             <table>
                 <thead>
-                    <tr>
-                        <th style="width:40px;">No</th>
-                        <th style="width:100px;">レアリティ</th>
-                        <th style="width:80px;">確率</th>
-                        <th>景品名</th>
-                    </tr>
+                    <tr><th style="width:40px;">No</th><th style="width:100px;">レアリティ</th><th style="width:80px;">確率</th><th>景品名</th></tr>
                 </thead>
                 <tbody id="prize-tbody"></tbody>
             </table>
@@ -215,7 +145,6 @@
 
     <div class="card">
         <h2 style="text-align:center; color:#333; margin-top:0;">ガチャ抽選</h2>
-        
         <div style="text-align:center; margin-bottom:20px;">
             <input type="text" id="user-name" placeholder="名前を入力" style="width:200px; text-align:center;">
         </div>
@@ -232,15 +161,23 @@
         </div>
 
         <h3 style="margin-top:30px; margin-bottom:10px; font-size:1em; color:#555;">抽選結果</h3>
+        
         <div id="result-area">
             <div style="text-align:center; color:#ccc; padding:20px;">
                 ボタンを押すとここに結果が出ます
             </div>
         </div>
+
+        <div id="copy-area" style="text-align:center; margin-top:15px; display:none;">
+            <button class="btn-success" onclick="copyResult()">📋 結果をテキストでコピー</button>
+        </div>
     </div>
 
 <script>
-    // 開閉機能
+    // グローバル変数: 最新の結果を保持する
+    let lastResults = [];
+    let lastDrawCount = 0;
+
     function toggleSection(id, titleEl) {
         const el = document.getElementById(id);
         if (el.style.display === 'none') {
@@ -252,7 +189,6 @@
         }
     }
 
-    // データ初期値
     let config = {
         title: "マイガチャ",
         rarities: [
@@ -265,9 +201,7 @@
         prizes: []
     };
 
-    window.onload = function() {
-        loadData();
-    };
+    window.onload = function() { loadData(); };
 
     function loadData() {
         const stored = localStorage.getItem('iriam_highspec_gacha');
@@ -277,9 +211,7 @@
             document.getElementById('rarity-count').value = config.rarities.length;
             if(config.prizes.length === 0) initPrizes(10);
             document.getElementById('prize-count').value = config.prizes.length;
-        } else {
-            initPrizes(10); 
-        }
+        } else { initPrizes(10); }
         renderRarityTable();
         renderPrizeTable();
     }
@@ -297,7 +229,6 @@
         saveData();
     }
 
-    // --- レアリティ ---
     function updateRarityTable() {
         const count = parseInt(document.getElementById('rarity-count').value);
         if (count < 1) return;
@@ -341,7 +272,6 @@
         if(field === 'name') renderPrizeTable();
     }
 
-    // --- 景品 ---
     function updatePrizeTable() {
         const count = parseInt(document.getElementById('prize-count').value);
         if (count < 1) return;
@@ -397,7 +327,6 @@
         if (field === 'rarityIndex') renderPrizeTable(); 
     }
 
-    // --- 抽選 ---
     function drawCustom() {
         const count = parseInt(document.getElementById('custom-draw-count').value);
         drawGacha(count);
@@ -440,6 +369,10 @@
             }
         }
 
+        // 結果をグローバル変数に保存
+        lastResults = results;
+        lastDrawCount = times;
+
         // 表示
         let html = "";
         const userName = document.getElementById('user-name').value || "名無し";
@@ -457,6 +390,35 @@
             </div>`;
         });
         document.getElementById('result-area').innerHTML = html;
+        
+        // コピーボタンを表示
+        document.getElementById('copy-area').style.display = 'block';
+    }
+
+    // ★追加: コピー機能
+    function copyResult() {
+        if (lastResults.length === 0) return;
+
+        const userName = document.getElementById('user-name').value || "名無し";
+        const title = config.title;
+        let text = `【${title}】${userName}さんの抽選結果 (${lastDrawCount}回)\n`;
+        
+        lastResults.forEach((r) => {
+            text += `[${r.rName}] ${r.name}\n`;
+        });
+        
+        // クリップボードへコピー
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert("結果をコピーしました！\nX(Twitter)などに貼り付けてください。");
+            }).catch(err => {
+                console.error("コピー失敗", err);
+                alert("コピーに失敗しました。");
+            });
+        } else {
+            // 古いブラウザ用など
+            alert("このブラウザではコピー機能が制限されています。");
+        }
     }
 
     function resetAll() {
