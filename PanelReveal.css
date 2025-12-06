@@ -1,132 +1,193 @@
-/* 全体の調整 */
+/* 全体レイアウト */
 body {
     background: linear-gradient(120deg, #e0f7fa 0%, #fce4ec 100%);
     min-height: 100vh;
     padding: 20px;
-    box-sizing: border-box;
+    color: #333;
+    font-family: 'Segoe UI', Arial, sans-serif;
 }
 
 .main-container {
-    max-width: 900px;
+    max-width: 1000px;
     margin: 60px auto 20px auto;
     text-align: center;
 }
 
-h1 { color: #333; margin-bottom: 10px; }
+h1 { margin: 0 0 10px 0; color: #333; }
 p { color: #666; margin-bottom: 20px; }
 
-/* 画像アップロードボタン */
-.setting-area { margin-bottom: 20px; }
+/* 設定カード */
+.setting-card {
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+}
+
+.setting-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .upload-btn {
     background: #1976d2;
     color: white;
-    padding: 10px 20px;
-    border-radius: 30px;
+    padding: 8px 16px;
+    border-radius: 4px;
     cursor: pointer;
-    display: inline-block;
     font-weight: bold;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    transition: background 0.2s;
+    font-size: 0.9em;
 }
 .upload-btn:hover { background: #1565c0; }
 
-/* ▼ ボードの構造（重要） */
-.board-wrapper {
-    position: relative; /* 重ね合わせの基準 */
-    width: 100%;
-    max-width: 800px; /* 最大幅 */
-    aspect-ratio: 4 / 3; /* 比率を固定（画像の形に合わせる） */
-    margin: 0 auto;
-    background: #fff;
-    border: 4px solid #fff;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    border-radius: 12px;
-    overflow: hidden;
-}
-
-/* 背面の画像 */
-#hidden-image {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* 枠いっぱいに表示 */
-    z-index: 1; /* 一番下 */
-}
-
-/* 前面のパネルグリッド */
-.panel-grid {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 2; /* 画像の上 */
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4列 (好みに合わせて変更可) */
-    grid-template-rows: repeat(4, 1fr);    /* 4行 */
-    gap: 2px; /* パネルの隙間 */
-}
-
-/* パネル単体 */
-.panel-item {
-    background: #ffecb3; /* デフォルト色 */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: opacity 0.5s, transform 0.2s;
-    padding: 5px;
-    box-sizing: border-box;
-    font-weight: bold;
-    color: #555;
-    text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
-    user-select: none;
-    border: 1px solid rgba(255,255,255,0.5);
-}
-
-.panel-item:hover {
-    filter: brightness(0.95);
-}
-
-/* パネル内の文字 */
-.mission-cat {
-    font-size: 0.8em;
-    color: #e91e63;
-    margin-bottom: 4px;
-}
-.mission-text {
-    font-size: 1em;
-    line-height: 1.2;
-}
-
-/* 消えた状態 */
-.panel-item.cleared {
-    opacity: 0; /* 透明にする */
-    pointer-events: none; /* クリック不可にする */
-}
-
-/* リセットボタン */
-.reset-btn {
-    margin-top: 30px;
-    padding: 10px 30px;
-    background: #fff;
-    border: 2px solid #ccc;
+.btn-gen {
+    background: #e91e63;
+    color: white;
+    border: none;
+    padding: 8px 20px;
     border-radius: 20px;
     cursor: pointer;
     font-weight: bold;
-    color: #555;
 }
-.reset-btn:hover { background: #eee; }
+.btn-gen:hover { background: #c2185b; }
+
+/* ボードエリア */
+.board-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.board-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 800px; /* 最大幅 */
+    background: #eee;
+    border: 4px solid #fff;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    border-radius: 8px;
+    overflow: hidden;
+    /* アスペクト比はJSで画像に合わせて設定します */
+    min-height: 300px;
+}
+
+#hidden-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+#no-image-text {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    color: #999;
+    font-weight: bold;
+}
+
+/* パネルレイヤー */
+.panel-layer {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+}
+
+/* 個別パネル */
+.panel-item {
+    position: absolute; /* 自由配置のため絶対配置 */
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s;
+    padding: 2px;
+}
+
+/* カウント表示 */
+.panel-info {
+    font-size: 0.8em;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 4px;
+    text-align: center;
+    line-height: 1.2;
+}
+
+/* 進捗バー */
+.progress-bar {
+    width: 80%;
+    height: 6px;
+    background: #eee;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+.progress-fill {
+    height: 100%;
+    background: #4caf50;
+    width: 0%;
+    transition: width 0.3s;
+}
+
+/* 操作ボタン */
+.counter-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    background: #1976d2;
+    color: white;
+    font-size: 1.2em;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+}
+.counter-btn:active { transform: scale(0.9); }
+
+/* OPENボタン (完了時) */
+.open-btn {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(255, 215, 0, 0.9); /* 金色 */
+    color: #d32f2f;
+    font-weight: bold;
+    font-size: 1.2em;
+    border: none;
+    cursor: pointer;
+    display: none; /* 最初は非表示 */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    animation: popUp 0.3s;
+    z-index: 10;
+}
+.open-btn span { font-size: 0.7em; color: #333; font-weight: normal; }
+
+/* パネルが消えた状態 */
+.panel-item.cleared {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(1.1);
+}
+
+@keyframes popUp { from { transform: scale(0); } to { transform: scale(1); } }
 
 /* スマホ対応 */
 @media (max-width: 600px) {
-    .board-wrapper {
-        aspect-ratio: 3 / 4; /* スマホなら縦長にする？ */
-    }
-    .panel-grid {
-        grid-template-columns: repeat(3, 1fr); /* 3列に変更 */
-        grid-template-rows: repeat(5, 1fr);
-    }
-    .mission-text { font-size: 0.8em; }
+    .home-btn { position: static; display: inline-block; margin-bottom: 15px; }
+    .main-container { margin-top: 0; padding: 10px; }
+    .setting-card { flex-direction: column; align-items: stretch; }
 }
