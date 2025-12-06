@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>パネル開け</title>
+    <title>ミッションパネル</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="index.css">
     <link rel="stylesheet" href="PanelReveal.css">
@@ -11,21 +11,39 @@
     <a href="index.html" class="home-btn">ホームへ戻る</a>
 
     <div class="main-container">
-        <h1>🎁 パネル開け</h1>
-        <p>ミッションを達成してパネルを消し、隠されたイラストを完成させよう！</p>
+        <h1>🎯 ミッションパネル開け</h1>
+        <p>ギフトやコメント数をカウントし、目標達成でパネルを開放！</p>
         
-        <div class="setting-area">
-            <label for="imageInput" class="upload-btn">📁 隠す画像を選択</label>
-            <input type="file" id="imageInput" accept="image/*" style="display:none;">
-        </div>
-
-        <div class="board-wrapper">
-            <img id="hidden-image" src="https://placehold.jp/800x600.png?text=No%20Image" alt="Hidden">
+        <div class="setting-card">
+            <div class="setting-row">
+                <label for="imageInput" class="upload-btn">📁 イラストを選択</label>
+                <input type="file" id="imageInput" accept="image/*" style="display:none;">
+                <span id="file-name" style="font-size:0.9em; color:#666;">未選択</span>
+            </div>
             
-            <div id="panel-grid" class="panel-grid"></div>
+            <div class="setting-row">
+                <label>分割数: 
+                    <select id="grid-cols"><option value="3">3列</option><option value="4" selected>4列</option><option value="5">5列</option></select>
+                    ×
+                    <select id="grid-rows"><option value="3">3行</option><option value="4" selected>4行</option><option value="5">5行</option></select>
+                </label>
+            </div>
+
+            <div class="setting-row">
+                <label>基本目標数: <input type="number" id="default-target" value="10" style="width:60px; padding:5px;"> 回/個</label>
+            </div>
+
+            <button onclick="generateGrid()" class="btn-gen">🆕 パネル生成・リセット</button>
         </div>
 
-        <button onclick="resetPanels()" class="reset-btn">🔄 全て戻す</button>
+        <div class="board-container">
+            <div id="board-wrapper" class="board-wrapper">
+                <img id="hidden-image" src="" alt="">
+                <div id="no-image-text">画像を選択してください</div>
+                
+                <div id="panel-layer" class="panel-layer"></div>
+            </div>
+        </div>
     </div>
 
     <script src="PanelReveal.js"></script>
