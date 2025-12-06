@@ -43,17 +43,43 @@
         .section-header {
             background-color: var(--main-color);
             color: white;
-            padding: 10px 15px;
+            padding: 12px 15px;
             font-weight: bold;
             margin-top: 20px;
             border-radius: 4px 4px 0 0;
+            cursor: pointer; /* クリックできる感 */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
         }
+        .section-header:hover {
+            background-color: var(--header-bg);
+        }
+        /* 開閉アイコン */
+        .section-header::after {
+            content: '▼';
+            font-size: 0.8em;
+            transition: transform 0.3s;
+        }
+        /* 閉じているときのアイコン */
+        .section-header.closed::after {
+            transform: rotate(-90deg);
+        }
+        /* 閉じているときのヘッダー（角丸を戻す） */
+        .section-header.closed {
+            border-radius: 4px;
+            background-color: #78909c; /* 閉じているときは少し地味な色に */
+        }
+
         .section-body {
             background: white;
             padding: 20px;
             border: 1px solid #ddd;
             border-top: none;
             border-radius: 0 0 4px 4px;
+            /* アニメーション用 */
+            display: block; 
         }
 
         /* コントロール群 */
@@ -142,23 +168,22 @@
             border-bottom: 1px solid #eee;
         }
         .result-rarity { font-weight: bold; min-width: 50px; }
+        
         /* レアリティごとの色（簡易） */
-        .rarity-0 { color: #757575; } /* N */
-        .rarity-1 { color: #1e88e5; } /* R */
-        .rarity-2 { color: #43a047; } /* SR */
-        .rarity-3 { color: #fbc02d; text-shadow: 1px 1px 0 rgba(0,0,0,0.1); } /* SSR */
-        .rarity-4 { color: #e91e63; font-weight:900; } /* UR */
+        .rarity-0 { color: #757575; } 
+        .rarity-1 { color: #1e88e5; } 
+        .rarity-2 { color: #43a047; } 
+        .rarity-3 { color: #fbc02d; text-shadow: 1px 1px 0 rgba(0,0,0,0.1); } 
+        .rarity-4 { color: #e91e63; font-weight:900; } 
 
         /* フッター */
         footer {
             text-align: center;
             padding: 20px;
-            color: #white;
             background: var(--main-color);
             margin-top: 40px;
             color: white;
         }
-        a { color: white; text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -166,7 +191,7 @@
 <header>
     <div>
         <h1>高機能ガチャツール (再現版)</h1>
-        <span class="version">ver.1.0.0</span>
+        <span class="version">ver.1.0.1</span>
     </div>
     <div>
         <button class="btn-gray" onclick="location.href='index.html'">ホームへ戻る</button>
@@ -175,18 +200,21 @@
 
 <div class="container">
     
-    <div style="background:white; padding:15px; border-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,0.1); display:flex; justify-content:space-between; align-items:center;">
-        <div style="display:flex; gap:10px; align-items:center;">
-            <span>ガチャ名:</span>
-            <input type="text" id="gacha-title" value="マイガチャ" oninput="saveData()">
-        </div>
-        <div>
-            <button class="btn-red" onclick="resetAll()">履歴全削除</button>
+    <div class="section-header closed" onclick="toggleSection('sec-basic', this)">基本設定・データ管理</div>
+    <div id="sec-basic" class="section-body" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; gap:10px; align-items:center;">
+                <span>ガチャ名:</span>
+                <input type="text" id="gacha-title" value="マイガチャ" oninput="saveData()">
+            </div>
+            <div>
+                <button class="btn-red" onclick="resetAll()">履歴全削除</button>
+            </div>
         </div>
     </div>
 
-    <div class="section-header">▼ レアリティ設定</div>
-    <div class="section-body">
+    <div class="section-header closed" onclick="toggleSection('sec-rarity', this)">▼ レアリティ設定</div>
+    <div id="sec-rarity" class="section-body" style="display:none;">
         <div class="control-row">
             <label>レアリティ数設定: <input type="number" id="rarity-count" value="5" min="1" max="10" style="width:60px;" onchange="updateRarityTable()"></label>
             <span style="font-size:0.8rem; color:#666;">※変更すると確率設定がリセットされます</span>
@@ -211,8 +239,8 @@
         </table>
     </div>
 
-    <div class="section-header">▼ 景品設定</div>
-    <div class="section-body">
+    <div class="section-header closed" onclick="toggleSection('sec-prize', this)">▼ 景品設定</div>
+    <div id="sec-prize" class="section-body" style="display:none;">
         <div class="control-row">
             <label>景品数設定: <input type="number" id="prize-count" value="10" min="1" style="width:60px;" onchange="updatePrizeTable()"></label>
         </div>
@@ -259,6 +287,18 @@
 </footer>
 
 <script>
+    // 開閉機能
+    function toggleSection(id, header) {
+        const el = document.getElementById(id);
+        if (el.style.display === 'none') {
+            el.style.display = 'block';
+            header.classList.remove('closed');
+        } else {
+            el.style.display = 'none';
+            header.classList.add('closed');
+        }
+    }
+
     // データ管理用オブジェクト
     let config = {
         title: "マイガチャ",
@@ -272,35 +312,30 @@
         prizes: []
     };
 
-    // 初期化
     window.onload = function() {
         loadData();
     };
 
-    // ローカルストレージから読み込み
     function loadData() {
         const stored = localStorage.getItem('iriam_highspec_gacha');
         if (stored) {
             config = JSON.parse(stored);
             document.getElementById('gacha-title').value = config.title;
             document.getElementById('rarity-count').value = config.rarities.length;
-            // 景品数が足りない場合の調整などは省略（単純にロード）
             if(config.prizes.length === 0) initPrizes(10);
             document.getElementById('prize-count').value = config.prizes.length;
         } else {
-            initPrizes(10); // 初回
+            initPrizes(10); 
         }
         renderRarityTable();
         renderPrizeTable();
     }
 
-    // データの保存
     function saveData() {
         config.title = document.getElementById('gacha-title').value;
         localStorage.setItem('iriam_highspec_gacha', JSON.stringify(config));
     }
 
-    // 景品データの初期化
     function initPrizes(count) {
         config.prizes = [];
         for(let i=0; i<count; i++) {
@@ -309,13 +344,10 @@
         saveData();
     }
 
-    // --- レアリティ設定関連 ---
-
+    // --- レアリティ設定 ---
     function updateRarityTable() {
         const count = parseInt(document.getElementById('rarity-count').value);
         if (count < 1) return;
-        
-        // 配列の長さを調整
         const currentLen = config.rarities.length;
         if (count > currentLen) {
             for (let i = currentLen; i < count; i++) {
@@ -326,14 +358,13 @@
         }
         saveData();
         renderRarityTable();
-        renderPrizeTable(); // プルダウン更新のため
+        renderPrizeTable();
     }
 
     function renderRarityTable() {
         const tbody = document.getElementById('rarity-tbody');
         tbody.innerHTML = '';
         let total = 0;
-
         config.rarities.forEach((r, index) => {
             total += parseFloat(r.rate) || 0;
             const tr = document.createElement('tr');
@@ -344,7 +375,6 @@
             `;
             tbody.appendChild(tr);
         });
-
         const totalEl = document.getElementById('total-prob');
         totalEl.textContent = total.toFixed(2);
         totalEl.style.color = Math.abs(total - 100) < 0.01 ? 'green' : 'red';
@@ -354,16 +384,14 @@
         if (field === 'rate') value = parseFloat(value);
         config.rarities[index][field] = value;
         saveData();
-        if(field === 'rate') renderRarityTable(); // 合計更新
-        if(field === 'name') renderPrizeTable(); // プルダウン更新
+        if(field === 'rate') renderRarityTable();
+        if(field === 'name') renderPrizeTable();
     }
 
-    // --- 景品設定関連 ---
-
+    // --- 景品設定 ---
     function updatePrizeTable() {
         const count = parseInt(document.getElementById('prize-count').value);
         if (count < 1) return;
-
         const currentLen = config.prizes.length;
         if (count > currentLen) {
             for (let i = currentLen; i < count; i++) {
@@ -373,7 +401,7 @@
             if(confirm("景品数を減らすと末尾のデータが削除されます。よろしいですか？")) {
                 config.prizes.splice(count);
             } else {
-                document.getElementById('prize-count').value = currentLen; // 戻す
+                document.getElementById('prize-count').value = currentLen; 
                 return;
             }
         }
@@ -384,8 +412,6 @@
     function renderPrizeTable() {
         const tbody = document.getElementById('prize-tbody');
         tbody.innerHTML = '';
-
-        // レアリティごとの景品数をカウント（確率計算用）
         const rarityCounts = new Array(config.rarities.length).fill(0);
         config.prizes.forEach(p => {
             if(p.rarityIndex < config.rarities.length) {
@@ -394,18 +420,14 @@
         });
 
         config.prizes.forEach((p, index) => {
-            // レアリティ選択肢生成
             let options = '';
             config.rarities.forEach((r, rIdx) => {
                 options += `<option value="${rIdx}" ${p.rarityIndex == rIdx ? 'selected' : ''}>${r.name}</option>`;
             });
-
-            // 個別確率計算 (レアリティ確率 ÷ そのレアリティの景品数)
             let individualRate = "0.00";
             if (p.rarityIndex < config.rarities.length && rarityCounts[p.rarityIndex] > 0) {
                 individualRate = (config.rarities[p.rarityIndex].rate / rarityCounts[p.rarityIndex]).toFixed(4);
             }
-
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${index + 1}</td>
@@ -425,18 +447,16 @@
         if (field === 'rarityIndex') value = parseInt(value);
         config.prizes[index][field] = value;
         saveData();
-        if (field === 'rarityIndex') renderPrizeTable(); // 確率再計算のため
+        if (field === 'rarityIndex') renderPrizeTable(); 
     }
 
     // --- ガチャロジック ---
-
     function drawCustom() {
         const count = parseInt(document.getElementById('custom-draw-count').value);
         drawGacha(count);
     }
 
     function drawGacha(times) {
-        // 確率チェック
         let totalRate = config.rarities.reduce((sum, r) => sum + (parseFloat(r.rate)||0), 0);
         if (Math.abs(totalRate - 100) > 0.1) {
             alert("レアリティ設定の合計確率が100%になっていません。(現在: " + totalRate.toFixed(2) + "%)");
@@ -447,25 +467,17 @@
             return;
         }
 
-        const results = [];
-        const resultArea = document.getElementById('result-area');
-        
-        // 景品リストをレアリティごとに分類
         const prizesByRarity = [];
         config.rarities.forEach(() => prizesByRarity.push([]));
         config.prizes.forEach(p => {
-            if(prizesByRarity[p.rarityIndex]) {
-                prizesByRarity[p.rarityIndex].push(p);
-            }
+            if(prizesByRarity[p.rarityIndex]) prizesByRarity[p.rarityIndex].push(p);
         });
 
-        // 抽選実行
+        const results = [];
         for(let i=0; i<times; i++) {
-            const rand = Math.random() * 100; // 0-100
+            const rand = Math.random() * 100;
             let current = 0;
             let selectedRarityIndex = -1;
-
-            // レアリティ抽選
             for(let r=0; r<config.rarities.length; r++) {
                 current += config.rarities[r].rate;
                 if (rand < current) {
@@ -473,11 +485,8 @@
                     break;
                 }
             }
-
-            // 万が一漏れた場合は最後
             if(selectedRarityIndex === -1) selectedRarityIndex = config.rarities.length - 1;
 
-            // そのレアリティの中から景品をランダムに選ぶ
             const candidates = prizesByRarity[selectedRarityIndex];
             if (candidates && candidates.length > 0) {
                 const prize = candidates[Math.floor(Math.random() * candidates.length)];
@@ -511,9 +520,7 @@
                 <span>${r.name}</span>
             </div>`;
         });
-
-        resultArea.innerHTML = html;
-        resultArea.scrollTop = 0;
+        document.getElementById('result-area').innerHTML = html;
     }
 
     function resetAll() {
