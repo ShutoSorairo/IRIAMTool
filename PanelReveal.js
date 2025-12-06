@@ -1,115 +1,106 @@
-// ▼ パネルの裏に隠す景品データ（ラフ画を元に作成）
-// 必要な数だけデータを追加・編集してください。
-const panelData = [
-    // ~えらいカテゴリ~ お見事！(500pt) × 5個
-    ...Array(5).fill({ cat: "えらい", name: "お見事！", pt: 500 }),
-    // ~ラブカテ~ 大好き or 10000pt × 1個
-    { cat: "LOVE", name: "大好き or 1万pt", pt: 10000 },
-    // お歌5曲 × 1個
-    { cat: "その他", name: "お歌5曲", pt: 0 },
-    // ~ミライトギフト~ ウィンクチャレンジ(500pt) × 5個
-    ...Array(5).fill({ cat: "ミライト", name: "ウィンクCP", pt: 500 }),
-    // ~ミライトギフト~ セレブレーション(1000pt) × 3個
-    ...Array(3).fill({ cat: "ミライト", name: "セレブレーション", pt: 1000 }),
-    // ~ラブカテ~ すこっていい？(500pt) × 2個
-    ...Array(2).fill({ cat: "LOVE", name: "すこっていい？", pt: 500 }),
-    // ~専用ギフト~ 神推し(100pt) × 10個
-    ...Array(10).fill({ cat: "専用", name: "神推し", pt: 100 }),
-    // ~専用ギフト~ のびのび猫(100pt) × 15個 (※数が多すぎたので調整しました)
-    ...Array(15).fill({ cat: "専用", name: "のびのび猫", pt: 100 }),
-    // コメント1000 × 1個
-    { cat: "その他", name: "コメント1000", pt: 0 },
-    // 調整用（空白のパネル）
-    ...Array(5).fill({ cat: "-", name: "(ハズレ)", pt: 0 })
+// ▼ パネルに表示するミッションデータ
+// ラフ画の内容を元に作成しました
+const missions = [
+    { cat: "～えらいカテゴリ～", text: "お見事！\n(500pt)\n5個" },
+    { cat: "～ラブカテ～", text: "大好き\nor\n10000pt" },
+    { cat: "～その他～", text: "お歌5曲" },
+    { cat: "～ミライトギフト～", text: "ウィンクCP\n(500pt)\n5個" },
+    { cat: "～ミライトギフト～", text: "セレブレーション\n(1000pt)\n3個" },
+    { cat: "～ラブカテ～", text: "すこっていい？\n(500pt)\n2個" },
+    { cat: "～専用ギフト～", text: "神推し\n(100pt)\n10個" },
+    { cat: "～専用ギフト～", text: "のびのび猫\n(100pt)\n20個" },
+    { cat: "～その他～", text: "コメント\n1000個" },
+    
+    // 足りない分はランダムや繰り返しで埋めるための予備データ
+    { cat: "Free", text: "お好きなギフト\n1個" },
+    { cat: "Chance", text: "リクエスト\n1曲" },
+    { cat: "Bonus", text: "スクショ\nタイム" },
+    { cat: "Mission", text: "セリフ枠\n実施" },
+    { cat: "Mission", text: "延長\n30分" },
+    { cat: "Mission", text: "初見さん\n挨拶" },
+    { cat: "Mission", text: "定期\nツイート" }
 ];
 
-// パステルカラーのパレット（ラフ画の雰囲気）
-const colorPalette = [
-    "#ff9a9e", "#fad0c4", "#a18cd1", "#fbc2eb", "#8fd3f4", 
-    "#84fab0", "#fccb90", "#d299c2", "#a8edea", "#fed6e3"
+// パステルカラーのパレット
+const colors = [
+    "#ffccbc", "#ffe0b2", "#ffecb3", "#dcedc8", "#b2dfdb",
+    "#b3e5fc", "#e1bee7", "#f8bbd0", "#cfd8dc"
 ];
 
-// 起動時の処理
 document.addEventListener('DOMContentLoaded', () => {
-    initPanels();
+    initBoard();
+    
+    // 画像アップロード機能
+    document.getElementById('imageInput').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('hidden-image').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
 });
 
-// パネルの初期化と生成
-function initPanels() {
+function initBoard() {
     const grid = document.getElementById('panel-grid');
-    grid.innerHTML = ''; // 一旦空にする
+    grid.innerHTML = '';
 
-    // データをシャッフル（順番をランダムにする）
-    const shuffledData = shuffleArray([...panelData]);
+    // ミッションをシャッフル
+    const shuffled = shuffle([...missions]);
+    
+    // 現在のCSSグリッド設定に合わせてパネル数を調整（例: 4x4=16枚）
+    // CSSの grid-template-columns / rows に合わせて数を調整してください
+    const totalPanels = 16; 
 
-    // データに基づいてパネル要素を作成
-    shuffledData.forEach((data, index) => {
+    // データが足りない場合はループさせる
+    while (shuffled.length < totalPanels) {
+        shuffled.push(...missions);
+    }
+
+    for (let i = 0; i < totalPanels; i++) {
+        const data = shuffled[i];
         const panel = document.createElement('div');
         panel.className = 'panel-item';
         
-        // ランダムな色と形を適用
-        const color = colorPalette[Math.floor(Math.random() * colorPalette.length)];
-        const clipStyle = generateRandomClipPath();
+        // ランダムな色付け
+        const bg = colors[Math.floor(Math.random() * colors.length)];
+        panel.style.backgroundColor = bg;
+
+        // 改行コード(\n)を<br>に変換
+        const formattedText = data.text.replace(/\n/g, '<br>');
 
         panel.innerHTML = `
-            <div class="panel-inner">
-                <div class="panel-front" style="background:${color}; ${clipStyle}">
-                    <span style="opacity:0.7;">?</span>
-                </div>
-                <div class="panel-back">
-                    <div class="prize-content">
-                        <span class="prize-category">${data.cat}</span>
-                        <span class="prize-name">${data.name}</span>
-                        ${data.pt > 0 ? `<span class="prize-points">${data.pt}pt</span>` : ''}
-                    </div>
-                </div>
-            </div>
+            <div class="mission-cat">${data.cat}</div>
+            <div class="mission-text">${formattedText}</div>
         `;
 
-        // クリックイベント（開く処理）
+        // クリックで消えるイベント
         panel.addEventListener('click', function() {
-            this.classList.add('opened');
+            // クラスを付与して透明にする（完全に消すとレイアウトが崩れるためopacity:0にする）
+            this.classList.add('cleared');
         });
 
         grid.appendChild(panel);
-    });
-}
-
-// パネルを元に戻す（リセット）
-function resetPanels() {
-    if(confirm("すべてのパネルを閉じて、配置をシャッフルしますか？")) {
-        const panels = document.querySelectorAll('.panel-item');
-        panels.forEach(p => p.classList.remove('opened'));
-        
-        // アニメーション完了後に再生成
-        setTimeout(() => {
-            initPanels();
-        }, 600);
     }
 }
 
-// 配列をシャッフルする関数（フィッシャー–イェーツ法）
-function shuffleArray(array) {
+function resetPanels() {
+    if(confirm("パネルを全て元に戻しますか？")) {
+        const panels = document.querySelectorAll('.panel-item');
+        panels.forEach(p => p.classList.remove('cleared'));
+        
+        // 少し待ってから中身をシャッフルし直す
+        setTimeout(initBoard, 500);
+    }
+}
+
+// シャッフル関数
+function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
     return array;
-}
-
-// ランダムな多角形のスタイルを生成する関数
-function generateRandomClipPath() {
-    // 4隅の座標を少しランダムにずらす
-    const tl = `${rnd(0,15)}% ${rnd(0,15)}%`;   // 左上
-    const tr = `${rnd(85,100)}% ${rnd(0,15)}%`; // 右上
-    const br = `${rnd(85,100)}% ${rnd(85,100)}%`; // 右下
-    const bl = `${rnd(0,15)}% ${rnd(85,100)}%`;   // 左下
-    
-    // polygon関数で多角形を定義
-    return `clip-path: polygon(${tl}, ${tr}, ${br}, ${bl});`;
-}
-
-// 指定範囲のランダムな整数を返す補助関数
-function rnd(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
