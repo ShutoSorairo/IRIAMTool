@@ -81,7 +81,7 @@ function showGifts(category) {
         item.className = 'gift-item';
         item.innerHTML = `
             <div class="gift-icon">
-                <img src="${gift.src}" alt="${gift.name}" class="gift-img" loading="lazy">
+                <img src="${gift.src}" alt="${gift.name}" class="gift-img" loading="lazy" style="width:40px;height:40px;">
             </div>
             <div class="gift-name">${gift.name}</div>
             <div class="gift-points">${pointsStr}</div>
@@ -100,3 +100,4 @@ function getPointValue(src) {
     }
     return 0; // ポイント表記がない場合は0として扱う
 }
+
