@@ -8,31 +8,39 @@
     <link rel="stylesheet" href="AdminDashboard.css">
 </head>
 <body>
-
     <a href="index.html" class="home-btn">ホームへ戻る</a>
 
     <div class="card" style="text-align:center; background:#fff3e0; border:2px dashed #ffb74d;">
         <h3 style="color:#e65100; margin-top:0;">💾 設定を保存する</h3>
         <p style="font-size:0.9em;">作業が終わったら必ずダウンロードしてください。</p>
-        <button onclick="downloadJSON()" class="btn-dl">
-            gifts.json をダウンロード
-        </button>
+        <button onclick="downloadJSON()" class="btn-dl">gifts.json をダウンロード</button>
     </div>
 
     <div class="card">
-        <h3>📂 ギフト追加 (独立入力版)</h3>
-        <p>ギフト名とファイル名は別々に入力します。<br>拡張子は <b>.PNG</b> で固定されます。</p>
+        <h3>📂 ギフト追加 (複数カテゴリ対応)</h3>
         
         <div style="text-align:right; font-size:0.9em; color:#666; margin-bottom:10px;">
-            現在の登録数: <span id="current-count" style="font-weight:bold;">読み込み中...</span> 件
+            現在の登録数: <span id="current-count" style="font-weight:bold;">...</span> 件
         </div>
 
         <div style="background:#f4faff; padding:20px; border-radius:8px; border:1px solid #d0e3f0;">
-            <label>1. ギフト名 (表示名)</label>
+            <label>1. ギフト名</label>
             <input type="text" id="g-name" placeholder="例: すごいしらす" style="width:100%;">
             
-            <label>2. カテゴリ (フォルダ自動選択)</label>
-            <select id="g-category" onchange="updatePreview()" style="width:100%;">
+            <label>2. 所属カテゴリ (複数選択可)</label>
+            <div class="checkbox-group" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:15px;">
+                <label><input type="checkbox" name="cats" value="ネタ"> ネタ</label>
+                <label><input type="checkbox" name="cats" value="笑"> 笑</label>
+                <label><input type="checkbox" name="cats" value="定番"> 定番</label>
+                <label><input type="checkbox" name="cats" value="専用"> 専用</label>
+                <label><input type="checkbox" name="cats" value="えらい"> えらい</label>
+                <label><input type="checkbox" name="cats" value="挨拶"> 挨拶</label>
+                <label><input type="checkbox" name="cats" value="ステージ"> ステージ</label>
+                <label><input type="checkbox" name="cats" value="LOVE"> LOVE</label>
+            </div>
+
+            <label>3. 画像保存先フォルダ (パス生成用)</label>
+            <select id="g-folder" onchange="updatePreview()" style="width:100%;">
                 <option value="ネタ">ネタ</option>
                 <option value="笑">笑</option>
                 <option value="定番">定番</option>
@@ -40,32 +48,28 @@
                 <option value="えらい">えらい</option>
                 <option value="挨拶">挨拶</option>
                 <option value="ステージ">ステージ</option>
-                <option value="LOVE">LOVE (Love)</option>
+                <option value="Love">Love (LOVE)</option>
             </select>
 
-            <label>3. 画像ファイル設定</label>
-            <div style="margin-bottom:5px; font-size:0.85em; color:#666;">※半角英数字推奨。拡張子は不要です。</div>
+            <label>4. ファイル設定</label>
             <div class="input-group">
-                <input type="text" id="g-filebase" placeholder="ファイル名 (例: sugoshira)" oninput="updatePreview()" style="flex:2;">
+                <input type="text" id="g-filebase" placeholder="ファイル名" oninput="updatePreview()" style="flex:2;">
                 <span style="font-weight:bold; color:#555;">_</span>
                 <input type="number" id="g-points" placeholder="PT" oninput="updatePreview()" style="width:80px; text-align:right;">
                 <div class="fixed-text">pt.PNG</div>
             </div>
 
-            <label>生成されるパス (プレビュー)</label>
-            <div id="path-preview" class="preview-box">ギフト/ネタ/_pt.PNG</div>
+            <label>パスプレビュー</label>
+            <div id="path-preview" class="preview-box">ギフト/...</div>
 
-            <button onclick="addGift()" class="btn-add">リストに追加する</button>
+            <button onclick="addGift()" class="btn-add">リストに追加</button>
         </div>
     </div>
 
     <div class="card">
         <h3>🗑️ 登録済みギフトの管理</h3>
-        <p>名前で検索して削除できます。</p>
         <input type="text" id="search-box" placeholder="🔍 名前で検索..." oninput="renderGiftList()" style="width:100%; margin-bottom:10px;">
-        <div id="gift-list-container" class="gift-list-box">
-            <div style="text-align:center; padding:20px; color:#aaa;">読み込み中...</div>
-        </div>
+        <div id="gift-list-container" class="gift-list-box"></div>
     </div>
 
     <script src="AdminDashboard.js"></script>
