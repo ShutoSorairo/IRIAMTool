@@ -18,15 +18,28 @@
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            width: 100%;
-            box-sizing: border-box; /* 枠線を含めたサイズ計算 */
+            box-sizing: border-box;
         }
         label {
             font-weight: bold;
             display: block;
-            margin-top: 10px;
+            margin-top: 15px;
             margin-bottom: 5px;
             color: #333;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .fixed-text {
+            color: #666;
+            font-weight: bold;
+            background: #eee;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            white-space: nowrap;
         }
         .preview-box {
             background: #222;
@@ -46,7 +59,7 @@
             font-size: 1.1em;
             cursor: pointer;
             border-radius: 5px;
-            margin-top: 10px;
+            margin-top: 20px;
         }
         .btn-dl {
             display: inline-block;
@@ -66,21 +79,20 @@
     </div>
 
     <div class="card">
-        <h3>📂 ギフト追加 & JSON更新</h3>
-        <p>リストに新しいギフトを追加し、更新用ファイルをダウンロードします。</p>
+        <h3>📂 ギフト追加 (PT指定・PNG大文字)</h3>
+        <p>ポイント数と名前を入力するだけで、正しいファイル名を自動生成します。</p>
         
         <div style="text-align:right; font-size:0.9em; color:#666;">
             現在の登録数: <span id="current-count">読み込み中...</span> 件
         </div>
 
         <div style="background:#f4faff; padding:15px; border-radius:8px; border:1px solid #d0e3f0;">
-            <label>1. ギフト名</label>
-            <input type="text" id="g-name" placeholder="例: すごいしらす">
             
-            <label>2. カテゴリ (フォルダを自動選択)</label>
-            <select id="g-category" onchange="updatePreview()">
-                <option value="ミライト復刻">ミライト復刻 (New)</option>
-                <option value="季節">季節</option>
+            <label>1. ギフト名 (表示名)</label>
+            <input type="text" id="g-name" placeholder="例: すごいしらす" style="width:100%;">
+            
+            <label>2. カテゴリ (フォルダ自動選択)</label>
+            <select id="g-category" onchange="updatePreview()" style="width:100%;">
                 <option value="ネタ">ネタ</option>
                 <option value="笑">笑</option>
                 <option value="定番">定番</option>
@@ -89,21 +101,32 @@
                 <option value="挨拶">挨拶</option>
                 <option value="ステージ">ステージ</option>
                 <option value="LOVE">LOVE (Love)</option>
+                <option value="ミライト復刻">ミライト復刻 (New)</option>
+                <option value="季節">季節</option>
             </select>
 
-            <label>3. 画像ファイル名 (ポイント数含む)</label>
-            <input type="text" id="g-filename" placeholder="例: sugoshira_100pt.png" oninput="updatePreview()">
-            <small style="color:#666;">※「_100pt.png」などの形式にしてください。</small>
+            <label>3. 画像ファイル設定</label>
+            <div style="margin-bottom:5px; font-size:0.85em; color:#666;">※半角英数字推奨。拡張子は不要です。</div>
+            
+            <div class="input-group">
+                <input type="text" id="g-filebase" placeholder="ファイル名 (例: sugoshira)" oninput="updatePreview()" style="flex:2;">
+                
+                <span style="font-weight:bold;">_</span>
+                
+                <input type="number" id="g-points" placeholder="PT" oninput="updatePreview()" style="width:80px; text-align:right;">
+                
+                <div class="fixed-text">pt.PNG</div>
+            </div>
 
-            <label>パスプレビュー (自動生成)</label>
-            <div id="path-preview" class="preview-box">ギフト/New/undefined</div>
+            <label>生成されるパス (プレビュー)</label>
+            <div id="path-preview" class="preview-box">ギフト/ネタ/_pt.PNG</div>
 
             <button onclick="addGiftToJSON()" class="btn-add">リストに追加する</button>
         </div>
         
         <div id="dl-area" style="display:none; text-align:center; margin-top:20px; border-top:1px solid #eee; padding-top:20px;">
             <p style="color:#2e7d32; font-weight:bold;">✅ 追加されました！</p>
-            <p>下のボタンを押して <b>gifts.json</b> を保存し、<br>サーバー(GitHub)のファイルを上書きしてください。</p>
+            <p>下のボタンで <b>gifts.json</b> を保存し、<br>画像ファイル(<b>.PNG</b>)と一緒にアップロードしてください。</p>
             <a id="json-dl-link" href="#" download="gifts.json" class="btn-dl">
                 gifts.json をダウンロード
             </a>
@@ -111,11 +134,8 @@
     </div>
 
     <script>
-        // ▼ フォルダ名の対応表 (重要)
-        // 左: カテゴリ名, 右: 実際のフォルダ名
+        // ▼ フォルダ名の対応表
         const folderMap = {
-            "ミライト復刻": "New",    // フォルダ名が「New」の場合
-            "季節": "季節",
             "ネタ": "ネタ",
             "笑": "笑",
             "定番": "定番",
@@ -123,12 +143,12 @@
             "えらい": "えらい",
             "挨拶": "挨拶",
             "ステージ": "ステージ",
-            "LOVE": "Love"        // フォルダ名が「Love」 (大文字小文字に注意)
+            "LOVE": "Love"
         };
 
         let currentGifts = [];
 
-        // ページ読み込み時にサーバー上の最新JSONを取得
+        // 初期化
         window.onload = async function() {
             // ログインチェック
             if (!sessionStorage.getItem('iriam_admin_logged_in')) {
@@ -136,8 +156,6 @@
                 window.location.href = "AdminLogin.html";
                 return;
             }
-
-            updatePreview(); // プレビュー初期化
 
             try {
                 const res = await fetch('gifts.json');
@@ -149,36 +167,40 @@
                 }
             } catch(e) {
                 console.error("JSON読込エラー", e);
-                document.getElementById('current-count').textContent = "エラー";
             }
+            updatePreview();
         };
 
-        // パスのプレビューを表示する機能
+        // プレビュー更新機能
         function updatePreview() {
             const cat = document.getElementById('g-category').value;
-            const filename = document.getElementById('g-filename').value;
+            const filebase = document.getElementById('g-filebase').value; // ファイル名部分
+            const points = document.getElementById('g-points').value;     // ポイント部分
             
-            // 対応表からフォルダ名を取得、なければカテゴリ名をそのまま使う
-            const folder = folderMap[cat] || cat; 
+            // フォルダ決定
+            const folder = folderMap[cat] || cat;
             
-            const fullPath = `ギフト/${folder}/${filename}`;
+            const ptStr = points ? points : ""; 
+            
+            const fullPath = `ギフト/${folder}/${filebase}_${ptStr}pt.PNG`;
             document.getElementById('path-preview').textContent = fullPath;
         }
 
-        // リストに追加してダウンロード準備をする機能
+        // 追加機能
         function addGiftToJSON() {
             const name = document.getElementById('g-name').value;
             const cat = document.getElementById('g-category').value;
-            const filename = document.getElementById('g-filename').value;
+            const filebase = document.getElementById('g-filebase').value;
+            const points = document.getElementById('g-points').value;
 
-            if(!name || !filename) {
-                alert("名前とファイル名を入力してください");
+            if(!name || !filebase || !points) {
+                alert("すべての項目を入力してください");
                 return;
             }
 
-            // 正しいパスを生成
             const folder = folderMap[cat] || cat;
-            const fullPath = `ギフト/${folder}/${filename}`;
+            
+            const fullPath = `ギフト/${folder}/${filebase}_${points}pt.PNG`;
 
             // 配列に追加
             currentGifts.push({
@@ -187,27 +209,25 @@
                 src: fullPath
             });
 
-            // 画面の件数更新
             document.getElementById('current-count').textContent = currentGifts.length;
 
-            // JSONデータを作成
-            const jsonStr = JSON.stringify(currentGifts, null, 2); // 見やすく整形
+            // JSON生成
+            const jsonStr = JSON.stringify(currentGifts, null, 2);
             const blob = new Blob([jsonStr], {type: "application/json"});
             const url = URL.createObjectURL(blob);
             
-            // ダウンロードリンクを設定
             const link = document.getElementById('json-dl-link');
             link.href = url;
 
-            // ダウンロードエリアを表示
             document.getElementById('dl-area').style.display = 'block';
             
-            // 入力欄をクリア
+            // 入力クリア
             document.getElementById('g-name').value = '';
-            document.getElementById('g-filename').value = '';
+            document.getElementById('g-filebase').value = '';
+            document.getElementById('g-points').value = '';
             updatePreview();
 
-            alert(`「${name}」を追加しました。\n最後に必ずダウンロードしてアップロードしてください。`);
+            alert(`「${name}」(${points}pt) を追加しました。\n画像ファイル名は「${filebase}_${points}pt.PNG」にしてください。`);
         }
     </script>
 </body>
