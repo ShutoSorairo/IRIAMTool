@@ -1,106 +1,128 @@
-// ▼ パネルに表示するミッションデータ
-// ラフ画の内容を元に作成しました
-const missions = [
-    { cat: "～えらいカテゴリ～", text: "お見事！\n(500pt)\n5個" },
-    { cat: "～ラブカテ～", text: "大好き\nor\n10000pt" },
-    { cat: "～その他～", text: "お歌5曲" },
-    { cat: "～ミライトギフト～", text: "ウィンクCP\n(500pt)\n5個" },
-    { cat: "～ミライトギフト～", text: "セレブレーション\n(1000pt)\n3個" },
-    { cat: "～ラブカテ～", text: "すこっていい？\n(500pt)\n2個" },
-    { cat: "～専用ギフト～", text: "神推し\n(100pt)\n10個" },
-    { cat: "～専用ギフト～", text: "のびのび猫\n(100pt)\n20個" },
-    { cat: "～その他～", text: "コメント\n1000個" },
-    
-    // 足りない分はランダムや繰り返しで埋めるための予備データ
-    { cat: "Free", text: "お好きなギフト\n1個" },
-    { cat: "Chance", text: "リクエスト\n1曲" },
-    { cat: "Bonus", text: "スクショ\nタイム" },
-    { cat: "Mission", text: "セリフ枠\n実施" },
-    { cat: "Mission", text: "延長\n30分" },
-    { cat: "Mission", text: "初見さん\n挨拶" },
-    { cat: "Mission", text: "定期\nツイート" }
-];
-
-// パステルカラーのパレット
-const colors = [
-    "#ffccbc", "#ffe0b2", "#ffecb3", "#dcedc8", "#b2dfdb",
-    "#b3e5fc", "#e1bee7", "#f8bbd0", "#cfd8dc"
-];
+// パネルの設定データ
+// ※自由な形にしたい場合は、ここの width/height/top/left を手動で編集可能です
+let panels = [];
 
 document.addEventListener('DOMContentLoaded', () => {
-    initBoard();
-    
-    // 画像アップロード機能
-    document.getElementById('imageInput').addEventListener('change', function(e) {
+    // 画像アップロード処理
+    const input = document.getElementById('imageInput');
+    input.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file) {
+            document.getElementById('file-name').textContent = file.name;
             const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('hidden-image').src = e.target.result;
+            reader.onload = function(evt) {
+                const img = document.getElementById('hidden-image');
+                img.src = evt.target.result;
+                img.onload = () => adjustBoardSize(img);
+                document.getElementById('no-image-text').style.display = 'none';
             };
             reader.readAsDataURL(file);
         }
     });
 });
 
-function initBoard() {
-    const grid = document.getElementById('panel-grid');
-    grid.innerHTML = '';
-
-    // ミッションをシャッフル
-    const shuffled = shuffle([...missions]);
+// 画像の比率に合わせてボードサイズを調整
+function adjustBoardSize(img) {
+    const wrapper = document.getElementById('board-wrapper');
+    const aspect = img.naturalWidth / img.naturalHeight;
+    // CSSのaspect-ratioを設定して比率を固定
+    wrapper.style.aspectRatio = `${img.naturalWidth} / ${img.naturalHeight}`;
     
-    // 現在のCSSグリッド設定に合わせてパネル数を調整（例: 4x4=16枚）
-    // CSSの grid-template-columns / rows に合わせて数を調整してください
-    const totalPanels = 16; 
+    // パネルを再生成
+    generateGrid();
+}
 
-    // データが足りない場合はループさせる
-    while (shuffled.length < totalPanels) {
-        shuffled.push(...missions);
-    }
+// グリッド生成（または自由定義データの読み込み）
+function generateGrid() {
+    const layer = document.getElementById('panel-layer');
+    layer.innerHTML = '';
+    panels = [];
 
-    for (let i = 0; i < totalPanels; i++) {
-        const data = shuffled[i];
-        const panel = document.createElement('div');
-        panel.className = 'panel-item';
-        
-        // ランダムな色付け
-        const bg = colors[Math.floor(Math.random() * colors.length)];
-        panel.style.backgroundColor = bg;
+    const cols = parseInt(document.getElementById('grid-cols').value);
+    const rows = parseInt(document.getElementById('grid-rows').value);
+    const defaultTarget = parseInt(document.getElementById('default-target').value);
 
-        // 改行コード(\n)を<br>に変換
-        const formattedText = data.text.replace(/\n/g, '<br>');
+    const widthPct = 100 / cols;
+    const heightPct = 100 / rows;
 
-        panel.innerHTML = `
-            <div class="mission-cat">${data.cat}</div>
-            <div class="mission-text">${formattedText}</div>
-        `;
-
-        // クリックで消えるイベント
-        panel.addEventListener('click', function() {
-            // クラスを付与して透明にする（完全に消すとレイアウトが崩れるためopacity:0にする）
-            this.classList.add('cleared');
-        });
-
-        grid.appendChild(panel);
+    // パネルを生成して配置
+    let idCounter = 0;
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            const panelData = {
+                id: idCounter++,
+                top: r * heightPct,
+                left: c * widthPct,
+                width: widthPct,
+                height: heightPct,
+                current: 0,
+                target: defaultTarget,
+                label: `No.${idCounter}` // 必要に応じて "お見事" などに変更可
+            };
+            panels.push(panelData);
+            createPanelElement(panelData, layer);
+        }
     }
 }
 
-function resetPanels() {
-    if(confirm("パネルを全て元に戻しますか？")) {
-        const panels = document.querySelectorAll('.panel-item');
-        panels.forEach(p => p.classList.remove('cleared'));
+// パネルのDOM要素を作成
+function createPanelElement(data, container) {
+    const div = document.createElement('div');
+    div.className = 'panel-item';
+    // 位置とサイズ指定 (％指定なので画像サイズが変わっても追従します)
+    div.style.top = data.top + '%';
+    div.style.left = data.left + '%';
+    div.style.width = data.width + '%';
+    div.style.height = data.height + '%';
+    div.id = `p-${data.id}`;
+
+    // 中身のHTML
+    div.innerHTML = `
+        <div class="panel-info">
+            <div id="label-${data.id}">${data.label}</div>
+            <div id="count-${data.id}">0 / ${data.target}</div>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="bar-${data.id}"></div>
+        </div>
+        <button class="counter-btn" onclick="increment(${data.id})">＋</button>
         
-        // 少し待ってから中身をシャッフルし直す
-        setTimeout(initBoard, 500);
+        <button class="open-btn" id="btn-${data.id}" onclick="openPanel(${data.id})">
+            OPEN
+            <span>Click!</span>
+        </button>
+    `;
+
+    container.appendChild(div);
+}
+
+// カウントアップ処理
+function increment(id) {
+    const panel = panels.find(p => p.id === id);
+    if (!panel) return;
+
+    panel.current++;
+    updatePanelUI(panel);
+}
+
+// UI更新 & 達成判定
+function updatePanelUI(panel) {
+    // 表示更新
+    document.getElementById(`count-${panel.id}`).textContent = `${panel.current} / ${panel.target}`;
+    
+    // バー更新
+    const pct = Math.min(100, (panel.current / panel.target) * 100);
+    document.getElementById(`bar-${panel.id}`).style.width = pct + '%';
+
+    // 達成チェック
+    if (panel.current >= panel.target) {
+        const btn = document.getElementById(`btn-${panel.id}`);
+        btn.style.display = 'flex'; // OPENボタンを表示
     }
 }
 
-// シャッフル関数
-function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
+// パネルを開く（消す）処理
+function openPanel(id) {
+    const el = document.getElementById(`p-${id}`);
+    el.classList.add('cleared'); // CSSアニメーションで消す
 }
