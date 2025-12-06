@@ -1,432 +1,637 @@
 [
   {
     "name": "もういっかい！",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/もういっかい！_5pt.PNG"
   },
   {
     "name": "ダウト",
-    "category": "ネタ",
+    "category": [
+      "ネタ",
+      "定番"
+    ],
     "src": "ギフト/ネタ/ダウト_5pt.PNG"
   },
   {
     "name": "ざわ…ざわ…",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/ざわ…ざわ…_5pt.PNG"
   },
   {
     "name": "炎",
-    "category": "ネタ",
+    "category": [
+      "ネタ",
+      "定番"
+    ],
     "src": "ギフト/ネタ/ファイヤー_5pt.PNG"
   },
   {
     "name": "非常口",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/非常口_5pt.PNG"
   },
   {
     "name": "いつもので",
-    "category": "ネタ",
+    "category": [
+      "ネタ",
+      "定番",
+      "ステージ"
+    ],
     "src": "ギフト/ネタ/いつもので_5pt.PNG"
   },
   {
     "name": "かー",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/かー_5pt.PNG"
   },
   {
     "name": "つー",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/つー_5pt.PNG"
   },
   {
     "name": "一体感",
-    "category": "ネタ",
+    "category": [
+      "ネタ",
+      "定番"
+    ],
     "src": "ギフト/ネタ/一体感_5pt.PNG"
   },
   {
     "name": "乗りなッ！",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/乗りなッ！_5pt.PNG"
   },
   {
     "name": "降りろ…",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/降りろ…_5pt.PNG"
   },
   {
     "name": "しーっ",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/しーっ_5pt.PNG"
   },
   {
     "name": "はて…？",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/はて…？_5pt.PNG"
   },
   {
     "name": "やれやれ",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/やれやれ_5pt.PNG"
   },
   {
     "name": "ばぁ。",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/ばぁ。_5pt.PNG"
   },
   {
     "name": "完全燃焼",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/完全燃焼_5pt.PNG"
   },
   {
     "name": "激熱",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/激熱_5pt.PNG"
   },
   {
     "name": "まぶしい",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/まぶしい_5pt.PNG"
   },
   {
     "name": "世界一",
-    "category": "ネタ",
+    "category": [
+      "ネタ",
+      "えらい"
+    ],
     "src": "ギフト/ネタ/世界一_5pt.PNG"
   },
   {
     "name": "祭うちわ",
-    "category": "ネタ",
+    "category": [
+      "ネタ",
+      "ステージ"
+    ],
     "src": "ギフト/ネタ/祭うちわ_5pt.PNG"
   },
   {
     "name": "ええやん",
-    "category": "ネタ",
+    "category": [
+      "ネタ",
+      "えらい"
+    ],
     "src": "ギフト/ネタ/ええやん_5pt.PNG"
   },
   {
     "name": "最強",
-    "category": "ネタ",
+    "category": [
+      "ネタ",
+      "えらい"
+    ],
     "src": "ギフト/ネタ/最強_5pt.PNG"
   },
   {
     "name": "スリスリ",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/スリスリ_5pt.PNG"
   },
   {
     "name": "中二病",
-    "category": "ネタ",
+    "category": [
+      "ネタ",
+      "ステージ"
+    ],
     "src": "ギフト/ネタ/中二病_5pt.PNG"
   },
   {
     "name": "拳",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/拳_5pt.PNG"
   },
   {
     "name": "ふぅー！！",
-    "category": "ネタ",
+    "category": [
+      "ネタ",
+      "定番",
+      "ステージ"
+    ],
     "src": "ギフト/ネタ/ふぅー！！_5pt.PNG"
   },
   {
     "name": "メシウマ",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/メシウマ_5pt.PNG"
   },
   {
     "name": "アニキー！",
-    "category": "ネタ",
+    "category": [
+      "ネタ",
+      "えらい"
+    ],
     "src": "ギフト/ネタ/アニキー！_5pt.PNG"
   },
   {
     "name": "仰せのままに",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/仰せのままに_5pt.PNG"
   },
   {
     "name": "漢",
-    "category": "ネタ",
+    "category": [
+      "ネタ",
+      "えらい"
+    ],
     "src": "ギフト/ネタ/漢_5pt.PNG"
   },
   {
     "name": "鉄アレイ",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/鉄アレイ_5pt.PNG"
   },
   {
     "name": "しおしお…",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/しおしお…_5pt.PNG"
   },
   {
     "name": "ヒャッホー！",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/ヒャッホー！_5pt.PNG"
   },
   {
     "name": "あざとい",
-    "category": "ネタ",
+    "category": [
+      "ネタ",
+      "えらい",
+      "LOVE"
+    ],
     "src": "ギフト/ネタ/あざとい_5pt.PNG"
   },
   {
     "name": "おもしれーやつ",
-    "category": "ネタ",
+    "category": [
+      "ネタ",
+      "えらい"
+    ],
     "src": "ギフト/ネタ/おもしれーやつ_5pt.PNG"
   },
   {
     "name": "沼",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/沼_5pt.PNG"
   },
   {
     "name": "鳥肌注意",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/鳥肌注意_5pt.PNG"
   },
   {
     "name": "すやぁ…",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/すやぁ…_5pt.PNG"
   },
   {
     "name": "やりおる",
-    "category": "ネタ",
+    "category": [
+      "ネタ",
+      "えらい",
+      "挨拶"
+    ],
     "src": "ギフト/ネタ/やりおる_5pt.PNG"
   },
   {
     "name": "あとは頼んだ",
-    "category": "ネタ",
+    "category": [
+      "ネタ",
+      "挨拶"
+    ],
     "src": "ギフト/ネタ/あとは頼んだ_5pt.PNG"
   },
   {
     "name": "おねぎします。",
-    "category": "ネタ",
+    "category": [
+      "ネタ",
+      "定番",
+      "挨拶"
+    ],
     "src": "ギフト/ネタ/おねぎします。_5pt.PNG"
   },
   {
     "name": "まかセロリ",
-    "category": "ネタ",
+    "category": [
+      "ネタ",
+      "定番"
+    ],
     "src": "ギフト/ネタ/まかセロリ_5pt.PNG"
   },
   {
     "name": "ドヤッ",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/ドヤッ_5pt.PNG"
   },
   {
     "name": "ぱぁ",
-    "category": "ネタ",
+    "category": [
+      "ネタ",
+      "定番"
+    ],
     "src": "ギフト/ネタ/ぱぁ_5pt.PNG"
   },
   {
     "name": "チャージっ！",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/チャージっ！_10pt.PNG"
   },
   {
     "name": "ひんやりタイム",
-    "category": "ネタ",
+    "category": [
+      "ネタ",
+      "定番"
+    ],
     "src": "ギフト/ネタ/ひんやりタイム_10pt.PNG"
   },
   {
     "name": "アチッ",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/アチッ_10pt.PNG"
   },
   {
     "name": "・・・つむっ！",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/・・・つむっ！_10pt.PNG"
   },
   {
     "name": "おばけしらす",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/おばけしらす_44pt.PNG"
   },
   {
     "name": "オール",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/オール_99pt.PNG"
   },
   {
     "name": "しらすまん",
-    "category": "ネタ",
+    "category": [
+      "ネタ",
+      "定番"
+    ],
     "src": "ギフト/ネタ/しらすまん_200pt.PNG"
   },
   {
     "name": "ダウト(大)",
-    "category": "ネタ",
+    "category": [
+      "ネタ",
+      "定番"
+    ],
     "src": "ギフト/ネタ/ダウト(大)_200pt.PNG"
   },
   {
     "name": "爆弾",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/爆弾_300pt.PNG"
   },
   {
     "name": "カチコチ",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/カチコチ_300pt.PNG"
   },
   {
     "name": "蝋燭",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/蝋燭_300pt.PNG"
   },
   {
     "name": "どーなつちゃうの？",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/どーなつちゃうの？_300pt.PNG"
   },
   {
     "name": "嫁に来ないか…？",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/嫁に来ないか…？_500pt.PNG"
   },
   {
     "name": "そういうとこだぞ",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/そういうとこだぞ_500pt.PNG"
   },
   {
     "name": "ん…？",
-    "category": "ネタ",
+    "category": [
+      "ネタ",
+      "定番"
+    ],
     "src": "ギフト/ネタ/ん…？_500pt.PNG"
   },
   {
     "name": "パシャパシャ",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/パシャパシャ_500pt.PNG"
   },
   {
     "name": "集中線",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/集中線_500pt.PNG"
   },
   {
     "name": "警察だ！",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/警察だ！_500pt.PNG"
   },
   {
     "name": "パイ投げ",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/パイ投げ_500pt.PNG"
   },
   {
     "name": "たらい落とし",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/たらい落とし_500pt.PNG"
   },
   {
     "name": "しらすレインボー",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/しらすレインボー_500pt.PNG"
   },
   {
     "name": "ギガブルーム",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/ギガブルーム_500pt.PNG"
   },
   {
     "name": "まだ大丈夫。。",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/まだ大丈夫。。_500pt.PNG"
   },
   {
     "name": "気配感知",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/気配感知_500pt.PNG"
   },
   {
     "name": "REC",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/REC_500pt.PNG"
   },
   {
     "name": "お宝発見",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/お宝発見_1,000pt.PNG"
   },
   {
     "name": "あちらのお客様からです！",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/あちらのお客様からです！_3,000pt.PNG"
   },
   {
     "name": "www",
-    "category": "笑",
+    "category": [
+      "笑",
+      "定番"
+    ],
     "src": "ギフト/笑/www_5pt.PNG"
   },
   {
     "name": "草",
-    "category": ["笑","定番"],
+    "category": [
+      "笑",
+      "定番"
+    ],
     "src": "ギフト/笑/草_5pt.PNG"
   },
   {
     "name": "ドッ",
-    "category": "笑",
+    "category": [
+      "笑",
+      "定番"
+    ],
     "src": "ギフト/笑/ドッ_5pt.PNG"
   },
   {
     "name": "かぷかぷ",
-    "category": "笑",
+    "category": [
+      "笑"
+    ],
     "src": "ギフト/笑/かぷかぷ_5pt.PNG"
   },
   {
     "name": "こらえ笑い",
-    "category": "笑",
+    "category": [
+      "笑"
+    ],
     "src": "ギフト/笑/こらえ笑い_5pt.PNG"
   },
   {
     "name": "ブフォッ",
-    "category": "笑",
+    "category": [
+      "笑"
+    ],
     "src": "ギフト/笑/ブフォッ_5pt.PNG"
   },
   {
     "name": "微笑",
-    "category": "笑",
+    "category": [
+      "笑"
+    ],
     "src": "ギフト/笑/微笑_5pt.PNG"
   },
   {
     "name": "真顔",
-    "category": "笑",
+    "category": [
+      "笑"
+    ],
     "src": "ギフト/笑/真顔_5pt.PNG"
   },
   {
     "name": "草(植物)",
-    "category": ["笑","定番"],
+    "category": [
+      "笑",
+      "定番"
+    ],
     "src": "ギフト/笑/草(植物)_5pt.PNG"
   },
   {
     "name": "おもしれー",
-    "category": "笑",
+    "category": [
+      "笑"
+    ],
     "src": "ギフト/笑/おもしれー_5pt.PNG"
   },
   {
     "name": "ガハハ",
-    "category": "笑",
+    "category": [
+      "笑"
+    ],
     "src": "ギフト/笑/ガハハ_5pt.PNG"
   },
   {
     "name": "ズコー",
-    "category": "笑",
+    "category": [
+      "笑"
+    ],
     "src": "ギフト/笑/ズコー_5pt.PNG"
   },
   {
     "name": "座布団",
-    "category": "笑",
+    "category": [
+      "笑"
+    ],
     "src": "ギフト/笑/座布団_5pt.PNG"
   },
   {
     "name": "ビタミン不足",
-    "category": "笑",
+    "category": [
+      "笑"
+    ],
     "src": "ギフト/笑/ビタミン不足_5pt.PNG"
   },
   {
     "name": "ウケる",
-    "category": "笑",
+    "category": [
+      "笑",
+      "定番"
+    ],
     "src": "ギフト/笑/ウケる_5pt.PNG"
   },
   {
@@ -440,1660 +645,1829 @@
   {
     "name": "うんうん",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/うんうん_1pt.PNG"
   },
   {
     "name": "なるほど",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/なるほど_1pt.PNG"
   },
   {
     "name": "わかる",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/わかる_1pt.PNG"
   },
   {
     "name": "わからん",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/わからん_1pt.PNG"
   },
   {
     "name": "爆笑",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/爆笑_1pt.PNG"
   },
   {
     "name": "号泣",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/号泣_1pt.PNG"
   },
   {
     "name": "考え中",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/考え中_1pt.PNG"
   },
   {
     "name": "好物",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番",
+      "LOVE"
+    ],
     "src": "ギフト/定番/好物_1pt.PNG"
   },
   {
     "name": "ふ～ん",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/ふ～ん_5pt.PNG"
   },
   {
     "name": "・・・",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/・・・_5pt.PNG"
   },
   {
     "name": "？",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/？_5pt.PNG"
   },
   {
     "name": "！？",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/！？_5pt.PNG"
   },
   {
     "name": "ありがとう！",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/ありがとう！_5pt.PNG"
   },
   {
     "name": "やだ",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/やだ_5pt.PNG"
-  },
-  {
-    "name": "ダウト",
-    "icon": "",
-    "category": "定番",
-    "src": "ギフト/定番/ダウト_5pt.PNG"
-  },
-  {
-    "name": "www",
-    "icon": "",
-    "category": "定番",
-    "src": "ギフト/定番/www_5pt.PNG"
   },
   {
     "name": "神",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番",
+      "えらい"
+    ],
     "src": "ギフト/定番/神_5pt.PNG"
   },
   {
     "name": "キャンディ",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/キャンディ_5pt.PNG"
-  },
-  {
-    "name": "炎",
-    "icon": "",
-    "category": "定番",
-    "src": "ギフト/定番/炎_5pt.PNG"
   },
   {
     "name": "握手",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番",
+      "挨拶"
+    ],
     "src": "ギフト/定番/握手_5pt.PNG"
   },
   {
     "name": "ハイ！",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/ハイ！_5pt.PNG"
   },
   {
     "name": "助かる",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/助かる_5pt.PNG"
   },
   {
     "name": "クラッカー",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番",
+      "ステージ"
+    ],
     "src": "ギフト/定番/クラッカー_5pt.PNG"
   },
   {
     "name": "良さそう",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番",
+      "えらい"
+    ],
     "src": "ギフト/定番/良さそう_5pt.PNG"
   },
   {
     "name": "クローバー",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/クローバー_5pt.PNG"
   },
   {
     "name": "ドリンク",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/ドリンク_5pt.PNG"
   },
   {
     "name": "ぴえん",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/ぴえん_5pt.PNG"
   },
   {
     "name": "バラ",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/バラ_5pt.PNG"
-  },
-  {
-    "name": "いつもので",
-    "icon": "",
-    "category": "定番",
-    "src": "ギフト/定番/いつもので_5pt.PNG"
-  },
-  {
-    "name": "一体感",
-    "icon": "",
-    "category": "定番",
-    "src": "ギフト/定番/一体感_5pt.PNG"
-  },
-  {
-    "name": "ドッ",
-    "icon": "",
-    "category": "定番",
-    "src": "ギフト/定番/ドッ_5pt.PNG"
   },
   {
     "name": "ごはん",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/ごはん_5pt.PNG"
   },
   {
     "name": "サラダバー",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番",
+      "挨拶"
+    ],
     "src": "ギフト/定番/サラダバー_5pt.PNG"
   },
   {
     "name": "えへへ",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/えへへ_5pt.PNG"
   },
   {
     "name": "うぐぅ…",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/うぐぅ…_5pt.PNG"
   },
   {
     "name": "ガクブル",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/ガクブル_5pt.PNG"
   },
   {
     "name": "サァーー",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/サァーー_5pt.PNG"
   },
   {
     "name": "ナムナム",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/ナムナム_5pt.PNG"
   },
   {
     "name": "ヒエッ",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/ヒエッ_5pt.PNG"
   },
   {
     "name": "ちょっと",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/ちょっと_5pt.PNG"
   },
   {
     "name": "むっちゃ",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/むっちゃ_5pt.PNG"
   },
   {
     "name": "もっと",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番",
+      "ステージ"
+    ],
     "src": "ギフト/定番/もっと_5pt.PNG"
   },
   {
     "name": "エナジードリンク",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/エナジードリンク_5pt.PNG"
   },
   {
     "name": "拍手",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番",
+      "えらい",
+      "ステージ"
+    ],
     "src": "ギフト/定番/拍手_5pt.PNG"
-  },
-  {
-    "name": "ふぅー！！",
-    "icon": "",
-    "category": "定番",
-    "src": "ギフト/定番/ふぅー！！_5pt.PNG"
   },
   {
     "name": "おいしいやつ！",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/おいしいやつ！_5pt.PNG"
   },
   {
     "name": "おかわり！",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/おかわり！_5pt.PNG"
   },
   {
     "name": "おなかいっぱい",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/おなかいっぱい_5pt.PNG"
   },
   {
     "name": "おなかすいた",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/おなかすいた_5pt.PNG"
   },
   {
     "name": "ごっつぁんです",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/ごっつぁんです_5pt.PNG"
   },
   {
     "name": "じゅるり",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/じゅるり_5pt.PNG"
   },
   {
     "name": "オサレ",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番",
+      "えらい"
+    ],
     "src": "ギフト/定番/オサレ_5pt.PNG"
   },
   {
     "name": "いえーい！",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/いえーい！(ホシーカ)_5pt.PNG"
   },
   {
     "name": "うむうむ",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/うむうむ(ぷくちゃ)_5pt.PNG"
   },
   {
     "name": "きゅるん",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/きゅるん(ユラミィ)_5pt.PNG"
   },
   {
     "name": "ごろごろ",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/ごろごろ(ねこころ)_5pt.PNG"
   },
   {
     "name": "ぺこぺこ",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/ぺこぺこ(つむまる)_5pt.PNG"
   },
   {
     "name": "あわわわ",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/あわわわ_5pt.PNG"
   },
   {
     "name": "しおしお",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/しおしお_5pt.PNG"
   },
   {
     "name": "ぽかぽか",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/ぽかぽか_5pt.PNG"
   },
   {
     "name": "やば～い",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/やば～い_5pt.PNG"
-  },
-  {
-    "name": "ウケる",
-    "icon": "",
-    "category": "定番",
-    "src": "ギフト/定番/ウケる_5pt.PNG"
   },
   {
     "name": "ビクッ！？",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/ビクッ！？_5pt.PNG"
   },
   {
     "name": "ファイティン",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/ファイティン_5pt.PNG"
   },
   {
     "name": "？？？",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/？？？_5pt.PNG"
   },
   {
     "name": "はぁい…",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/はぁい…_5pt.PNG"
   },
   {
     "name": "ふんふん…",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/ふんふん…_5pt.PNG"
   },
   {
     "name": "おねが～い",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/おねが～い_5pt.PNG"
   },
   {
     "name": "ぱぁぁ",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/ぱぁぁ_5pt.PNG"
   },
   {
     "name": "ぷんぷん",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/ぷんぷん_5pt.PNG"
   },
   {
     "name": "ふぉっふぉっ",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/ふぉっふぉっ_5pt.PNG"
   },
   {
     "name": "メンタルブレイク",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/メンタルブレイク_5pt.PNG"
   },
   {
     "name": "いっくよー！",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/いっくよー！_5pt.PNG"
-  },
-  {
-    "name": "おねぎします。",
-    "icon": "",
-    "category": "定番",
-    "src": "ギフト/定番/おねぎします。_5pt.PNG"
-  },
-  {
-    "name": "まかセロリ",
-    "icon": "",
-    "category": "定番",
-    "src": "ギフト/定番/まかセロリ_5pt.PNG"
-  },
-  {
-    "name": "ぱぁ",
-    "icon": "",
-    "category": "定番",
-    "src": "ギフト/定番/ぱぁ_5pt.PNG"
   },
   {
     "name": "ぱぁぁぁ",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/ぱぁぁぁ_5pt.PNG"
   },
   {
     "name": "ひそひそ",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/ひそひそ_5pt.PNG"
   },
   {
     "name": "ポカーン",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/ポカーン_5pt.PNG"
   },
   {
     "name": "閃き",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/閃き_5pt.PNG"
   },
   {
     "name": "のど飴",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/のど飴_5pt.PNG"
   },
   {
     "name": "休んで！",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/休んで！_5pt.PNG"
   },
   {
     "name": "寝て！",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/寝て！_5pt.PNG"
   },
   {
     "name": "食べて！",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/食べて！_5pt.PNG"
   },
   {
     "name": "充電中",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/充電中_5pt.PNG"
   },
   {
     "name": "残量100%",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/残量100_5pt.PNG"
   },
   {
     "name": "残量1%",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/残量1_5pt.PNG"
   },
   {
     "name": "グー",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/グー_5pt.PNG"
   },
   {
     "name": "チョキ",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/チョキ_5pt.PNG"
   },
   {
     "name": "パー",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/パー_5pt.PNG"
   },
   {
     "name": "シャキーン",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/シャキーン_10pt.PNG"
   },
   {
     "name": "キラキラ",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/キラキラ_10pt.PNG"
-  },
-  {
-    "name": "ひんやりタイム",
-    "icon": "",
-    "category": "定番",
-    "src": "ギフト/定番/ひんやりタイム_10pt.PNG"
   },
   {
     "name": "…どれ？",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/…どれ？_10pt.PNG"
   },
   {
     "name": "一本締め",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/一本締め_10pt.PNG"
   },
   {
     "name": "お茶",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/お茶_100pt.PNG"
   },
   {
     "name": "えらい",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番",
+      "えらい"
+    ],
     "src": "ギフト/定番/えらい_100pt.PNG"
   },
   {
     "name": "クラッカー(大)",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番",
+      "えらい",
+      "ステージ"
+    ],
     "src": "ギフト/定番/クラッカー(大)_200pt.PNG"
   },
   {
     "name": "バラ(大)",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番",
+      "ステージ"
+    ],
     "src": "ギフト/定番/バラ(大)_200pt.PNG"
   },
   {
     "name": "御意",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/御意_200pt.PNG"
-  },
-  {
-    "name": "しらすまん",
-    "icon": "",
-    "category": "定番",
-    "src": "ギフト/定番/しらすまん_200pt.PNG"
-  },
-  {
-    "name": "ダウト(大)",
-    "icon": "",
-    "category": "定番",
-    "src": "ギフト/定番/ダウト(大)_200pt.PNG"
   },
   {
     "name": "怒り",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/怒り_300pt.PNG"
   },
   {
     "name": "頑張れ",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/頑張れ_500pt.PNG"
   },
   {
     "name": "乾杯！",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/乾杯！_500pt.PNG"
   },
   {
     "name": "エモい(大)",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番",
+      "えらい"
+    ],
     "src": "ギフト/定番/エモい(大)_500pt.PNG"
   },
   {
     "name": "花束",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番",
+      "ステージ"
+    ],
     "src": "ギフト/定番/花束_500pt.PNG"
   },
   {
     "name": "ありがとう！(大)",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/ありがとう！(大)_500pt.PNG"
   },
   {
     "name": "助かる(大)",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/助かる(大)_500pt.PNG"
-  },
-  {
-    "name": "ん…？",
-    "icon": "",
-    "category": "定番",
-    "src": "ギフト/定番/ん…？_500pt.PNG"
   },
   {
     "name": "うわぁぁん",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/うわぁぁん_500pt.PNG"
   },
   {
     "name": "ウィンクチャレンジ",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/ウィンクチャレンジ_500pt.PNG"
   },
   {
     "name": "フレーム猫耳",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/フレーム猫耳_500pt.PNG"
   },
   {
     "name": "タピオカ",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/タピオカ_700pt.PNG"
   },
   {
     "name": "くす玉",
     "icon": "",
-    "category": ["定番","えらい","ステージ"],
+    "category": [
+      "定番",
+      "えらい",
+      "ステージ"
+    ],
     "src": "ギフト/定番/くす玉_1,000pt.PNG"
   },
   {
     "name": "缶詰(風船)",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/缶詰(風船)_3,000pt.PNG"
   },
   {
     "name": "イリアム特性パフェ",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/イリアム特製パフェ_3,000pt.PNG"
   },
   {
     "name": "缶詰(花)",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/缶詰(花)_5,000pt.PNG"
   },
   {
     "name": "缶詰タワー",
     "icon": "",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/缶詰タワー_10,000pt.PNG"
   },
   {
     "name": "バッジおめ",
     "icon": "",
-    "category": "専用",
+    "category": [
+      "専用"
+    ],
     "src": "ギフト/専用/バッジおめ_10pt.PNG"
   },
   {
     "name": "ナイフォロ",
     "icon": "",
-    "category": "専用",
+    "category": [
+      "専用"
+    ],
     "src": "ギフト/専用/ナイフォロ_10pt.PNG"
   },
   {
     "name": "ナイコメ",
     "icon": "",
-    "category": "専用",
+    "category": [
+      "専用"
+    ],
     "src": "ギフト/専用/ナイコメ_10pt.PNG"
   },
   {
     "name": "未定～！",
     "icon": "",
-    "category": "専用",
+    "category": [
+      "専用"
+    ],
     "src": "ギフト/専用/未定～！_10pt.PNG"
   },
   {
     "name": "NGですわ",
     "icon": "",
-    "category": "専用",
+    "category": [
+      "専用"
+    ],
     "src": "ギフト/専用/NGですわ_10pt.PNG"
   },
   {
     "name": "OKですわ",
     "icon": "",
-    "category": "専用",
+    "category": [
+      "専用"
+    ],
     "src": "ギフト/専用/OKですわ_10pt.PNG"
   },
   {
     "name": "ごきげんよう",
     "icon": "",
-    "category": "専用",
+    "category": [
+      "専用"
+    ],
     "src": "ギフト/専用/ごきげんよう_10pt.PNG"
   },
   {
     "name": "ごめんあそばせ",
     "icon": "",
-    "category": "専用",
+    "category": [
+      "専用"
+    ],
     "src": "ギフト/専用/ごめんあそばせ_10pt.PNG"
   },
   {
     "name": "ヤバイですわ",
     "icon": "",
-    "category": "専用",
+    "category": [
+      "専用"
+    ],
     "src": "ギフト/専用/ヤバイですわ_10pt.PNG"
   },
   {
     "name": "尊いですわ",
     "icon": "",
-    "category": "専用",
+    "category": [
+      "専用"
+    ],
     "src": "ギフト/専用/尊いですわ_10pt.PNG"
   },
   {
     "name": "んぱぁ！",
     "icon": "",
-    "category": "専用",
+    "category": [
+      "専用"
+    ],
     "src": "ギフト/専用/んぱぁ！_10pt.PNG"
   },
   {
     "name": "のびのび猫",
     "icon": "",
-    "category": "専用",
+    "category": [
+      "専用"
+    ],
     "src": "ギフト/専用/のびのび猫_100pt.PNG"
   },
   {
     "name": "ふわふわうさぎ",
     "icon": "",
-    "category": "専用",
+    "category": [
+      "専用"
+    ],
     "src": "ギフト/専用/ふわふわうさぎ_100pt.PNG"
   },
   {
     "name": "モナリザしらす",
     "icon": "",
-    "category": "専用",
+    "category": [
+      "専用"
+    ],
     "src": "ギフト/専用/モナリザしらす_100pt.PNG"
   },
   {
     "name": "年越ししらす",
     "icon": "",
-    "category": "専用",
+    "category": [
+      "専用"
+    ],
     "src": "ギフト/専用/年越ししらす_100pt.PNG"
   },
   {
     "name": "みんなで乾杯",
     "icon": "",
-    "category": "専用",
+    "category": [
+      "専用"
+    ],
     "src": "ギフト/専用/みんなで乾杯_100pt.PNG"
   },
   {
     "name": "神推し",
     "icon": "",
-    "category": "専用",
+    "category": [
+      "専用"
+    ],
     "src": "ギフト/専用/神推し_100pt.PNG"
   },
   {
     "name": "わいわい投票",
     "icon": "",
-    "category": "専用",
+    "category": [
+      "専用"
+    ],
     "src": "ギフト/専用/わいわい投票_500pt.PNG"
   },
   {
     "name": "キリおめ",
     "icon": "",
-    "category": "えらい",
+    "category": [
+      "えらい"
+    ],
     "src": "ギフト/えらい/キリおめ_5pt.PNG"
   },
   {
     "name": "ナイギフ",
     "icon": "",
-    "category": "えらい",
+    "category": [
+      "えらい"
+    ],
     "src": "ギフト/えらい/ナイギフ_5pt.PNG"
   },
   {
     "name": "ナイス",
     "icon": "",
-    "category": "えらい",
+    "category": [
+      "えらい"
+    ],
     "src": "ギフト/えらい/ナイス_5pt.PNG"
   },
   {
     "name": "かわいい",
     "icon": "",
-    "category": "えらい",
+    "category": [
+      "えらい",
+      "LOVE"
+    ],
     "src": "ギフト/えらい/かわいい_5pt.PNG"
-  },
-  {
-    "name": "神",
-    "icon": "",
-    "category": "えらい",
-    "src": "ギフト/えらい/神_5pt.PNG"
   },
   {
     "name": "100点",
     "icon": "",
-    "category": "えらい",
+    "category": [
+      "えらい"
+    ],
     "src": "ギフト/えらい/100点_5pt.PNG"
-  },
-  {
-    "name": "良さそう",
-    "icon": "",
-    "category": "えらい",
-    "src": "ギフト/えらい/良さそう_5pt.PNG"
-  },
-  {
-    "name": "世界一",
-    "icon": "",
-    "category": "えらい",
-    "src": "ギフト/えらい/世界一_5pt.PNG"
   },
   {
     "name": "えぐぐ",
     "icon": "",
-    "category": "えらい",
+    "category": [
+      "えらい"
+    ],
     "src": "ギフト/えらい/えぐぐ_5pt.PNG"
   },
   {
     "name": "すごい",
     "icon": "",
-    "category": "えらい",
+    "category": [
+      "えらい"
+    ],
     "src": "ギフト/えらい/すごい_5pt.PNG"
   },
   {
     "name": "すばら！",
     "icon": "",
-    "category": "えらい",
+    "category": [
+      "えらい"
+    ],
     "src": "ギフト/えらい/すばら！_5pt.PNG"
   },
   {
     "name": "たのしみ",
     "icon": "",
-    "category": "えらい",
+    "category": [
+      "えらい"
+    ],
     "src": "ギフト/えらい/たのしみ_5pt.PNG"
-  },
-  {
-    "name": "ええやん",
-    "icon": "",
-    "category": "えらい",
-    "src": "ギフト/えらい/ええやん_5pt.PNG"
   },
   {
     "name": "天才か！？",
     "icon": "",
-    "category": "えらい",
+    "category": [
+      "えらい"
+    ],
     "src": "ギフト/えらい/天才か！？_5pt.PNG"
-  },
-  {
-    "name": "最強",
-    "icon": "",
-    "category": "えらい",
-    "src": "ギフト/えらい/最強_5pt.PNG"
   },
   {
     "name": "かしこ",
     "icon": "",
-    "category": "えらい",
+    "category": [
+      "えらい"
+    ],
     "src": "ギフト/えらい/かしこ_5pt.PNG"
   },
   {
     "name": "はなまる",
     "icon": "",
-    "category": "えらい",
+    "category": [
+      "えらい"
+    ],
     "src": "ギフト/えらい/はなまる_5pt.PNG"
-  },
-  {
-    "name": "拍手",
-    "icon": "",
-    "category": "えらい",
-    "src": "ギフト/えらい/拍手_5pt.PNG"
   },
   {
     "name": "エモい",
     "icon": "",
-    "category": "えらい",
+    "category": [
+      "えらい"
+    ],
     "src": "ギフト/えらい/エモい_5pt.PNG"
   },
   {
     "name": "チルい",
     "icon": "",
-    "category": "えらい",
+    "category": [
+      "えらい"
+    ],
     "src": "ギフト/えらい/チルい_5pt.PNG"
   },
   {
     "name": "かっこいい",
     "icon": "",
-    "category": "えらい",
+    "category": [
+      "えらい"
+    ],
     "src": "ギフト/えらい/かっこいい_5pt.PNG"
   },
   {
     "name": "イケボ",
     "icon": "",
-    "category": "えらい",
+    "category": [
+      "えらい"
+    ],
     "src": "ギフト/えらい/イケボ_5pt.PNG"
-  },
-  {
-    "name": "オサレ",
-    "icon": "",
-    "category": "えらい",
-    "src": "ギフト/えらい/オサレ_5pt.PNG"
   },
   {
     "name": "クール",
     "icon": "",
-    "category": "えらい",
+    "category": [
+      "えらい"
+    ],
     "src": "ギフト/えらい/クール_5pt.PNG"
-  },
-  {
-    "name": "アニキー！",
-    "icon": "",
-    "category": "えらい",
-    "src": "ギフト/えらい/アニキー！_5pt.PNG"
-  },
-  {
-    "name": "漢",
-    "icon": "",
-    "category": "えらい",
-    "src": "ギフト/えらい/漢_5pt.PNG"
-  },
-  {
-    "name": "あざとい",
-    "icon": "",
-    "category": "えらい",
-    "src": "ギフト/えらい/あざとい_5pt.PNG"
-  },
-  {
-    "name": "おもしれーやつ",
-    "icon": "",
-    "category": "えらい",
-    "src": "ギフト/えらい/おもしれーやつ_5pt.PNG"
   },
   {
     "name": "かわぼ",
     "icon": "",
-    "category": "えらい",
+    "category": [
+      "えらい",
+      "LOVE"
+    ],
     "src": "ギフト/えらい/かわぼ_5pt.PNG"
   },
   {
     "name": "癒し～",
     "icon": "",
-    "category": "えらい",
+    "category": [
+      "えらい"
+    ],
     "src": "ギフト/えらい/癒し～_5pt.PNG"
   },
   {
     "name": "耳が幸せ",
     "icon": "",
-    "category": "えらい",
+    "category": [
+      "えらい"
+    ],
     "src": "ギフト/えらい/耳が幸せ_5pt.PNG"
-  },
-  {
-    "name": "やりおる",
-    "icon": "",
-    "category": "えらい",
-    "src": "ギフト/えらい/やりおる_5pt.PNG"
   },
   {
     "name": "よかろう",
     "icon": "",
-    "category": "えらい",
+    "category": [
+      "えらい"
+    ],
     "src": "ギフト/えらい/よかろう_5pt.PNG"
-  },
-  {
-    "name": "えらい",
-    "icon": "",
-    "category": "えらい",
-    "src": "ギフト/えらい/えらい_100pt.PNG"
   },
   {
     "name": "Congratulations!！!",
     "icon": "",
-    "category": "えらい",
+    "category": [
+      "えらい"
+    ],
     "src": "ギフト/えらい/Congratulations!！_100pt.PNG"
-  },
-  {
-    "name": "クラッカー(大)",
-    "icon": "",
-    "category": "えらい",
-    "src": "ギフト/えらい/クラッカー(大)_200pt.PNG"
   },
   {
     "name": "拍手(大)",
     "icon": "",
-    "category": "えらい",
+    "category": [
+      "えらい",
+      "ステージ"
+    ],
     "src": "ギフト/えらい/拍手(大)_200pt.PNG"
-  },
-  {
-    "name": "エモい(大)",
-    "icon": "",
-    "category": "えらい",
-    "src": "ギフト/えらい/エモい(大)_500pt.PNG"
   },
   {
     "name": "たいへんよくできました",
     "icon": "",
-    "category": "えらい",
+    "category": [
+      "えらい"
+    ],
     "src": "ギフト/えらい/たいへんよくできました_500pt.PNG"
   },
   {
     "name": "お見事！",
     "icon": "",
-    "category": "えらい",
+    "category": [
+      "えらい"
+    ],
     "src": "ギフト/えらい/お見事！_500pt.PNG"
   },
   {
     "name": "ケーキ(誕生日)",
     "icon": "",
-    "category": "えらい",
+    "category": [
+      "えらい"
+    ],
     "src": "ギフト/えらい/ケーキ(誕生日)_1,000pt.PNG"
   },
   {
     "name": "かわいい！",
     "icon": "",
-    "category": ["えらい","LOVE"],
+    "category": [
+      "えらい",
+      "LOVE"
+    ],
     "src": "ギフト/えらい/かわいい！_3,000pt.PNG"
   },
   {
     "name": "尊い",
     "icon": "",
-    "category": ["えらい","LOVE"],
+    "category": [
+      "えらい",
+      "LOVE"
+    ],
     "src": "ギフト/えらい/尊い_5,000pt.PNG"
   },
   {
     "name": "なでなで",
     "icon": "",
-    "category": ["えらい","LOVE"],
+    "category": [
+      "えらい",
+      "LOVE"
+    ],
     "src": "ギフト/えらい/なでなで_7,000pt.PNG"
   },
   {
     "name": "ハッピーバースデー",
     "icon": "",
-    "category": "えらい",
+    "category": [
+      "えらい"
+    ],
     "src": "ギフト/えらい/ハッピーバースデー_10,000pt.PNG"
   },
   {
     "name": "はろー！",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/はろー！_5pt.PNG"
   },
   {
     "name": "ようこそ",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/ようこそ_5pt.PNG"
   },
   {
     "name": "おつかれさま",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/おつかれさま_5pt.PNG"
   },
   {
     "name": "おはよう",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/おはよう_5pt.PNG"
   },
   {
     "name": "こんばんは",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/こんばんは_5pt.PNG"
   },
   {
     "name": "バイバイ",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/バイバイ_5pt.PNG"
-  },
-  {
-    "name": "握手",
-    "icon": "",
-    "category": "挨拶",
-    "src": "ギフト/挨拶/握手_5pt.PNG"
   },
   {
     "name": "おかえり",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/おかえり_5pt.PNG"
   },
   {
     "name": "おやすみ",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/おやすみ_5pt.PNG"
   },
   {
     "name": "いってきます",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/いってきます_5pt.PNG"
   },
   {
     "name": "いってらっしゃい",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/いってらっしゃい_5pt.PNG"
   },
   {
     "name": "いらっしゃい",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/いらっしゃい_5pt.PNG"
   },
   {
     "name": "おじゃまします",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/おじゃまします_5pt.PNG"
   },
   {
     "name": "ただいま",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/ただいま_5pt.PNG"
   },
   {
     "name": "やってる？",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/やってる？_5pt.PNG"
   },
   {
     "name": "らっしゃっせい！",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/らっしゃっせい！_5pt.PNG"
   },
   {
     "name": "初見さんヤッホー",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/初見さんヤッホー_5pt.PNG"
   },
   {
     "name": "遅れた！！",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/遅れた！！_5pt.PNG"
   },
   {
     "name": "すぐ戻る！",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/すぐ戻る！_5pt.PNG"
   },
   {
     "name": "トイレ",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/トイレ_5pt.PNG"
   },
   {
     "name": "フロリダ",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/フロリダ_5pt.PNG"
   },
   {
     "name": "しごもど！",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/しごもど！_5pt.PNG"
   },
   {
     "name": "ちょい落ち",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/ちょい落ち_5pt.PNG"
-  },
-  {
-    "name": "サラダバー",
-    "icon": "",
-    "category": "挨拶",
-    "src": "ギフト/挨拶/サラダバー_5pt.PNG"
   },
   {
     "name": "スッ",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/スッ_5pt.PNG"
   },
   {
     "name": "ヤッホー(さぼぼん)",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/ヤッホー(さぼぼん)_5pt.PNG"
   },
   {
     "name": "すやぁ・・・",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/すやぁ・・・_5pt.PNG"
-  },
-  {
-    "name": "やりおる",
-    "icon": "",
-    "category": "挨拶",
-    "src": "ギフト/挨拶/やりおる_5pt.PNG"
-  },
-  {
-    "name": "あとは頼んだ",
-    "icon": "",
-    "category": "挨拶",
-    "src": "ギフト/挨拶/あとは頼んだ_5pt.PNG"
-  },
-  {
-    "name": "おねぎします。",
-    "icon": "",
-    "category": "挨拶",
-    "src": "ギフト/挨拶/おねぎします。_5pt.PNG"
   },
   {
     "name": "またね",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/またね_100pt.PNG"
   },
   {
     "name": "参上",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/参上_200pt.PNG"
   },
   {
     "name": "こんにちは",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/こんにちは_500pt.PNG"
   },
   {
     "name": "また来るね！",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/また来るね！_500pt.PNG"
   },
   {
     "name": "おやすみ(大)",
     "icon": "",
-    "category": "挨拶",
+    "category": [
+      "挨拶"
+    ],
     "src": "ギフト/挨拶/おやすみ(大)_800pt.PNG"
-  },
-  {
-    "name": "クラッカー",
-    "icon": "",
-    "category": "ステージ",
-    "src": "ギフト/ステージ/クラッカー_5pt.PNG"
   },
   {
     "name": "サイリウム・オレンジ",
     "icon": "",
-    "category": "ステージ",
+    "category": [
+      "ステージ"
+    ],
     "src": "ギフト/ステージ/サイリウム・オレンジ_5pt.PNG"
   },
   {
     "name": "サイリウム・ピンク",
     "icon": "",
-    "category": "ステージ",
+    "category": [
+      "ステージ"
+    ],
     "src": "ギフト/ステージ/サイリウム・ピンク_5pt.PNG"
   },
   {
     "name": "サイリウム・白",
     "icon": "",
-    "category": "ステージ",
+    "category": [
+      "ステージ"
+    ],
     "src": "ギフト/ステージ/サイリウム・白_5pt.PNG"
   },
   {
     "name": "サイリウム・紫",
     "icon": "",
-    "category": "ステージ",
+    "category": [
+      "ステージ"
+    ],
     "src": "ギフト/ステージ/サイリウム・紫_5pt.PNG"
   },
   {
     "name": "サイリウム・緑",
     "icon": "",
-    "category": "ステージ",
+    "category": [
+      "ステージ"
+    ],
     "src": "ギフト/ステージ/サイリウム・緑_5pt.PNG"
   },
   {
     "name": "サイリウム・赤",
     "icon": "",
-    "category": "ステージ",
+    "category": [
+      "ステージ"
+    ],
     "src": "ギフト/ステージ/サイリウム・赤_5pt.PNG"
   },
   {
     "name": "サイリウム・青",
     "icon": "",
-    "category": "ステージ",
+    "category": [
+      "ステージ"
+    ],
     "src": "ギフト/ステージ/サイリウム・青_5pt.PNG"
   },
   {
     "name": "サイリウム・黄",
     "icon": "",
-    "category": "ステージ",
+    "category": [
+      "ステージ"
+    ],
     "src": "ギフト/ステージ/サイリウム・黄_5pt.PNG"
   },
   {
     "name": "サイリウム・黄緑",
     "icon": "",
-    "category": "ステージ",
+    "category": [
+      "ステージ"
+    ],
     "src": "ギフト/ステージ/サイリウム・黄緑_5pt.PNG"
   },
   {
     "name": "サイリウム・黒",
     "icon": "",
-    "category": "ステージ",
+    "category": [
+      "ステージ"
+    ],
     "src": "ギフト/ステージ/サイリウム・黒_5pt.PNG"
-  },
-  {
-    "name": "いつもので",
-    "icon": "",
-    "category": "ステージ",
-    "src": "ギフト/ステージ/いつもので_5pt.PNG"
-  },
-  {
-    "name": "もっと",
-    "icon": "",
-    "category": "ステージ",
-    "src": "ギフト/ステージ/もっと_5pt.PNG"
-  },
-  {
-    "name": "祭うちわ",
-    "icon": "",
-    "category": "ステージ",
-    "src": "ギフト/ステージ/祭うちわ_5pt.PNG"
-  },
-  {
-    "name": "拍手",
-    "icon": "",
-    "category": "ステージ",
-    "src": "ギフト/ステージ/拍手_5pt.PNG"
   },
   {
     "name": "サイリウム・葱",
     "icon": "",
-    "category": "ステージ",
+    "category": [
+      "ステージ"
+    ],
     "src": "ギフト/ステージ/サイリウム・葱_5pt.PNG"
-  },
-  {
-    "name": "中二病",
-    "icon": "",
-    "category": "ステージ",
-    "src": "ギフト/ステージ/中二病_5pt.PNG"
   },
   {
     "name": "アフロしらす",
     "icon": "",
-    "category": "ステージ",
+    "category": [
+      "ステージ"
+    ],
     "src": "ギフト/ステージ/アフロしらす_5pt.PNG"
   },
   {
     "name": "アンコール",
     "icon": "",
-    "category": "ステージ",
+    "category": [
+      "ステージ"
+    ],
     "src": "ギフト/ステージ/アンコール_5pt.PNG"
   },
   {
     "name": "ヘドバン",
     "icon": "",
-    "category": "ステージ",
+    "category": [
+      "ステージ"
+    ],
     "src": "ギフト/ステージ/ヘドバン_5pt.PNG"
-  },
-  {
-    "name": "ふぅー！！",
-    "icon": "",
-    "category": "ステージ",
-    "src": "ギフト/ステージ/ふぅー！！_5pt.PNG"
   },
   {
     "name": "キャーッ！",
     "icon": "",
-    "category": "ステージ",
+    "category": [
+      "ステージ",
+      "LOVE"
+    ],
     "src": "ギフト/ステージ/キャーッ！_5pt.PNG"
   },
   {
     "name": "音符",
     "icon": "",
-    "category": "ステージ",
+    "category": [
+      "ステージ"
+    ],
     "src": "ギフト/ステージ/音符_100pt.PNG"
-  },
-  {
-    "name": "クラッカー(大)",
-    "icon": "",
-    "category": "ステージ",
-    "src": "ギフト/ステージ/クラッカー(大)_200pt.PNG"
-  },
-  {
-    "name": "バラ(大)",
-    "icon": "",
-    "category": "ステージ",
-    "src": "ギフト/ステージ/バラ(大)_200pt.PNG"
-  },
-  {
-    "name": "拍手(大)",
-    "icon": "",
-    "category": "ステージ",
-    "src": "ギフト/ステージ/拍手(大)_200pt.PNG"
   },
   {
     "name": "よーい",
     "icon": "",
-    "category": "ステージ",
+    "category": [
+      "ステージ"
+    ],
     "src": "ギフト/ステージ/よーい_200pt.PNG"
   },
   {
     "name": "サーチライト",
     "icon": "",
-    "category": "ステージ",
+    "category": [
+      "ステージ"
+    ],
     "src": "ギフト/ステージ/サーチライト_200pt.PNG"
   },
   {
     "name": "もういっかい(大)",
     "icon": "",
-    "category": "ステージ",
+    "category": [
+      "ステージ"
+    ],
     "src": "ギフト/ステージ/もういっかい(大)_500pt.PNG"
-  },
-  {
-    "name": "花束",
-    "icon": "",
-    "category": "ステージ",
-    "src": "ギフト/ステージ/花束_500pt.PNG"
   },
   {
     "name": "スポットライト",
     "icon": "",
-    "category": "ステージ",
+    "category": [
+      "ステージ"
+    ],
     "src": "ギフト/ステージ/スポットライト_500pt.PNG"
   },
   {
     "name": "V.I.P",
     "icon": "",
-    "category": "ステージ",
+    "category": [
+      "ステージ"
+    ],
     "src": "ギフト/ステージ/VIP_500pt.PNG"
   },
   {
     "name": "ライト&フォグ",
     "icon": "",
-    "category": "ステージ",
+    "category": [
+      "ステージ"
+    ],
     "src": "ギフト/ステージ/ライト&フォグ_1,000pt.PNG"
   },
   {
     "name": "ライブステージ",
     "icon": "",
-    "category": "ステージ",
+    "category": [
+      "ステージ"
+    ],
     "src": "ギフト/ステージ/ライブステージ_1,000pt.PNG"
   },
   {
     "name": "花火",
     "icon": "",
-    "category": "ステージ",
+    "category": [
+      "ステージ"
+    ],
     "src": "ギフト/ステージ/花火_10,000pt.PNG"
   },
   {
-    "name": "好物",
-    "category": "LOVE",
-    "src": "ギフト/Love/好物_1pt.PNG"
-  },
-  {
     "name": "ハート",
-    "category": "LOVE",
+    "category": [
+      "LOVE"
+    ],
     "src": "ギフト/Love/ハート_5pt.PNG"
   },
   {
-    "name": "かわいい",
-    "icon": "",
-    "category": "LOVE",
-    "src": "ギフト/Love/かわいい_5pt.PNG"
-  },
-  {
     "name": "照れ",
-    "category": "LOVE",
+    "category": [
+      "LOVE"
+    ],
     "icon": "",
     "src": "ギフト/Love/照れ_5pt.PNG"
   },
   {
-    "name": "キャーッ！",
-    "category": "LOVE",
-    "src": "ギフト/Love/キャーッ！_5pt.PNG"
-  },
-  {
-    "name": "あざとい",
-    "category": "LOVE",
-    "src": "ギフト/Love/あざとい_5pt.PNG"
-  },
-  {
-    "name": "かわぼ",
-    "category": "LOVE",
-    "src": "ギフト/Love/かわぼ_5pt.PNG"
-  },
-  {
     "name": "呼んだ？",
-    "category": "LOVE",
+    "category": [
+      "LOVE"
+    ],
     "src": "ギフト/Love/呼んだ？_5pt.PNG"
   },
   {
     "name": "ハート(大)",
-    "category": "LOVE",
+    "category": [
+      "LOVE"
+    ],
     "src": "ギフト/Love/ハート(大)_200pt.PNG"
   },
   {
     "name": "すっこていい？",
-    "category": "LOVE",
+    "category": [
+      "LOVE"
+    ],
     "src": "ギフト/Love/すっこていい？_500pt.PNG"
   },
   {
     "name": "嫁に来ないか・・・？",
-    "category": "LOVE",
+    "category": [
+      "LOVE"
+    ],
     "src": "ギフト/Love/嫁に来ないか・・・？_500pt.PNG"
   },
   {
     "name": "ズキューン",
-    "category": "LOVE",
+    "category": [
+      "LOVE"
+    ],
     "src": "ギフト/Love/ズキューン_500pt.PNG"
   },
   {
     "name": "唐突な愛",
-    "category": "LOVE",
+    "category": [
+      "LOVE"
+    ],
     "src": "ギフト/Love/唐突な愛_500pt.PNG"
   },
   {
     "name": "ウィンクタイム",
-    "category": "LOVE",
+    "category": [
+      "LOVE"
+    ],
     "src": "ギフト/Love/ウィンクタイム_500pt.PNG"
   },
   {
     "name": "すこ",
-    "category": "LOVE",
+    "category": [
+      "LOVE"
+    ],
     "src": "ギフト/Love/すこ_1,000pt.PNG"
   },
   {
     "name": "だいすき",
-    "category": "LOVE",
+    "category": [
+      "LOVE"
+    ],
     "src": "ギフト/Love/だいすき_10,000pt.PNG"
   },
   {
     "name": "あふれる想い",
-    "category": "LOVE",
+    "category": [
+      "LOVE"
+    ],
     "src": "ギフト/Love/あふれる想い_30,000pt.PNG"
   },
   {
     "name": "お手わんこ",
-    "category": "専用",
+    "category": [
+      "専用"
+    ],
     "src": "ギフト/専用/お手わんこ_100pt.PNG"
   },
   {
     "name": "ポジティブ足りてる？",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/ポジティブ足りてる？_300pt.PNG"
   },
   {
     "name": "パンケーキ",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/パンケーキ1_300pt.PNG"
   },
   {
-    "name": "パンケーキ",
-    "category": "定番",
-    "src": "ギフト/定番/パンケーキ2_300pt.PNG"
-  },
-  {
-    "name": "パンケーキ",
-    "category": "定番",
-    "src": "ギフト/定番/パンケーキ3_300pt.PNG"
-  },
-  {
     "name": "びたんびたん",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/びたんびたん_10pt.PNG"
   },
   {
     "name": "わいわい",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/わいわい_10pt.PNG"
   },
   {
     "name": "ノリノリ",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/ノリノリ_10pt.PNG"
   },
   {
     "name": "ドラムロール",
-    "category": "定番",
+    "category": [
+      "定番"
+    ],
     "src": "ギフト/定番/ドラムロール_5pt.PNG"
   },
   {
     "name": "プチ岐阜",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/プチ岐阜_5pt.PNG"
   },
   {
     "name": "逆にね",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/逆にね_5pt.PNG"
   },
   {
     "name": "からの～？",
-    "category": "ネタ",
+    "category": [
+      "ネタ"
+    ],
     "src": "ギフト/ネタ/からの～？_10pt.PNG"
   }
 ]
