@@ -479,7 +479,7 @@
   {
     "name": "好物",
     "icon": "",
-    "category": "定番",
+    "category": ["定番","LOVE"],
     "src": "ギフト/定番/好物_1pt.PNG"
   },
   {
@@ -1969,11 +1969,6 @@
     "icon": "",
     "category": "ステージ",
     "src": "ギフト/ステージ/花火_10,000pt.PNG"
-  },
-  {
-    "name": "好物",
-    "category": "LOVE",
-    "src": "ギフト/Love/好物_1pt.PNG"
   },
   {
     "name": "ハート",
