@@ -12,11 +12,20 @@
 
     <div class="main-container">
         <h1>🎁 パネル開け</h1>
-        <p>パネルをクリックして、隠された景品を見つけよう！</p>
+        <p>ミッションを達成してパネルを消し、隠されたイラストを完成させよう！</p>
         
-        <div id="panel-grid" class="panel-grid"></div>
+        <div class="setting-area">
+            <label for="imageInput" class="upload-btn">📁 隠す画像を選択</label>
+            <input type="file" id="imageInput" accept="image/*" style="display:none;">
+        </div>
 
-        <button onclick="resetPanels()" class="reset-btn">🔄 パネルを元に戻す</button>
+        <div class="board-wrapper">
+            <img id="hidden-image" src="https://placehold.jp/800x600.png?text=No%20Image" alt="Hidden">
+            
+            <div id="panel-grid" class="panel-grid"></div>
+        </div>
+
+        <button onclick="resetPanels()" class="reset-btn">🔄 全て戻す</button>
     </div>
 
     <script src="PanelReveal.js"></script>
