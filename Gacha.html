@@ -2,242 +2,526 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>カスタムガチャ</title>
+    <title>高機能ガチャツール再現版</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="index.css">
     <style>
-        body { background: #f0f2f5; font-family: 'M PLUS Rounded 1c', sans-serif; }
-        .gacha-container { max-width: 900px; margin: 0 auto; padding: 20px; text-align: center; }
-
-        /* ガチャ機エリア */
-        .machine-area {
-            background: #fff;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+        :root {
+            --main-color: #00bcd4; /* シアン */
+            --header-bg: #00acc1;
+            --accent-color: #ff5252; /* 赤ボタン */
+            --bg-color: #f5f5f5;
+            --table-header: #e0f7fa;
+            --table-border: #b2ebf2;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif;
+            background-color: var(--bg-color);
+            color: #333;
+        }
+        /* ヘッダー */
+        header {
+            background-color: var(--main-color);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 { margin: 0; font-size: 1.5rem; }
+        .version { font-size: 0.8rem; opacity: 0.8; }
+        
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 0 10px;
         }
 
-        /* 設定エリア (開閉式) */
-        .settings-box {
-            background: #e3f2fd;
-            border: 2px dashed #90caf9;
-            border-radius: 12px;
+        /* セクション共通 */
+        .section-header {
+            background-color: var(--main-color);
+            color: white;
+            padding: 10px 15px;
+            font-weight: bold;
+            margin-top: 20px;
+            border-radius: 4px 4px 0 0;
+        }
+        .section-body {
+            background: white;
             padding: 20px;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+        }
+
+        /* コントロール群 */
+        .control-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        input[type="text"], input[type="number"] {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            transition: opacity 0.2s;
+        }
+        button:hover { opacity: 0.8; }
+        .btn-red { background-color: var(--accent-color); }
+        .btn-blue { background-color: var(--main-color); }
+        .btn-gray { background-color: #78909c; }
+
+        /* テーブル */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid var(--table-border);
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: var(--table-header);
+            font-weight: bold;
+            color: #006064;
+        }
+        input.table-input {
+            width: 90%;
+            border: 1px solid #ddd;
+            padding: 5px;
+            text-align: center;
+        }
+        select {
+            width: 90%;
+            padding: 5px;
+        }
+
+        /* ガチャ抽選エリア */
+        .gacha-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .btn-draw {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 30px;
+        }
+
+        /* 結果表示 */
+        #result-area {
+            background: #fff;
+            padding: 20px;
+            margin-top: 20px;
+            min-height: 100px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .result-rarity { font-weight: bold; min-width: 50px; }
+        /* レアリティごとの色（簡易） */
+        .rarity-0 { color: #757575; } /* N */
+        .rarity-1 { color: #1e88e5; } /* R */
+        .rarity-2 { color: #43a047; } /* SR */
+        .rarity-3 { color: #fbc02d; text-shadow: 1px 1px 0 rgba(0,0,0,0.1); } /* SSR */
+        .rarity-4 { color: #e91e63; font-weight:900; } /* UR */
+
+        /* フッター */
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #white;
+            background: var(--main-color);
             margin-top: 40px;
-            text-align: left;
+            color: white;
         }
-        .settings-title { font-weight: bold; margin-bottom: 10px; color: #1565c0; display:flex; justify-content:space-between; cursor:pointer;}
-        
-        /* 入力フォーム */
-        .input-row { display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
-        .input-row input { padding: 8px; border-radius: 4px; border: 1px solid #ccc; flex: 1; }
-        .btn-add { background: #4caf50; color: white; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer; }
-        
-        /* 登録済みリスト */
-        .item-list { max-height: 200px; overflow-y: auto; background: #fff; border: 1px solid #ddd; padding: 10px; border-radius: 4px; }
-        .item-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding: 5px 0; }
-        .item-preview { width: 30px; height: 30px; object-fit: contain; vertical-align: middle; margin-right: 10px; }
-        .btn-del { background: #f44336; color: white; border: none; padding: 2px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8em; }
-
-        /* ボタン群 */
-        .controls { display: flex; justify-content: center; gap: 20px; margin-top: 20px; }
-        .btn-gacha {
-            border: none; padding: 15px 40px; font-size: 1.2rem; font-weight: bold; color: #fff;
-            border-radius: 50px; cursor: pointer; box-shadow: 0 5px 0 rgba(0,0,0,0.2); transition: transform 0.1s;
-        }
-        .btn-gacha:active { transform: translateY(3px); box-shadow: none; }
-        .btn-1 { background: linear-gradient(135deg, #4facfe, #00f2fe); }
-        .btn-10 { background: linear-gradient(135deg, #ff9a9e, #fecfef); color: #d63384; }
-
-        /* カード結果 */
-        .result-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; margin-top: 30px; }
-        .card { background: #fff; border-radius: 12px; padding: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); animation: popIn 0.3s backwards; border: 3px solid #ddd; }
-        .card-img { width: 100%; height: 100px; object-fit: contain; margin-bottom: 5px; }
-        
-        /* レアリティ色 */
-        .rarity-UR { border-color: #ff00ff; background: #fff0ff; }
-        .rarity-SSR { border-color: #ffd700; background: #fffff0; }
-        .rarity-SR { border-color: #c0c0c0; }
-        
-        @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        a { color: white; text-decoration: underline; }
     </style>
 </head>
 <body>
-    <div class="gacha-container">
-        <a href="index.html" style="color:#888; text-decoration:none;">← ホームへ戻る</a>
 
-        <div class="machine-area">
-            <h1>💎 カスタムガチャ</h1>
-            <p>下の設定エリアで好きなアイテムを追加してね！</p>
-            
-            <div class="controls">
-                <button class="btn-gacha btn-1" onclick="playGacha(1)">1回</button>
-                <button class="btn-gacha btn-10" onclick="playGacha(10)">10連</button>
-            </div>
-            
-            <div id="result-area" class="result-grid"></div>
+<header>
+    <div>
+        <h1>高機能ガチャツール (再現版)</h1>
+        <span class="version">ver.1.0.0</span>
+    </div>
+    <div>
+        <button class="btn-gray" onclick="location.href='index.html'">ホームへ戻る</button>
+    </div>
+</header>
+
+<div class="container">
+    
+    <div style="background:white; padding:15px; border-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,0.1); display:flex; justify-content:space-between; align-items:center;">
+        <div style="display:flex; gap:10px; align-items:center;">
+            <span>ガチャ名:</span>
+            <input type="text" id="gacha-title" value="マイガチャ" oninput="saveData()">
         </div>
+        <div>
+            <button class="btn-red" onclick="resetAll()">履歴全削除</button>
+        </div>
+    </div>
 
-        <div class="settings-box">
-            <div class="settings-title" onclick="toggleSettings()">
-                <span>🛠️ ガチャの中身を設定 (クリックで開閉)</span>
-                <span>▼</span>
-            </div>
-            <div id="settings-content">
-                <p style="font-size:0.9em; color:#666; margin-bottom:10px;">
-                    画像パス、名前、ポイントを入力して追加してください。<br>
-                    データはブラウザに保存されます。
-                </p>
-                
-                <div class="input-row">
-                    <input type="text" id="in-name" placeholder="名前 (例: 大当たり)">
-                    <input type="number" id="in-pt" placeholder="PT (例: 10000)">
-                    <input type="text" id="in-src" placeholder="画像パス/URL">
-                </div>
-                <div style="text-align:right; margin-bottom:10px;">
-                    <button class="btn-add" onclick="addItem()">追加する</button>
-                </div>
+    <div class="section-header">▼ レアリティ設定</div>
+    <div class="section-body">
+        <div class="control-row">
+            <label>レアリティ数設定: <input type="number" id="rarity-count" value="5" min="1" max="10" style="width:60px;" onchange="updateRarityTable()"></label>
+            <span style="font-size:0.8rem; color:#666;">※変更すると確率設定がリセットされます</span>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:30%">レアリティ名称</th>
+                    <th style="width:30%">出現率 (%)</th>
+                    <th>簡易色設定</th>
+                </tr>
+            </thead>
+            <tbody id="rarity-tbody">
+                </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3" style="text-align:right; font-size:0.9rem; color:#666;">
+                        合計確率: <span id="total-prob">0</span>% (100%になるように調整してください)
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
 
-                <div class="item-list" id="custom-list">
-                    </div>
-                
-                <div style="text-align:right; margin-top:10px;">
-                    <button onclick="resetData()" style="background:#666; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">全削除</button>
-                </div>
+    <div class="section-header">▼ 景品設定</div>
+    <div class="section-body">
+        <div class="control-row">
+            <label>景品数設定: <input type="number" id="prize-count" value="10" min="1" style="width:60px;" onchange="updatePrizeTable()"></label>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:50px;">No.</th>
+                    <th style="width:120px;">レアリティ</th>
+                    <th style="width:100px;">個別確率</th>
+                    <th>景品名</th>
+                </tr>
+            </thead>
+            <tbody id="prize-tbody">
+                </tbody>
+        </table>
+    </div>
+
+    <div class="section-header">ガチャ抽選</div>
+    <div class="section-body" style="background:#e0f7fa;">
+        <div class="control-row" style="justify-content:center;">
+            <label>なまえ入力欄: <input type="text" id="user-name" placeholder="名無し"></label>
+            <label><input type="checkbox" id="detail-option"> 結果詳細表示オプション</label>
+        </div>
+        
+        <div class="gacha-controls">
+            <button class="btn-blue btn-draw" onclick="drawGacha(1)">1回</button>
+            <button class="btn-blue btn-draw" onclick="drawGacha(10)">10連</button>
+            <div style="display:flex; align-items:center; gap:5px;">
+                <button class="btn-blue btn-draw" style="padding:10px 20px; font-size:1rem;" onclick="drawCustom()">回数指定</button>
+                <input type="number" id="custom-draw-count" value="100" style="width:60px; padding:8px;">
             </div>
         </div>
     </div>
 
-    <script>
-        // ガチャデータ (ローカルストレージから読み込む)
-        let gachaItems = [];
-        const STORAGE_KEY = 'iriam_custom_gacha_v1';
+    <div class="section-header">結果</div>
+    <div id="result-area">
+        <div style="color:#aaa; text-align:center;">ここに結果が表示されます</div>
+    </div>
 
-        // 初期化
-        window.onload = function() {
-            loadItems();
-        };
+</div>
 
-        // データの読み込み
-        function loadItems() {
-            const stored = localStorage.getItem(STORAGE_KEY);
-            if (stored) {
-                gachaItems = JSON.parse(stored);
-            } else {
-                // 初回だけサンプルデータを入れる
-                gachaItems = [
-                    { name: "サンプル100pt", pt: 100, src: "https://placehold.jp/150x150.png?text=100pt" },
-                    { name: "サンプルUR", pt: 10000, src: "https://placehold.jp/150x150.png?text=UR" }
-                ];
-            }
-            renderList();
+<footer>
+    Web Tool Mockup for IRIAM Tool
+</footer>
+
+<script>
+    // データ管理用オブジェクト
+    let config = {
+        title: "マイガチャ",
+        rarities: [
+            { name: "N", rate: 50 },
+            { name: "R", rate: 30 },
+            { name: "SR", rate: 15 },
+            { name: "SSR", rate: 4 },
+            { name: "UR", rate: 1 }
+        ],
+        prizes: []
+    };
+
+    // 初期化
+    window.onload = function() {
+        loadData();
+    };
+
+    // ローカルストレージから読み込み
+    function loadData() {
+        const stored = localStorage.getItem('iriam_highspec_gacha');
+        if (stored) {
+            config = JSON.parse(stored);
+            document.getElementById('gacha-title').value = config.title;
+            document.getElementById('rarity-count').value = config.rarities.length;
+            // 景品数が足りない場合の調整などは省略（単純にロード）
+            if(config.prizes.length === 0) initPrizes(10);
+            document.getElementById('prize-count').value = config.prizes.length;
+        } else {
+            initPrizes(10); // 初回
         }
+        renderRarityTable();
+        renderPrizeTable();
+    }
 
-        // リスト描画 (設定エリア)
-        function renderList() {
-            const listEl = document.getElementById('custom-list');
-            listEl.innerHTML = '';
-            
-            if (gachaItems.length === 0) {
-                listEl.innerHTML = '<div style="color:#999; text-align:center;">アイテムがありません</div>';
-                return;
-            }
+    // データの保存
+    function saveData() {
+        config.title = document.getElementById('gacha-title').value;
+        localStorage.setItem('iriam_highspec_gacha', JSON.stringify(config));
+    }
 
-            gachaItems.forEach((item, index) => {
-                const div = document.createElement('div');
-                div.className = 'item-row';
-                div.innerHTML = `
-                    <div style="display:flex; align-items:center;">
-                        <img src="${item.src}" class="item-preview" onerror="this.src=''">
-                        <span style="font-weight:bold; margin-right:10px;">${item.name}</span>
-                        <span style="color:#666; font-size:0.9em;">(${item.pt}pt)</span>
-                    </div>
-                    <button class="btn-del" onclick="deleteItem(${index})">削除</button>
-                `;
-                listEl.appendChild(div);
-            });
+    // 景品データの初期化
+    function initPrizes(count) {
+        config.prizes = [];
+        for(let i=0; i<count; i++) {
+            config.prizes.push({ name: "景品 " + (i+1), rarityIndex: 0 });
         }
+        saveData();
+    }
 
-        // アイテム追加
-        function addItem() {
-            const name = document.getElementById('in-name').value;
-            const pt = parseInt(document.getElementById('in-pt').value);
-            const src = document.getElementById('in-src').value;
+    // --- レアリティ設定関連 ---
 
-            if (!name || isNaN(pt) || !src) {
-                alert("すべての項目を入力してください");
-                return;
-            }
-
-            gachaItems.push({ name, pt, src });
-            saveItems();
-            
-            // 入力クリア
-            document.getElementById('in-name').value = '';
-            document.getElementById('in-pt').value = '';
-            document.getElementById('in-src').value = '';
-        }
-
-        // アイテム削除
-        function deleteItem(index) {
-            gachaItems.splice(index, 1);
-            saveItems();
-        }
-
-        // データ保存
-        function saveItems() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(gachaItems));
-            renderList();
-        }
+    function updateRarityTable() {
+        const count = parseInt(document.getElementById('rarity-count').value);
+        if (count < 1) return;
         
-        // 全削除
-        function resetData() {
-            if(confirm("本当に全てのデータを削除しますか？")) {
-                gachaItems = [];
-                saveItems();
+        // 配列の長さを調整
+        const currentLen = config.rarities.length;
+        if (count > currentLen) {
+            for (let i = currentLen; i < count; i++) {
+                config.rarities.push({ name: "Rarity"+(i+1), rate: 0 });
             }
+        } else if (count < currentLen) {
+            config.rarities.splice(count);
         }
+        saveData();
+        renderRarityTable();
+        renderPrizeTable(); // プルダウン更新のため
+    }
 
-        // ガチャを回す
-        function playGacha(times) {
-            if (gachaItems.length === 0) {
-                alert("設定エリアからアイテムを追加してください！");
+    function renderRarityTable() {
+        const tbody = document.getElementById('rarity-tbody');
+        tbody.innerHTML = '';
+        let total = 0;
+
+        config.rarities.forEach((r, index) => {
+            total += parseFloat(r.rate) || 0;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="text" class="table-input" value="${r.name}" oninput="updateRarityData(${index}, 'name', this.value)"></td>
+                <td><input type="number" class="table-input" value="${r.rate}" oninput="updateRarityData(${index}, 'rate', this.value)"></td>
+                <td><span class="rarity-${index % 5}" style="font-weight:bold;">● Color</span></td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        const totalEl = document.getElementById('total-prob');
+        totalEl.textContent = total.toFixed(2);
+        totalEl.style.color = Math.abs(total - 100) < 0.01 ? 'green' : 'red';
+    }
+
+    function updateRarityData(index, field, value) {
+        if (field === 'rate') value = parseFloat(value);
+        config.rarities[index][field] = value;
+        saveData();
+        if(field === 'rate') renderRarityTable(); // 合計更新
+        if(field === 'name') renderPrizeTable(); // プルダウン更新
+    }
+
+    // --- 景品設定関連 ---
+
+    function updatePrizeTable() {
+        const count = parseInt(document.getElementById('prize-count').value);
+        if (count < 1) return;
+
+        const currentLen = config.prizes.length;
+        if (count > currentLen) {
+            for (let i = currentLen; i < count; i++) {
+                config.prizes.push({ name: "新規景品", rarityIndex: 0 });
+            }
+        } else if (count < currentLen) {
+            if(confirm("景品数を減らすと末尾のデータが削除されます。よろしいですか？")) {
+                config.prizes.splice(count);
+            } else {
+                document.getElementById('prize-count').value = currentLen; // 戻す
                 return;
             }
+        }
+        saveData();
+        renderPrizeTable();
+    }
 
-            const resultArea = document.getElementById('result-area');
-            resultArea.innerHTML = '';
+    function renderPrizeTable() {
+        const tbody = document.getElementById('prize-tbody');
+        tbody.innerHTML = '';
 
-            for (let i = 0; i < times; i++) {
-                // ランダム抽選
-                const item = gachaItems[Math.floor(Math.random() * gachaItems.length)];
-                
-                // レアリティ判定
-                let rarityClass = "";
-                let rarityLabel = "N";
-                if (item.pt >= 10000) { rarityClass = "rarity-UR"; rarityLabel = "UR"; }
-                else if (item.pt >= 3000) { rarityClass = "rarity-SSR"; rarityLabel = "SSR"; }
-                else if (item.pt >= 500) { rarityClass = "rarity-SR"; rarityLabel = "SR"; }
+        // レアリティごとの景品数をカウント（確率計算用）
+        const rarityCounts = new Array(config.rarities.length).fill(0);
+        config.prizes.forEach(p => {
+            if(p.rarityIndex < config.rarities.length) {
+                rarityCounts[p.rarityIndex]++;
+            }
+        });
 
-                const card = document.createElement('div');
-                card.className = `card ${rarityClass}`;
-                card.style.animationDelay = (i * 0.1) + "s";
-                card.innerHTML = `
-                    <div style="font-size:0.8em; font-weight:bold; color:#888;">${rarityLabel}</div>
-                    <img src="${item.src}" class="card-img">
-                    <div style="font-weight:bold; font-size:0.9em;">${item.name}</div>
-                    <div style="font-size:0.8em; color:#666;">${item.pt}pt</div>
-                `;
-                resultArea.appendChild(card);
+        config.prizes.forEach((p, index) => {
+            // レアリティ選択肢生成
+            let options = '';
+            config.rarities.forEach((r, rIdx) => {
+                options += `<option value="${rIdx}" ${p.rarityIndex == rIdx ? 'selected' : ''}>${r.name}</option>`;
+            });
+
+            // 個別確率計算 (レアリティ確率 ÷ そのレアリティの景品数)
+            let individualRate = "0.00";
+            if (p.rarityIndex < config.rarities.length && rarityCounts[p.rarityIndex] > 0) {
+                individualRate = (config.rarities[p.rarityIndex].rate / rarityCounts[p.rarityIndex]).toFixed(4);
+            }
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${index + 1}</td>
+                <td>
+                    <select onchange="updatePrizeData(${index}, 'rarityIndex', this.value)">
+                        ${options}
+                    </select>
+                </td>
+                <td style="color:#666; font-size:0.9em;">${individualRate}%</td>
+                <td><input type="text" class="table-input" value="${p.name}" oninput="updatePrizeData(${index}, 'name', this.value)" style="text-align:left;"></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function updatePrizeData(index, field, value) {
+        if (field === 'rarityIndex') value = parseInt(value);
+        config.prizes[index][field] = value;
+        saveData();
+        if (field === 'rarityIndex') renderPrizeTable(); // 確率再計算のため
+    }
+
+    // --- ガチャロジック ---
+
+    function drawCustom() {
+        const count = parseInt(document.getElementById('custom-draw-count').value);
+        drawGacha(count);
+    }
+
+    function drawGacha(times) {
+        // 確率チェック
+        let totalRate = config.rarities.reduce((sum, r) => sum + (parseFloat(r.rate)||0), 0);
+        if (Math.abs(totalRate - 100) > 0.1) {
+            alert("レアリティ設定の合計確率が100%になっていません。(現在: " + totalRate.toFixed(2) + "%)");
+            return;
+        }
+        if (config.prizes.length === 0) {
+            alert("景品が設定されていません。");
+            return;
+        }
+
+        const results = [];
+        const resultArea = document.getElementById('result-area');
+        
+        // 景品リストをレアリティごとに分類
+        const prizesByRarity = [];
+        config.rarities.forEach(() => prizesByRarity.push([]));
+        config.prizes.forEach(p => {
+            if(prizesByRarity[p.rarityIndex]) {
+                prizesByRarity[p.rarityIndex].push(p);
+            }
+        });
+
+        // 抽選実行
+        for(let i=0; i<times; i++) {
+            const rand = Math.random() * 100; // 0-100
+            let current = 0;
+            let selectedRarityIndex = -1;
+
+            // レアリティ抽選
+            for(let r=0; r<config.rarities.length; r++) {
+                current += config.rarities[r].rate;
+                if (rand < current) {
+                    selectedRarityIndex = r;
+                    break;
+                }
+            }
+
+            // 万が一漏れた場合は最後
+            if(selectedRarityIndex === -1) selectedRarityIndex = config.rarities.length - 1;
+
+            // そのレアリティの中から景品をランダムに選ぶ
+            const candidates = prizesByRarity[selectedRarityIndex];
+            if (candidates && candidates.length > 0) {
+                const prize = candidates[Math.floor(Math.random() * candidates.length)];
+                results.push({
+                    rarity: config.rarities[selectedRarityIndex].name,
+                    rIdx: selectedRarityIndex,
+                    name: prize.name
+                });
+            } else {
+                results.push({
+                    rarity: config.rarities[selectedRarityIndex].name,
+                    rIdx: selectedRarityIndex,
+                    name: "(対象景品なし)"
+                });
             }
         }
 
-        function toggleSettings() {
-            const content = document.getElementById('settings-content');
-            content.style.display = content.style.display === 'none' ? 'block' : 'none';
+        // 表示
+        let html = "";
+        const userName = document.getElementById('user-name').value || "名無し";
+        const date = new Date().toLocaleString();
+        
+        html += `<div style="border-bottom:2px solid #ddd; margin-bottom:10px; padding-bottom:5px;">
+            <strong>${userName}</strong> さんの結果 (${times}回) - <span style="font-size:0.8em; color:#888;">${date}</span>
+        </div>`;
+
+        results.forEach((r, idx) => {
+            html += `<div class="result-item">
+                <span style="color:#888; font-size:0.8em; width:30px;">${idx+1}.</span>
+                <span class="result-rarity rarity-${r.rIdx % 5}">[${r.rarity}]</span>
+                <span>${r.name}</span>
+            </div>`;
+        });
+
+        resultArea.innerHTML = html;
+        resultArea.scrollTop = 0;
+    }
+
+    function resetAll() {
+        if(confirm("設定データと履歴をすべて初期化しますか？")) {
+            localStorage.removeItem('iriam_highspec_gacha');
+            location.reload();
         }
-    </script>
+    }
+</script>
 </body>
 </html>
