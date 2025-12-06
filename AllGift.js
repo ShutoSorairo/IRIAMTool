@@ -55,34 +55,34 @@ function showGifts(category) {
 
     let filtered = [];
 
-    // ▼ 条件分岐を変更しました
+    // ▼ ポイント別 (100pt以上 + 重複削除)
     if (category === "ポイント別") {
-        // ルール: カテゴリ問わず 100pt以上
-        filtered = window.allGiftsData.filter(g => {
-            const pt = getPointValue(g.src);
-            return pt >= 100;
+        // まず全データから対象を抽出
+        const candidates = window.allGiftsData.filter(g => {
+            return getPointValue(g.src) >= 100;
         });
+        // 重複を削除 (srcが同じなら先にあった方を優先)
+        filtered = removeDuplicates(candidates);
     } 
+    // ▼ プチギフ (100pt未満 + 重複削除)
     else if (category === "プチギフ") {
-        // ルール: カテゴリ問わず 100pt未満 (pt < 100)
-        filtered = window.allGiftsData.filter(g => {
-            const pt = getPointValue(g.src);
-            return pt < 100;
+        const candidates = window.allGiftsData.filter(g => {
+            return getPointValue(g.src) < 100;
         });
+        filtered = removeDuplicates(candidates);
     } 
+    // ▼ 通常カテゴリ
     else {
-        // 通常ルール: そのカテゴリのものだけ
         filtered = window.allGiftsData.filter(g => g.category === category);
     }
 
-    // ポイント順に並び替え (昇順: 安い順)
+    // ポイント順に並び替え (昇順)
     filtered.sort((a, b) => {
         const ptA = getPointValue(a.src);
         const ptB = getPointValue(b.src);
         return ptA - ptB; 
     });
     
-    // 表示件数が0の場合
     if (filtered.length === 0) {
         giftList.innerHTML = '<div style="text-align:center; color:#aaa; padding:20px;">該当するギフトはありません。</div>';
         return;
@@ -106,6 +106,22 @@ function showGifts(category) {
     });
 }
 
+// 画像パス(src)を元に重複を取り除く関数
+function removeDuplicates(list) {
+    const seen = new Set();
+    return list.filter(item => {
+        // すでに登録済み(seenにある)画像パスなら false を返して除外
+        if (seen.has(item.src)) {
+            return false;
+        }
+        // 初めて見る画像ならセットに登録して true (採用)
+        seen.add(item.src);
+        return true;
+    });
+}
+
+// (getPointValue関数などはそのまま下にあればOK)
+
 // ファイルパスから数値としてのポイントを取得する関数
 function getPointValue(src) {
     // "_1,000pt" のような部分を探す
@@ -116,6 +132,7 @@ function getPointValue(src) {
     }
     return 0; // ポイント表記がない場合は0として扱う
 }
+
 
 
 
