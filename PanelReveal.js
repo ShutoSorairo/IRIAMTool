@@ -61,7 +61,6 @@ async function fetchGiftData() {
         if (res.ok) {
             allGifts = await res.json();
             
-            // 手動入力用のdatalist更新
             const dataList = document.getElementById('gift-options') || document.createElement('datalist');
             dataList.id = 'gift-options';
             dataList.innerHTML = '';
@@ -72,7 +71,6 @@ async function fetchGiftData() {
             });
             if(!document.getElementById('gift-options')) document.body.appendChild(dataList);
             
-            // カテゴリ別整理 (AllGift仕様)
             organizeGiftsByCategory();
             renderControls();
         }
@@ -232,12 +230,12 @@ function deletePanel(index) {
     }
 }
 
-// ★描画処理 (テキスト2段組み + プログレスバー対応)
+// ★改良: 描画処理 (開いたパネルの文字・バーを非表示)
 function renderSvg() {
     const svg = document.getElementById('panel-svg');
     svg.innerHTML = '';
     panels.forEach((p) => {
-        // 1. パネル
+        // 1. パネル本体
         const poly = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
         const pointsStr = p.points.map(pt => `${pt.x},${pt.y}`).join(" ");
         poly.setAttribute("points", pointsStr);
@@ -245,66 +243,69 @@ function renderSvg() {
         if (p.isOpened) poly.classList.add("cleared");
         svg.appendChild(poly);
         
-        // 2. テキスト (2段組み)
-        const center = getCenter(p.points);
-        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        text.setAttribute("x", center.x);
-        text.setAttribute("y", center.y);
-        
-        let line1 = ""; 
-        let line2 = ""; 
-        const remaining = Math.max(0, p.target - p.current);
-        const remStr = remaining.toLocaleString();
+        // ★ここが重要: パネルが開いている場合は、文字とバーの生成自体をスキップする
+        if (!p.isOpened) {
+            // --- 共通座標 ---
+            const center = getCenter(p.points);
 
-        if(p.missionType === 'comment' || p.missionType === 'star') {
-            line1 = getMissionTypeName(p.missionType);
-            line2 = `あと ${remStr}`; 
-        } else {
-            line1 = p.label.split('\n')[0]; 
-            line2 = `あと ${remStr}個`; 
+            // 2. テキスト設定
+            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text.setAttribute("x", center.x);
+            text.setAttribute("y", center.y);
+            
+            let line1 = ""; 
+            let line2 = ""; 
+            const remaining = Math.max(0, p.target - p.current);
+            const remStr = remaining.toLocaleString();
+
+            if(p.missionType === 'comment' || p.missionType === 'star') {
+                line1 = getMissionTypeName(p.missionType);
+                line2 = `あと ${remStr}`; 
+            } else {
+                line1 = p.label.split('\n')[0]; 
+                line2 = `あと ${remStr}個`; 
+            }
+
+            const tspan1 = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+            tspan1.textContent = line1;
+            tspan1.setAttribute("x", center.x);
+            tspan1.setAttribute("dy", "-0.6em"); 
+
+            const tspan2 = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+            tspan2.textContent = line2;
+            tspan2.setAttribute("x", center.x);
+            tspan2.setAttribute("dy", "1.4em"); 
+            
+            text.appendChild(tspan1);
+            text.appendChild(tspan2);
+            svg.appendChild(text);
+
+            // 3. プログレスバー
+            const barWidth = 160; 
+            const barHeight = 15; 
+            const barX = center.x - barWidth / 2;
+            const barY = center.y + 60; 
+
+            // 背景バー
+            const barBg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            barBg.setAttribute("x", barX); barBg.setAttribute("y", barY);
+            barBg.setAttribute("width", barWidth); barBg.setAttribute("height", barHeight);
+            barBg.setAttribute("rx", barHeight / 2);
+            barBg.setAttribute("fill", "rgba(255,255,255,0.7)");
+            barBg.setAttribute("stroke", "#fff"); 
+            barBg.setAttribute("stroke-width", "1");
+            svg.appendChild(barBg);
+
+            // 中身バー
+            const progressPct = Math.min(1, p.current / p.target);
+            const barFillWidth = Math.max(0, barWidth * progressPct);
+            const barFill = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            barFill.setAttribute("x", barX); barFill.setAttribute("y", barY);
+            barFill.setAttribute("width", barFillWidth); barFill.setAttribute("height", barHeight);
+            barFill.setAttribute("rx", barHeight / 2);
+            barFill.setAttribute("fill", p.current >= p.target ? "#e91e63" : "#4caf50");
+            svg.appendChild(barFill);
         }
-
-        const tspan1 = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
-        tspan1.textContent = line1;
-        tspan1.setAttribute("x", center.x);
-        tspan1.setAttribute("dy", "-0.6em"); 
-
-        const tspan2 = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
-        tspan2.textContent = line2;
-        tspan2.setAttribute("x", center.x);
-        tspan2.setAttribute("dy", "1.4em"); 
-        
-        text.appendChild(tspan1);
-        text.appendChild(tspan2);
-        
-        if (p.isOpened) text.classList.add("cleared");
-        svg.appendChild(text);
-
-        // 3. プログレスバー
-        const barWidth = 160; 
-        const barHeight = 15; 
-        const barX = center.x - barWidth / 2;
-        const barY = center.y + 60; // テキストより下
-
-        const barBg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-        barBg.setAttribute("x", barX); barBg.setAttribute("y", barY);
-        barBg.setAttribute("width", barWidth); barBg.setAttribute("height", barHeight);
-        barBg.setAttribute("rx", barHeight / 2);
-        barBg.setAttribute("fill", "rgba(255,255,255,0.7)");
-        barBg.setAttribute("stroke", "#fff"); 
-        barBg.setAttribute("stroke-width", "1");
-        if (p.isOpened) barBg.classList.add("cleared");
-        svg.appendChild(barBg);
-
-        const progressPct = Math.min(1, p.current / p.target);
-        const barFillWidth = Math.max(0, barWidth * progressPct);
-        const barFill = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-        barFill.setAttribute("x", barX); barFill.setAttribute("y", barY);
-        barFill.setAttribute("width", barFillWidth); barFill.setAttribute("height", barHeight);
-        barFill.setAttribute("rx", barHeight / 2);
-        barFill.setAttribute("fill", p.current >= p.target ? "#e91e63" : "#4caf50");
-        if (p.isOpened) barFill.classList.add("cleared");
-        svg.appendChild(barFill);
     });
 
     if (isEditMode && editPoints.length > 0) {
@@ -431,14 +432,30 @@ function renderControls() {
     panels.forEach((p, index) => {
         const item = document.createElement('div');
         let statusClass = '';
+        const isComplete = p.current >= p.target; // 達成フラグ
+
         if (p.isOpened) statusClass = 'done';
-        else if (p.current >= p.target) statusClass = 'active';
+        else if (isComplete) statusClass = 'active';
+        
         item.className = `ctrl-item ${statusClass}`;
         item.style.borderLeftColor = p.isOpened ? '#4caf50' : p.color;
 
-        let btnText = "未達成", btnClass = "";
-        if (p.isOpened) { btnText = "OPEN済"; btnClass = "opened"; }
-        else if (p.current >= p.target) { btnText = "OPEN!"; btnClass = "ready"; }
+        // ★改良: 未達成ならボタンをdisabledにする
+        let btnText = "未達成";
+        let btnClass = "";
+        let isDisabled = "";
+
+        if (p.isOpened) { 
+            btnText = "OPEN済"; 
+            btnClass = "opened"; 
+        } else if (isComplete) { 
+            btnText = "OPEN!"; 
+            btnClass = "ready"; 
+        } else {
+            // 未達成
+            isDisabled = "disabled";
+            // 見た目も薄くするなどのスタイルはCSSで対応(disabled属性で制御)
+        }
 
         let contentHTML = `
             <div class="ctrl-header">
@@ -447,21 +464,20 @@ function renderControls() {
                     パネル ${index + 1}
                 </span>
                 <div style="display:flex; gap:5px;">
-                    <button class="open-toggle-btn ${btnClass}" onclick="toggleOpen(${index})">${btnText}</button>
+                    <button class="open-toggle-btn ${btnClass}" onclick="toggleOpen(${index})" ${isDisabled}>${btnText}</button>
                     ${isEditMode ? `<button class="btn-trash" onclick="deletePanel(${index})">🗑️</button>` : ''}
                 </div>
             </div>
         `;
 
         if (isEditMode) {
-            // ▼ 編集モード
+            // (編集モードのコードは変更なし)
             const typeOptions = `
                 <option value="gift" ${p.missionType==='gift'?'selected':''}>ギフト</option>
                 <option value="comment" ${p.missionType==='comment'?'selected':''}>コメント</option>
                 <option value="star" ${p.missionType==='star'?'selected':''}>スター</option>
                 <option value="other" ${p.missionType==='other'?'selected':''}>その他</option>
             `;
-            
             let inputArea = '';
             if (p.missionType === 'gift') {
                 inputArea = `
@@ -496,7 +512,6 @@ function renderControls() {
                     </div>
                 `;
             }
-
             contentHTML += `
                 <div class="ctrl-edit-column">
                     <div style="margin-bottom:5px;">
@@ -507,7 +522,7 @@ function renderControls() {
                 </div>
             `;
         } else {
-            // ▼ プレイモード
+            // (プレイモード)
             let labelText = p.label;
             if(p.missionType === 'comment' || p.missionType === 'star') labelText = getMissionTypeName(p.missionType);
             
@@ -574,8 +589,17 @@ function adjustCount(index, direction) {
     renderControls();
 }
 
+// ★改良: オープン処理 (達成チェックを追加)
 function toggleOpen(index) {
-    panels[index].isOpened = !panels[index].isOpened;
+    const p = panels[index];
+    
+    // 達成していない、かつまだ開いていない場合は開けない
+    if (!p.isOpened && p.current < p.target) {
+        // 必要ならアラートを出すなど (今回は無反応にする)
+        return;
+    }
+
+    p.isOpened = !p.isOpened;
     saveData();
     renderSvg();
     renderControls();
