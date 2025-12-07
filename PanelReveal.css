@@ -1,23 +1,27 @@
-/* 全体レイアウト */
+/* =========================================
+   全体設定
+   ========================================= */
 body {
     background: linear-gradient(120deg, #e0f7fa 0%, #fce4ec 100%);
     min-height: 100vh;
     padding: 20px;
     color: #333;
     font-family: 'Segoe UI', Arial, sans-serif;
+    box-sizing: border-box;
 }
 
 .main-container {
-    max-width: 1000px;
+    max-width: 1200px;
     margin: 60px auto 20px auto;
     text-align: center;
 }
 
-h1 { margin: 0 0 10px 0; color: #333; }
-p { color: #666; margin-bottom: 20px; }
+h1 { margin-bottom: 20px; color: #333; }
 
-/* 設定カード */
-.setting-card {
+/* =========================================
+   上部設定エリア
+   ========================================= */
+.global-settings {
     background: #fff;
     padding: 15px;
     border-radius: 8px;
@@ -25,169 +29,152 @@ p { color: #666; margin-bottom: 20px; }
     margin-bottom: 20px;
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
     justify-content: center;
+    gap: 20px;
     align-items: center;
 }
 
-.setting-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
+.setting-group { display: flex; gap: 10px; align-items: center; }
 
-.upload-btn {
-    background: #1976d2;
-    color: white;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 0.9em;
-}
+/* ボタン類 */
+.upload-btn { background: #1976d2; color: white; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.9em; }
 .upload-btn:hover { background: #1565c0; }
 
-.btn-gen {
-    background: #e91e63;
-    color: white;
-    border: none;
-    padding: 8px 20px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-weight: bold;
-}
-.btn-gen:hover { background: #c2185b; }
+.btn-tweet { background: #1da1f2; color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: bold; }
+.btn-tweet:hover { background: #0d8bd9; }
 
-/* ボードエリア */
-.board-container {
-    width: 100%;
-    display: flex;
-    justify-content: center;
+.mode-btn { background: #ddd; color: #555; border: none; padding: 8px 20px; border-radius: 20px; cursor: pointer; font-weight: bold; transition: all 0.3s; }
+.mode-btn.active { background: #e91e63; color: white; transform: scale(1.05); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+
+/* =========================================
+   ワークスペース (左右分割)
+   ========================================= */
+.workspace { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; align-items: flex-start; }
+
+/* --- 左側: ボードエリア --- */
+.board-area {
+    flex: 1; min-width: 300px; max-width: 800px;
+    background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.instruction-box {
+    background: #fff3e0; color: #e65100; padding: 10px; margin-bottom: 10px;
+    border-radius: 4px; font-size: 0.9em; display: none;
 }
 
 .board-wrapper {
-    position: relative;
-    width: 100%;
-    max-width: 800px; /* 最大幅 */
-    background: #eee;
-    border: 4px solid #fff;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    border-radius: 8px;
-    overflow: hidden;
-    /* アスペクト比はJSで画像に合わせて設定します */
-    min-height: 300px;
+    position: relative; width: 100%; background: #eee; overflow: hidden;
+    border: 2px solid #333; user-select: none;
 }
 
-#hidden-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
+#hidden-image { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
 #no-image-text {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    color: #999;
-    font-weight: bold;
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    color: #999; font-weight: bold; pointer-events: none;
 }
 
-/* パネルレイヤー */
-.panel-layer {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-}
+/* SVGレイヤー */
+.panel-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; }
 
-/* 個別パネル */
-.panel-item {
-    position: absolute; /* 自由配置のため絶対配置 */
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid #ddd;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    transition: all 0.3s;
-    padding: 2px;
-}
+/* SVG要素 */
+polygon { stroke: #fff; stroke-width: 3; transition: fill-opacity 0.5s; cursor: pointer; }
+polygon:hover { filter: brightness(0.95); }
+polygon.cleared { fill-opacity: 0; stroke: none; pointer-events: none; }
 
-/* カウント表示 */
-.panel-info {
-    font-size: 0.8em;
-    font-weight: bold;
-    color: #555;
-    margin-bottom: 4px;
-    text-align: center;
-    line-height: 1.2;
+text {
+    fill: #333; font-family: sans-serif; font-weight: 900; font-size: 24px;
+    pointer-events: none; text-anchor: middle; dominant-baseline: middle;
+    text-shadow: 2px 0 0 #fff, -2px 0 0 #fff, 0 2px 0 #fff, 0 -2px 0 #fff, 1px 1px 0 #fff;
 }
+text.cleared { opacity: 0; }
 
-/* 進捗バー */
-.progress-bar {
-    width: 80%;
-    height: 6px;
-    background: #eee;
-    border-radius: 3px;
-    overflow: hidden;
-    margin-bottom: 5px;
+/* 編集中のガイド */
+circle.edit-point { fill: #e91e63; stroke: white; stroke-width: 2; }
+line.edit-line { stroke: #e91e63; stroke-width: 2; stroke-dasharray: 4; }
+
+/* 確認ポップアップ */
+.confirm-popup {
+    position: fixed; z-index: 9999; background: white; border: 2px solid #e91e63;
+    border-radius: 8px; padding: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    text-align: center; min-width: 150px;
 }
-.progress-fill {
-    height: 100%;
-    background: #4caf50;
-    width: 0%;
-    transition: width 0.3s;
+.confirm-popup p { margin: 0 0 10px 0; font-weight: bold; }
+.popup-btns { display: flex; gap: 10px; }
+.btn-ok { flex: 1; background: #4caf50; color: white; border: none; padding: 6px; border-radius: 4px; cursor: pointer; }
+.btn-cancel { flex: 1; background: #f44336; color: white; border: none; padding: 6px; border-radius: 4px; cursor: pointer; }
+
+/* --- 右側: コントロールエリア --- */
+.control-area {
+    flex: 1; min-width: 300px; max-width: 450px;
+    background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    max-height: 80vh; overflow-y: auto;
 }
+.control-list { display: flex; flex-direction: column; gap: 10px; }
 
-/* 操作ボタン */
-.counter-btn {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    border: none;
-    background: #1976d2;
-    color: white;
-    font-size: 1.2em;
-    cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 2px;
+/* コントロールカード */
+.ctrl-item {
+    border: 1px solid #eee; border-left: 8px solid #ccc; background: #fafafa;
+    padding: 10px; border-radius: 4px; display: flex; flex-direction: column; gap: 8px;
+    transition: background 0.2s;
 }
-.counter-btn:active { transform: scale(0.9); }
+.ctrl-item.active { background: #e3f2fd; }
+.ctrl-item.done { opacity: 0.6; background: #eee; }
 
-/* OPENボタン (完了時) */
-.open-btn {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(255, 215, 0, 0.9); /* 金色 */
-    color: #d32f2f;
-    font-weight: bold;
-    font-size: 1.2em;
-    border: none;
-    cursor: pointer;
-    display: none; /* 最初は非表示 */
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    animation: popUp 0.3s;
-    z-index: 10;
+.ctrl-header { display: flex; justify-content: space-between; align-items: center; font-weight: bold; color: #555; }
+
+.btn-trash {
+    background: #ff5252; color: white; border: none; border-radius: 4px;
+    padding: 4px 8px; cursor: pointer; font-size: 0.8em; margin-left: 10px;
 }
-.open-btn span { font-size: 0.7em; color: #333; font-weight: normal; }
+.btn-trash:hover { background: #d32f2f; }
 
-/* パネルが消えた状態 */
-.panel-item.cleared {
-    opacity: 0;
-    pointer-events: none;
-    transform: scale(1.1);
+.open-toggle-btn {
+    padding: 4px 10px; border: none; border-radius: 15px; font-weight: bold;
+    cursor: pointer; background: #eee; color: #666; font-size: 0.85em; min-width: 60px;
 }
+.open-toggle-btn.ready { background: #ffd700; color: #333; animation: pulse 1s infinite; }
+.open-toggle-btn.opened { background: #4caf50; color: white; animation: none; }
+@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-@keyframes popUp { from { transform: scale(0); } to { transform: scale(1); } }
+/* 編集用フォーム */
+.ctrl-edit-column { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.type-select { padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9em; background: #fff; cursor: pointer; }
 
-/* スマホ対応 */
-@media (max-width: 600px) {
-    .home-btn { position: static; display: inline-block; margin-bottom: 15px; }
-    .main-container { margin-top: 0; padding: 10px; }
-    .setting-card { flex-direction: column; align-items: stretch; }
+/* ギフト選択まわり */
+.gift-settings-container { background: #fff; border: 1px solid #eee; border-radius: 4px; padding: 8px; }
+.cat-select { padding: 4px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.85em; max-width: 100px; }
+
+/* ギフト画像グリッド */
+.gift-grid-selector {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 5px; max-height: 150px; overflow-y: auto;
+    border: 1px solid #f0f0f0; padding: 5px; background: #fafafa; border-radius: 4px;
+}
+.gift-option { display: flex; flex-direction: column; align-items: center; cursor: pointer; padding: 4px; border: 2px solid transparent; border-radius: 4px; transition: background 0.2s; }
+.gift-option:hover { background: #e3f2fd; }
+.gift-option.selected { background: #e3f2fd; border-color: #1976d2; }
+.gift-option img { width: 40px; height: 40px; object-fit: contain; }
+.gift-option .gift-name { font-size: 0.75em; color: #333; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; margin-top: 2px; }
+
+/* 入力エリア汎用 */
+.label-input { flex: 2; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9em; width: 100%; box-sizing: border-box; }
+.target-setting { display: flex; align-items: center; gap: 3px; white-space: nowrap; font-size: 0.9em; color: #666; }
+.target-input { width: 70px; text-align: center; padding: 6px; border: 1px solid #ddd; border-radius: 4px; background: #f9f9f9; }
+.target-select { flex: 1; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9em; background: #f9f9f9; font-weight: bold; color: #e91e63; cursor: pointer; }
+
+/* プレイモード表示 */
+.ctrl-play-info { display: flex; justify-content: space-between; align-items: center; padding: 0 5px; }
+.mission-title { font-weight: bold; color: #333; font-size: 0.95em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%; }
+.mission-progress { font-size: 0.9em; color: #666; background: rgba(255,255,255,0.5); padding: 2px 6px; border-radius: 4px; }
+.mission-progress .curr { color: #e91e63; font-weight: bold; font-size: 1.1em; }
+
+.ctrl-actions { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 8px; border-radius: 4px; margin-top: 5px; border: 1px solid #eee; }
+.count-btn { width: 36px; height: 36px; border-radius: 50%; border: none; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 1.2em; display: flex; justify-content: center; align-items: center; }
+.count-btn:active { transform: scale(0.95); }
+.btn-minus { background: #ffcdd2; color: #b71c1c; }
+.btn-plus { background: #c8e6c9; color: #1b5e20; }
+
+@media (max-width: 800px) {
+    .workspace { flex-direction: column; align-items: center; }
+    .board-area, .control-area { width: 100%; max-width: 100%; }
 }
