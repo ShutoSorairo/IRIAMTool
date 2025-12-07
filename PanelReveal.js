@@ -230,7 +230,7 @@ function deletePanel(index) {
     }
 }
 
-// ★改良: 描画処理 (テキストを2段組みに変更)
+// ★改良: 描画処理 (残り数 & プログレスバー)
 function renderSvg() {
     const svg = document.getElementById('panel-svg');
     svg.innerHTML = '';
@@ -243,44 +243,81 @@ function renderSvg() {
         if (p.isOpened) poly.classList.add("cleared");
         svg.appendChild(poly);
         
-        // 2. テキスト設定
+        // --- 共通座標 ---
         const center = getCenter(p.points);
+
+        // 2. テキスト設定 (残り数表示)
         const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
         text.setAttribute("x", center.x);
         text.setAttribute("y", center.y);
         
-        // --- テキスト内容の決定 ---
+        // テキスト内容
         let line1 = ""; // 上段: 名前
-        let line2 = ""; // 下段: 個数
+        let line2 = ""; // 下段: 残り数
         
+        // 残り計算
+        const remaining = Math.max(0, p.target - p.current);
+        const remStr = remaining.toLocaleString();
+
         if(p.missionType === 'comment' || p.missionType === 'star') {
             line1 = getMissionTypeName(p.missionType);
-            line2 = p.target.toLocaleString(); // コメント/スターは数字のみ
+            line2 = `あと ${remStr}`; 
         } else {
-            line1 = p.label.split('\n')[0]; // ギフト名 (ポイント含む)
-            line2 = p.target.toLocaleString() + "個"; // ギフトは「〇個」
+            line1 = p.label.split('\n')[0]; 
+            line2 = `あと ${remStr}個`; 
         }
 
-        // --- 2段組み作成 (tspanを使用) ---
-        // 上段 (少し上にずらす)
+        // 2段組み (tspan)
+        // 上段
         const tspan1 = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
         tspan1.textContent = line1;
         tspan1.setAttribute("x", center.x);
-        tspan1.setAttribute("dy", "-0.6em"); 
+        tspan1.setAttribute("dy", "-0.8em"); // 少し上へ
 
-        // 下段 (上段から下にずらす)
+        // 下段
         const tspan2 = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
         tspan2.textContent = line2;
         tspan2.setAttribute("x", center.x);
-        tspan2.setAttribute("dy", "1.4em");
-        // 下段の文字サイズを少し小さくするなど調整可能
-        // tspan2.setAttribute("font-size", "0.9em"); 
-
+        tspan2.setAttribute("dy", "1.6em"); // 下へ
+        
         text.appendChild(tspan1);
         text.appendChild(tspan2);
         
         if (p.isOpened) text.classList.add("cleared");
         svg.appendChild(text);
+
+        // 3. プログレスバー (SVG Rect)
+        // 位置: テキストの下
+        const barWidth = 80;
+        const barHeight = 8;
+        const barX = center.x - barWidth / 2;
+        const barY = center.y + 25; // テキストより下
+
+        // 背景バー
+        const barBg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        barBg.setAttribute("x", barX);
+        barBg.setAttribute("y", barY);
+        barBg.setAttribute("width", barWidth);
+        barBg.setAttribute("height", barHeight);
+        barBg.setAttribute("rx", barHeight / 2); // 角丸
+        barBg.setAttribute("fill", "rgba(255,255,255,0.7)");
+        if (p.isOpened) barBg.classList.add("cleared");
+        svg.appendChild(barBg);
+
+        // 中身バー
+        const progressPct = Math.min(1, p.current / p.target);
+        const barFillWidth = Math.max(0, barWidth * progressPct);
+        
+        const barFill = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        barFill.setAttribute("x", barX);
+        barFill.setAttribute("y", barY);
+        barFill.setAttribute("width", barFillWidth);
+        barFill.setAttribute("height", barHeight);
+        barFill.setAttribute("rx", barHeight / 2);
+        // 色分け: 完了したら赤、途中は緑
+        barFill.setAttribute("fill", p.current >= p.target ? "#e91e63" : "#4caf50");
+        if (p.isOpened) barFill.classList.add("cleared");
+        svg.appendChild(barFill);
     });
 
     // 編集中の線描画
@@ -431,7 +468,6 @@ function renderControls() {
         `;
 
         if (isEditMode) {
-            // ▼ 編集モード
             const typeOptions = `
                 <option value="gift" ${p.missionType==='gift'?'selected':''}>ギフト</option>
                 <option value="comment" ${p.missionType==='comment'?'selected':''}>コメント</option>
@@ -484,7 +520,7 @@ function renderControls() {
                 </div>
             `;
         } else {
-            // ▼ プレイモード
+            // ▼ プレイモード (表示順序の修正)
             let labelText = p.label;
             if(p.missionType === 'comment' || p.missionType === 'star') labelText = getMissionTypeName(p.missionType);
             
