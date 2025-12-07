@@ -61,7 +61,6 @@ async function fetchGiftData() {
         if (res.ok) {
             allGifts = await res.json();
             
-            // 手動入力用のdatalist更新
             const dataList = document.getElementById('gift-options') || document.createElement('datalist');
             dataList.id = 'gift-options';
             dataList.innerHTML = '';
@@ -72,7 +71,6 @@ async function fetchGiftData() {
             });
             if(!document.getElementById('gift-options')) document.body.appendChild(dataList);
             
-            // カテゴリ別整理 (AllGift仕様)
             organizeGiftsByCategory();
             renderControls();
         }
@@ -84,10 +82,8 @@ function organizeGiftsByCategory() {
     const catSet = new Set();
     const targetCategories = ["ネタ", "笑", "定番", "専用", "えらい", "挨拶", "ステージ", "LOVE", "プチギフ", "ポイント別"];
     
-    // 全ギフト
     giftsByCategory['全ギフト'] = [...allGifts];
 
-    // 通常カテゴリ
     allGifts.forEach(g => {
         let cats = [];
         if (Array.isArray(g.categories)) cats = g.categories;
@@ -99,16 +95,13 @@ function organizeGiftsByCategory() {
         });
     });
 
-    // 特殊カテゴリ
     giftsByCategory['プチギフ'] = allGifts.filter(g => getPt(g.src) < 100);
     giftsByCategory['ポイント別'] = allGifts.filter(g => getPt(g.src) >= 100);
 
-    // ポイント順ソート
     for (const key in giftsByCategory) {
         giftsByCategory[key].sort((a, b) => getPt(a.src) - getPt(b.src));
     }
 
-    // 表示順リスト作成
     categoriesList = ['全ギフト', ...targetCategories];
     Array.from(catSet).forEach(c => {
         if (!categoriesList.includes(c)) categoriesList.push(c);
@@ -237,11 +230,12 @@ function deletePanel(index) {
     }
 }
 
-// 描画処理
+// ★改良: 描画処理 (テキストを2段組みに変更)
 function renderSvg() {
     const svg = document.getElementById('panel-svg');
     svg.innerHTML = '';
     panels.forEach((p) => {
+        // 1. パネル本体
         const poly = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
         const pointsStr = p.points.map(pt => `${pt.x},${pt.y}`).join(" ");
         poly.setAttribute("points", pointsStr);
@@ -249,21 +243,47 @@ function renderSvg() {
         if (p.isOpened) poly.classList.add("cleared");
         svg.appendChild(poly);
         
+        // 2. テキスト設定
         const center = getCenter(p.points);
         const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
         text.setAttribute("x", center.x);
         text.setAttribute("y", center.y);
         
+        // --- テキスト内容の決定 ---
+        let line1 = ""; // 上段: 名前
+        let line2 = ""; // 下段: 個数
+        
         if(p.missionType === 'comment' || p.missionType === 'star') {
-            text.textContent = `${getMissionTypeName(p.missionType)}`;
+            line1 = getMissionTypeName(p.missionType);
+            line2 = p.target.toLocaleString(); // コメント/スターは数字のみ
         } else {
-            text.textContent = p.label.split('\n')[0]; 
+            line1 = p.label.split('\n')[0]; // ギフト名 (ポイント含む)
+            line2 = p.target.toLocaleString() + "個"; // ギフトは「〇個」
         }
+
+        // --- 2段組み作成 (tspanを使用) ---
+        // 上段 (少し上にずらす)
+        const tspan1 = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+        tspan1.textContent = line1;
+        tspan1.setAttribute("x", center.x);
+        tspan1.setAttribute("dy", "-0.6em"); 
+
+        // 下段 (上段から下にずらす)
+        const tspan2 = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+        tspan2.textContent = line2;
+        tspan2.setAttribute("x", center.x);
+        tspan2.setAttribute("dy", "1.4em");
+        // 下段の文字サイズを少し小さくするなど調整可能
+        // tspan2.setAttribute("font-size", "0.9em"); 
+
+        text.appendChild(tspan1);
+        text.appendChild(tspan2);
         
         if (p.isOpened) text.classList.add("cleared");
         svg.appendChild(text);
     });
 
+    // 編集中の線描画
     if (isEditMode && editPoints.length > 0) {
         const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
         const ptsStr = editPoints.map(pt => `${pt.x},${pt.y}`).join(" ");
@@ -411,7 +431,6 @@ function renderControls() {
         `;
 
         if (isEditMode) {
-            // ▼ 編集モード
             const typeOptions = `
                 <option value="gift" ${p.missionType==='gift'?'selected':''}>ギフト</option>
                 <option value="comment" ${p.missionType==='comment'?'selected':''}>コメント</option>
@@ -464,7 +483,6 @@ function renderControls() {
                 </div>
             `;
         } else {
-            // ▼ プレイモード
             let labelText = p.label;
             if(p.missionType === 'comment' || p.missionType === 'star') labelText = getMissionTypeName(p.missionType);
             
