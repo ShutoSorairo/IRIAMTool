@@ -48,6 +48,12 @@ function setImage(src) {
     img.onload = () => adjustBoardSize(img);
 }
 
+// ポイント取得ヘルパー
+function getPt(src) {
+    const match = src.match(/_(\d+(?:,\d+)*)pt/i);
+    return match ? parseInt(match[1].replace(/,/g, ''), 10) : 0;
+}
+
 // ギフトデータ取得
 async function fetchGiftData() {
     try {
@@ -55,6 +61,7 @@ async function fetchGiftData() {
         if (res.ok) {
             allGifts = await res.json();
             
+            // 手動入力用のdatalist更新
             const dataList = document.getElementById('gift-options') || document.createElement('datalist');
             dataList.id = 'gift-options';
             dataList.innerHTML = '';
@@ -65,6 +72,7 @@ async function fetchGiftData() {
             });
             if(!document.getElementById('gift-options')) document.body.appendChild(dataList);
             
+            // カテゴリ別整理 (AllGift仕様)
             organizeGiftsByCategory();
             renderControls();
         }
@@ -73,12 +81,13 @@ async function fetchGiftData() {
 
 function organizeGiftsByCategory() {
     giftsByCategory = {};
-    const getPt = (src) => {
-        const match = src.match(/_(\d+(?:,\d+)*)pt/i);
-        return match ? parseInt(match[1].replace(/,/g, ''), 10) : 0;
-    };
-
     const catSet = new Set();
+    const targetCategories = ["ネタ", "笑", "定番", "専用", "えらい", "挨拶", "ステージ", "LOVE", "プチギフ", "ポイント別"];
+    
+    // 全ギフト
+    giftsByCategory['全ギフト'] = [...allGifts];
+
+    // 通常カテゴリ
     allGifts.forEach(g => {
         let cats = [];
         if (Array.isArray(g.categories)) cats = g.categories;
@@ -90,17 +99,17 @@ function organizeGiftsByCategory() {
         });
     });
 
-    giftsByCategory['全ギフト'] = [...allGifts];
+    // 特殊カテゴリ
     giftsByCategory['プチギフ'] = allGifts.filter(g => getPt(g.src) < 100);
     giftsByCategory['ポイント別'] = allGifts.filter(g => getPt(g.src) >= 100);
 
+    // ポイント順ソート
     for (const key in giftsByCategory) {
         giftsByCategory[key].sort((a, b) => getPt(a.src) - getPt(b.src));
     }
 
-    const preferredOrder = ["全ギフト", "ネタ", "笑", "定番", "専用", "えらい", "挨拶", "ステージ", "LOVE", "プチギフ", "ポイント別"];
-    categoriesList = preferredOrder.filter(c => giftsByCategory[c] && giftsByCategory[c].length > 0);
-    
+    // 表示順リスト作成
+    categoriesList = ['全ギフト', ...targetCategories];
     Array.from(catSet).forEach(c => {
         if (!categoriesList.includes(c)) categoriesList.push(c);
     });
@@ -228,6 +237,7 @@ function deletePanel(index) {
     }
 }
 
+// 描画処理
 function renderSvg() {
     const svg = document.getElementById('panel-svg');
     svg.innerHTML = '';
@@ -321,12 +331,6 @@ function getGiftGridHTML(index, category, currentLabel) {
     });
     html += '</div>';
     return html;
-}
-
-// ポイント取得 (共通)
-function getPt(src) {
-    const match = src.match(/_(\d+(?:,\d+)*)pt/i);
-    return match ? parseInt(match[1].replace(/,/g, ''), 10) : 0;
 }
 
 function selectGift(index, giftName) {
@@ -460,11 +464,10 @@ function renderControls() {
                 </div>
             `;
         } else {
-            // ▼ プレイモード (表示順序の修正)
+            // ▼ プレイモード
             let labelText = p.label;
             if(p.missionType === 'comment' || p.missionType === 'star') labelText = getMissionTypeName(p.missionType);
             
-            // 残り計算
             const remaining = Math.max(0, p.target - p.current);
             const pct = Math.min(100, (p.current / p.target) * 100);
 
