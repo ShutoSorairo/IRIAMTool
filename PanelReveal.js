@@ -23,11 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const reader = new FileReader();
             reader.onload = function(evt) {
                 const result = evt.target.result;
-                const img = document.getElementById('hidden-image');
-                img.src = result;
+                setImage(result);
                 try { localStorage.setItem('iriam_free_panel_bg', result); } catch(e) {}
-                img.onload = () => adjustBoardSize(img);
-                document.getElementById('no-image-text').style.display = 'none';
             };
             reader.readAsDataURL(file);
         }
@@ -42,13 +39,23 @@ document.addEventListener('DOMContentLoaded', () => {
     loadAllData();
 });
 
-// ギフトデータ取得・整理
+function setImage(src) {
+    const img = document.getElementById('hidden-image');
+    const noImgText = document.getElementById('no-image-text');
+    img.src = src;
+    img.style.display = 'block';
+    noImgText.style.display = 'none';
+    img.onload = () => adjustBoardSize(img);
+}
+
+// ギフトデータ取得
 async function fetchGiftData() {
     try {
         const res = await fetch('gifts.json');
         if (res.ok) {
             allGifts = await res.json();
-            // ギフト入力補完用datalist更新
+            
+            // 手動入力用のdatalist更新
             const dataList = document.getElementById('gift-options') || document.createElement('datalist');
             dataList.id = 'gift-options';
             dataList.innerHTML = '';
@@ -59,37 +66,69 @@ async function fetchGiftData() {
             });
             if(!document.getElementById('gift-options')) document.body.appendChild(dataList);
             
-            // カテゴリ別整理
+            // カテゴリ別整理 (AllGift仕様)
             organizeGiftsByCategory();
-            // データ読み込み完了後にコントロール再描画
             renderControls();
         }
     } catch (e) { console.error("ギフトデータ読み込み失敗", e); }
 }
 
+// ★改良: AllGift.jsと同等のカテゴリ分けロジック
 function organizeGiftsByCategory() {
     giftsByCategory = {};
+    
+    // ポイント取得ヘルパー
+    const getPt = (src) => {
+        const match = src.match(/_(\d+(?:,\d+)*)pt/i);
+        return match ? parseInt(match[1].replace(/,/g, ''), 10) : 0;
+    };
+
+    // 1. 通常カテゴリの分類
     const catSet = new Set();
     allGifts.forEach(g => {
         let cats = [];
         if (Array.isArray(g.categories)) cats = g.categories;
         else if (g.category) cats = [g.category];
+        
         cats.forEach(c => {
             catSet.add(c);
             if (!giftsByCategory[c]) giftsByCategory[c] = [];
             giftsByCategory[c].push(g);
         });
     });
-    categoriesList = Array.from(catSet);
+
+    // 2. 特殊カテゴリの生成
+    // [全ギフト]
+    giftsByCategory['全ギフト'] = [...allGifts];
+    
+    // [プチギフ] (100pt未満)
+    giftsByCategory['プチギフ'] = allGifts.filter(g => getPt(g.src) < 100);
+    
+    // [ポイント別] (100pt以上)
+    giftsByCategory['ポイント別'] = allGifts.filter(g => getPt(g.src) >= 100);
+
+    // 各カテゴリ内でポイント順にソート
+    for (const key in giftsByCategory) {
+        giftsByCategory[key].sort((a, b) => getPt(a.src) - getPt(b.src));
+    }
+
+    // 3. 表示順の定義 (AllGift.jsに準拠 + 全ギフト)
+    const preferredOrder = ["全ギフト", "ネタ", "笑", "定番", "専用", "えらい", "挨拶", "ステージ", "LOVE", "プチギフ", "ポイント別"];
+    
+    // 定義順にリストを作成 (存在するカテゴリのみ)
+    categoriesList = preferredOrder.filter(c => giftsByCategory[c] && giftsByCategory[c].length > 0);
+    
+    // 定義外のカテゴリがあれば末尾に追加
+    Array.from(catSet).forEach(c => {
+        if (!categoriesList.includes(c)) categoriesList.push(c);
+    });
 }
 
-// モード切替
 function setMode(mode) {
     isEditMode = (mode === 'edit');
     document.getElementById('btn-play').className = isEditMode ? 'mode-btn' : 'mode-btn active';
     document.getElementById('btn-edit').className = isEditMode ? 'mode-btn active' : 'mode-btn';
     document.getElementById('instruction').style.display = isEditMode ? 'block' : 'none';
-    
     hideConfirmPopup();
     
     if (!isEditMode) {
@@ -189,7 +228,7 @@ function finishShape() {
         current: 0,
         isOpened: false,
         missionType: 'gift',
-        selectedCategory: categoriesList[0] || '定番'
+        selectedCategory: '全ギフト' // 初期カテゴリ
     });
     editPoints = [];
     currentMousePos = null;
@@ -268,13 +307,12 @@ function getCenter(points) {
     return { x: x / points.length, y: y / points.length };
 }
 
-// ロジック系
+// ロジック
 function getMissionTypeName(type) {
     const map = { gift:'ギフト', comment:'コメント', star:'スター', other:'その他' };
     return map[type] || 'その他';
 }
 
-// ★前回不足していた関数: カテゴリ選択肢HTML
 function getCategoryOptionsHTML(currentCat) {
     if(categoriesList.length === 0) return '<option>読込中...</option>';
     return categoriesList.map(cat => 
@@ -282,10 +320,10 @@ function getCategoryOptionsHTML(currentCat) {
     ).join('');
 }
 
-// ★前回不足していた関数: ギフトリストHTML
 function getGiftGridHTML(index, category, currentLabel) {
     const gifts = giftsByCategory[category] || [];
     if (gifts.length === 0) return '<div style="padding:10px;color:#999;font-size:0.9em;">ギフトなし</div>';
+    
     let html = '<div class="gift-grid-selector">';
     gifts.forEach(g => {
         const isSelected = (g.name === currentLabel);
@@ -301,7 +339,6 @@ function getGiftGridHTML(index, category, currentLabel) {
     return html;
 }
 
-// ★前回不足していた関数: ギフト選択
 function selectGift(index, giftName) {
     panels[index].label = giftName;
     saveData();
@@ -343,7 +380,7 @@ function getTargetOptionsHTML(currentVal) {
     return options.map(val => `<option value="${val}" ${val === currentVal ? 'selected' : ''}>${val.toLocaleString()}</option>`).join('');
 }
 
-// --- コントロールパネル ---
+// --- コントロール描画 ---
 function renderControls() {
     const list = document.getElementById('control-list');
     list.innerHTML = '';
@@ -458,7 +495,8 @@ function updateData(index, key, value) {
             panels[index].label = getMissionTypeName(value);
         } else {
             panels[index].target = 10;
-            if(value==='gift') panels[index].selectedCategory = categoriesList[0] || '定番';
+            // ギフト初期値
+            if(value==='gift') panels[index].selectedCategory = '全ギフト';
             panels[index].label = '';
         }
         panels[index].current = 0;
@@ -494,26 +532,15 @@ function saveData() { localStorage.setItem('iriam_free_panel', JSON.stringify(pa
 function loadAllData() {
     const bgData = localStorage.getItem('iriam_free_panel_bg');
     if (bgData) {
-        const img = document.getElementById('hidden-image');
-        img.onload = () => {
-            adjustBoardSize(img);
-            document.getElementById('no-image-text').style.display = 'none';
-            loadPanelsData();
-        };
-        img.src = bgData;
-    } else {
-        loadPanelsData();
+        setImage(bgData);
     }
-}
-
-function loadPanelsData() {
     const data = localStorage.getItem('iriam_free_panel');
     if (data) { panels = JSON.parse(data); renderSvg(); renderControls(); }
 }
 
 function copyBoardImage() {
     const target = document.getElementById('capture-target');
-    if (!document.getElementById('hidden-image').src) { alert("画像が設定されていません"); return; }
+    if (window.getComputedStyle(document.getElementById('hidden-image')).display === 'none') { alert("画像が設定されていません"); return; }
     html2canvas(target, { useCORS: true, scale: 2 }).then(canvas => {
         canvas.toBlob(blob => {
             try {
