@@ -16,6 +16,7 @@ const colorPalette = [
 
 // 初期化
 document.addEventListener('DOMContentLoaded', () => {
+    // 画像アップロード
     document.getElementById('imageInput').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file) {
@@ -33,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     svg.addEventListener('click', onSvgClick);
     svg.addEventListener('mousemove', onSvgMouseMove);
     
+    // データ読み込み
     fetchGiftData();
     loadAllData();
 });
@@ -44,12 +46,6 @@ function setImage(src) {
     img.style.display = 'block';
     noImgText.style.display = 'none';
     img.onload = () => adjustBoardSize(img);
-}
-
-// ポイント取得ヘルパー (共通化)
-function getPt(src) {
-    const match = src.match(/_(\d+(?:,\d+)*)pt/i);
-    return match ? parseInt(match[1].replace(/,/g, ''), 10) : 0;
 }
 
 // ギフトデータ取得
@@ -77,21 +73,24 @@ async function fetchGiftData() {
 
 function organizeGiftsByCategory() {
     giftsByCategory = {};
-    const catSet = new Set();
-    const targetCategories = ["ネタ", "笑", "定番", "専用", "えらい", "挨拶", "ステージ", "LOVE", "プチギフ", "ポイント別"];
-    
-    giftsByCategory['全ギフト'] = [...allGifts];
+    const getPt = (src) => {
+        const match = src.match(/_(\d+(?:,\d+)*)pt/i);
+        return match ? parseInt(match[1].replace(/,/g, ''), 10) : 0;
+    };
 
+    const catSet = new Set();
     allGifts.forEach(g => {
         let cats = [];
         if (Array.isArray(g.categories)) cats = g.categories;
         else if (g.category) cats = [g.category];
         cats.forEach(c => {
+            catSet.add(c);
             if (!giftsByCategory[c]) giftsByCategory[c] = [];
             giftsByCategory[c].push(g);
         });
     });
 
+    giftsByCategory['全ギフト'] = [...allGifts];
     giftsByCategory['プチギフ'] = allGifts.filter(g => getPt(g.src) < 100);
     giftsByCategory['ポイント別'] = allGifts.filter(g => getPt(g.src) >= 100);
 
@@ -99,9 +98,11 @@ function organizeGiftsByCategory() {
         giftsByCategory[key].sort((a, b) => getPt(a.src) - getPt(b.src));
     }
 
-    categoriesList = ['全ギフト', ...targetCategories];
-    Object.keys(giftsByCategory).forEach(key => {
-        if (!categoriesList.includes(key)) categoriesList.push(key);
+    const preferredOrder = ["全ギフト", "ネタ", "笑", "定番", "専用", "えらい", "挨拶", "ステージ", "LOVE", "プチギフ", "ポイント別"];
+    categoriesList = preferredOrder.filter(c => giftsByCategory[c] && giftsByCategory[c].length > 0);
+    
+    Array.from(catSet).forEach(c => {
+        if (!categoriesList.includes(c)) categoriesList.push(c);
     });
 }
 
@@ -127,6 +128,7 @@ function adjustBoardSize(img) {
     svg.setAttribute('viewBox', `0 0 ${img.naturalWidth} ${img.naturalHeight}`);
 }
 
+// --- 編集ロジック ---
 function getSvgCoordinates(e, svg) {
     const rect = svg.getBoundingClientRect();
     const viewBox = svg.viewBox.baseVal;
@@ -134,6 +136,7 @@ function getSvgCoordinates(e, svg) {
     const vbH = viewBox.height || 600;
     let x = (e.clientX - rect.left) * (vbW / rect.width);
     let y = (e.clientY - rect.top) * (vbH / rect.height);
+    
     const snapThreshold = vbW * 0.02;
     let closestDist = snapThreshold;
     let snappedX = null, snappedY = null;
@@ -297,18 +300,13 @@ function getCategoryOptionsHTML(currentCat) {
     ).join('');
 }
 
-// ★改良: グリッド表示時にポイントを表示
 function getGiftGridHTML(index, category, currentLabel) {
     const gifts = giftsByCategory[category] || [];
     if (gifts.length === 0) return '<div style="padding:10px;color:#999;font-size:0.9em;">ギフトなし</div>';
     
     let html = '<div class="gift-grid-selector">';
     gifts.forEach(g => {
-        // 現在の名前と一致しているか（ポイント付き文字列に対応するため .startsWith 等で判定も可だが、完全一致で管理）
-        // ※selectGiftで (50pt) が付くため、純粋な名前比較だとずれる可能性があるが、
-        // ユーザー体験的には「再選択」なので問題なし
         const isSelected = (currentLabel && currentLabel.startsWith(g.name));
-        
         const pt = getPt(g.src);
         const ptStr = pt > 0 ? `${pt}pt` : '';
 
@@ -325,19 +323,19 @@ function getGiftGridHTML(index, category, currentLabel) {
     return html;
 }
 
-// ★改良: 選択時にポイント数をラベルに追加
+// ポイント取得 (共通)
+function getPt(src) {
+    const match = src.match(/_(\d+(?:,\d+)*)pt/i);
+    return match ? parseInt(match[1].replace(/,/g, ''), 10) : 0;
+}
+
 function selectGift(index, giftName) {
-    // ギフトデータを探す
     const gift = allGifts.find(g => g.name === giftName);
     let labelText = giftName;
-    
     if (gift) {
         const pt = getPt(gift.src);
-        if (pt > 0) {
-            labelText = `${giftName} (${pt}pt)`;
-        }
+        if (pt > 0) labelText = `${giftName} (${pt}pt)`;
     }
-
     panels[index].label = labelText;
     saveData();
     renderSvg();
@@ -378,6 +376,7 @@ function getTargetOptionsHTML(currentVal) {
     return options.map(val => `<option value="${val}" ${val === currentVal ? 'selected' : ''}>${val.toLocaleString()}</option>`).join('');
 }
 
+// --- コントロール描画 ---
 function renderControls() {
     const list = document.getElementById('control-list');
     list.innerHTML = '';
@@ -408,6 +407,7 @@ function renderControls() {
         `;
 
         if (isEditMode) {
+            // ▼ 編集モード
             const typeOptions = `
                 <option value="gift" ${p.missionType==='gift'?'selected':''}>ギフト</option>
                 <option value="comment" ${p.missionType==='comment'?'selected':''}>コメント</option>
@@ -460,19 +460,31 @@ function renderControls() {
                 </div>
             `;
         } else {
+            // ▼ プレイモード (表示順序の修正)
             let labelText = p.label;
             if(p.missionType === 'comment' || p.missionType === 'star') labelText = getMissionTypeName(p.missionType);
+            
+            // 残り計算
+            const remaining = Math.max(0, p.target - p.current);
+            const pct = Math.min(100, (p.current / p.target) * 100);
 
             contentHTML += `
                 <div class="ctrl-play-info">
-                    <div class="mission-title">${labelText}</div>
-                    <div class="mission-progress"><span class="curr">${p.current.toLocaleString()}</span> / <span class="tgt">${p.target.toLocaleString()}</span></div>
+                    <div class="mission-header">
+                        <span class="mission-title">${labelText}</span>
+                        <span class="mission-val">${p.current.toLocaleString()} / ${p.target.toLocaleString()}</span>
+                    </div>
+                    <div class="mission-remaining">あと <span class="rem-num">${remaining.toLocaleString()}</span></div>
                 </div>
+                
+                <div class="ctrl-progress-row">
+                    <div class="ctrl-progress-track">
+                        <div class="ctrl-progress-fill" style="width:${pct}%; background:${p.current>=p.target?'#e91e63':'#4caf50'};"></div>
+                    </div>
+                </div>
+
                 <div class="ctrl-actions">
                     <button class="count-btn btn-minus" onclick="adjustCount(${index}, -1)">-</button>
-                    <div style="flex:1; margin:0 10px; height:6px; background:#eee; border-radius:3px; overflow:hidden;">
-                        <div style="width:${Math.min(100, (p.current/p.target)*100)}%; height:100%; background:${p.current>=p.target?'#e91e63':'#4caf50'}; transition:width 0.3s;"></div>
-                    </div>
                     <button class="count-btn btn-plus" onclick="adjustCount(${index}, 1)">+</button>
                 </div>
             `;
