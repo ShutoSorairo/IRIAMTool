@@ -431,6 +431,7 @@ function renderControls() {
         `;
 
         if (isEditMode) {
+            // ▼ 編集モード
             const typeOptions = `
                 <option value="gift" ${p.missionType==='gift'?'selected':''}>ギフト</option>
                 <option value="comment" ${p.missionType==='comment'?'selected':''}>コメント</option>
@@ -483,6 +484,7 @@ function renderControls() {
                 </div>
             `;
         } else {
+            // ▼ プレイモード
             let labelText = p.label;
             if(p.missionType === 'comment' || p.missionType === 'star') labelText = getMissionTypeName(p.missionType);
             
