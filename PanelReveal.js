@@ -495,7 +495,6 @@ function updateData(index, key, value) {
             panels[index].label = getMissionTypeName(value);
         } else {
             panels[index].target = 10;
-            // ギフト初期値
             if(value==='gift') panels[index].selectedCategory = '全ギフト';
             panels[index].label = '';
         }
