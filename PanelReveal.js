@@ -61,6 +61,7 @@ async function fetchGiftData() {
         if (res.ok) {
             allGifts = await res.json();
             
+            // 手動入力用のdatalist更新
             const dataList = document.getElementById('gift-options') || document.createElement('datalist');
             dataList.id = 'gift-options';
             dataList.innerHTML = '';
@@ -71,6 +72,7 @@ async function fetchGiftData() {
             });
             if(!document.getElementById('gift-options')) document.body.appendChild(dataList);
             
+            // カテゴリ別整理 (AllGift仕様)
             organizeGiftsByCategory();
             renderControls();
         }
@@ -230,12 +232,12 @@ function deletePanel(index) {
     }
 }
 
-// ★改良: 描画処理 (残り数 & プログレスバー)
+// ★描画処理 (テキスト2段組み + プログレスバー対応)
 function renderSvg() {
     const svg = document.getElementById('panel-svg');
     svg.innerHTML = '';
     panels.forEach((p) => {
-        // 1. パネル本体
+        // 1. パネル
         const poly = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
         const pointsStr = p.points.map(pt => `${pt.x},${pt.y}`).join(" ");
         poly.setAttribute("points", pointsStr);
@@ -243,19 +245,14 @@ function renderSvg() {
         if (p.isOpened) poly.classList.add("cleared");
         svg.appendChild(poly);
         
-        // --- 共通座標 ---
+        // 2. テキスト (2段組み)
         const center = getCenter(p.points);
-
-        // 2. テキスト設定 (残り数表示)
         const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
         text.setAttribute("x", center.x);
         text.setAttribute("y", center.y);
         
-        // テキスト内容
-        let line1 = ""; // 上段: 名前
-        let line2 = ""; // 下段: 残り数
-        
-        // 残り計算
+        let line1 = ""; 
+        let line2 = ""; 
         const remaining = Math.max(0, p.target - p.current);
         const remStr = remaining.toLocaleString();
 
@@ -267,18 +264,15 @@ function renderSvg() {
             line2 = `あと ${remStr}個`; 
         }
 
-        // 2段組み (tspan)
-        // 上段
         const tspan1 = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
         tspan1.textContent = line1;
         tspan1.setAttribute("x", center.x);
-        tspan1.setAttribute("dy", "-0.8em"); // 少し上へ
+        tspan1.setAttribute("dy", "-0.6em"); 
 
-        // 下段
         const tspan2 = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
         tspan2.textContent = line2;
         tspan2.setAttribute("x", center.x);
-        tspan2.setAttribute("dy", "1.6em"); // 下へ
+        tspan2.setAttribute("dy", "1.4em"); 
         
         text.appendChild(tspan1);
         text.appendChild(tspan2);
@@ -286,41 +280,33 @@ function renderSvg() {
         if (p.isOpened) text.classList.add("cleared");
         svg.appendChild(text);
 
-        // 3. プログレスバー (SVG Rect)
-        // 位置: テキストの下
-        const barWidth = 80;
-        const barHeight = 8;
+        // 3. プログレスバー
+        const barWidth = 160; 
+        const barHeight = 15; 
         const barX = center.x - barWidth / 2;
-        const barY = center.y + 25; // テキストより下
+        const barY = center.y + 60; // テキストより下
 
-        // 背景バー
         const barBg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-        barBg.setAttribute("x", barX);
-        barBg.setAttribute("y", barY);
-        barBg.setAttribute("width", barWidth);
-        barBg.setAttribute("height", barHeight);
-        barBg.setAttribute("rx", barHeight / 2); // 角丸
+        barBg.setAttribute("x", barX); barBg.setAttribute("y", barY);
+        barBg.setAttribute("width", barWidth); barBg.setAttribute("height", barHeight);
+        barBg.setAttribute("rx", barHeight / 2);
         barBg.setAttribute("fill", "rgba(255,255,255,0.7)");
+        barBg.setAttribute("stroke", "#fff"); 
+        barBg.setAttribute("stroke-width", "1");
         if (p.isOpened) barBg.classList.add("cleared");
         svg.appendChild(barBg);
 
-        // 中身バー
         const progressPct = Math.min(1, p.current / p.target);
         const barFillWidth = Math.max(0, barWidth * progressPct);
-        
         const barFill = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-        barFill.setAttribute("x", barX);
-        barFill.setAttribute("y", barY);
-        barFill.setAttribute("width", barFillWidth);
-        barFill.setAttribute("height", barHeight);
+        barFill.setAttribute("x", barX); barFill.setAttribute("y", barY);
+        barFill.setAttribute("width", barFillWidth); barFill.setAttribute("height", barHeight);
         barFill.setAttribute("rx", barHeight / 2);
-        // 色分け: 完了したら赤、途中は緑
         barFill.setAttribute("fill", p.current >= p.target ? "#e91e63" : "#4caf50");
         if (p.isOpened) barFill.classList.add("cleared");
         svg.appendChild(barFill);
     });
 
-    // 編集中の線描画
     if (isEditMode && editPoints.length > 0) {
         const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
         const ptsStr = editPoints.map(pt => `${pt.x},${pt.y}`).join(" ");
@@ -468,6 +454,7 @@ function renderControls() {
         `;
 
         if (isEditMode) {
+            // ▼ 編集モード
             const typeOptions = `
                 <option value="gift" ${p.missionType==='gift'?'selected':''}>ギフト</option>
                 <option value="comment" ${p.missionType==='comment'?'selected':''}>コメント</option>
@@ -520,7 +507,7 @@ function renderControls() {
                 </div>
             `;
         } else {
-            // ▼ プレイモード (表示順序の修正)
+            // ▼ プレイモード
             let labelText = p.label;
             if(p.missionType === 'comment' || p.missionType === 'star') labelText = getMissionTypeName(p.missionType);
             
