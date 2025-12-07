@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>自由形パネル開け</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="PanelReveal.css">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+</head>
+<body>
+    <a href="index.html" class="home-btn">ホームへ戻る</a>
+
+    <datalist id="gift-options"></datalist>
+
+    <div id="shape-confirm-popup" class="confirm-popup" style="display:none;">
+        <p>形を閉じますか？</p>
+        <div class="popup-btns">
+            <button onclick="confirmFinish()" class="btn-ok">OK</button>
+            <button onclick="cancelFinish()" class="btn-cancel">キャンセル</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <h1>📐 自由形パネル作成＆プレイ</h1>
+        
+        <div class="global-settings">
+            <div class="setting-group">
+                <label for="imageInput" class="upload-btn">📁 画像を選択</label>
+                <input type="file" id="imageInput" accept="image/*" style="display:none;">
+            </div>
+            <div class="setting-group">
+                <button onclick="setMode('play')" id="btn-play" class="mode-btn active">🎮 プレイ</button>
+                <button onclick="setMode('edit')" id="btn-edit" class="mode-btn">✏️ 編集(形を作る)</button>
+            </div>
+            <div class="setting-group">
+                <button onclick="copyBoardImage()" class="btn-tweet">📸 画像コピー</button>
+            </div>
+        </div>
+
+        <div class="workspace">
+            
+            <div class="board-area">
+                <div id="instruction" class="instruction-box">
+                    編集モード: 画像の上をクリックして点を打ち、多角形を作ってください。<br>
+                    <b>始点(赤い点)をクリック</b>すると、完了確認が出ます。
+                </div>
+
+                <div id="capture-target" class="board-wrapper">
+                    <img id="hidden-image" src="" alt="">
+                    <div id="no-image-text">画像を選択してください</div>
+                    <svg id="panel-svg" class="panel-layer" xmlns="http://www.w3.org/2000/svg"></svg>
+                </div>
+            </div>
+
+            <div class="control-area">
+                <h3>▼ 操作パネル</h3>
+                <div id="control-list" class="control-list">
+                    <div style="color:#999; padding:20px;">パネルを作成してください</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="PanelReveal.js"></script>
+</body>
+</html>
