@@ -70,6 +70,23 @@ h1 { margin-bottom: 20px; color: #333; }
     transform: scale(1.05); box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
+/* ホームボタン */
+.home-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: #1976d2;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 30px;
+    text-decoration: none;
+    z-index: 100;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: background 0.2s;
+}
+.home-btn:hover { background: #1565c0; }
+
 /* =========================================
    3. ワークスペース (左右分割)
    ========================================= */
