@@ -73,7 +73,7 @@ async function fetchGiftData() {
     } catch (e) { console.error("ギフトデータ読み込み失敗", e); }
 }
 
-// ★改良: AllGift.jsと同等のカテゴリ分けロジック
+// ★改良: AllGift.jsと全く同じロジックで分類・ソート
 function organizeGiftsByCategory() {
     giftsByCategory = {};
     
@@ -83,44 +83,44 @@ function organizeGiftsByCategory() {
         return match ? parseInt(match[1].replace(/,/g, ''), 10) : 0;
     };
 
-    // 1. 通常カテゴリの分類
-    const catSet = new Set();
+    // 1. 各カテゴリへの振り分け
+    // まずは空の配列を作成（AllGift.jsの定義順）
+    const targetCategories = ["ネタ", "笑", "定番", "専用", "えらい", "挨拶", "ステージ", "LOVE", "プチギフ", "ポイント別"];
+    
+    // 便宜上「全ギフト」も先頭に追加しておく（編集時に便利なので）
+    giftsByCategory['全ギフト'] = [...allGifts];
+
+    // 通常カテゴリ (JSONのcategoryに基づく)
     allGifts.forEach(g => {
         let cats = [];
         if (Array.isArray(g.categories)) cats = g.categories;
         else if (g.category) cats = [g.category];
         
         cats.forEach(c => {
-            catSet.add(c);
             if (!giftsByCategory[c]) giftsByCategory[c] = [];
             giftsByCategory[c].push(g);
         });
     });
 
-    // 2. 特殊カテゴリの生成
-    // [全ギフト]
-    giftsByCategory['全ギフト'] = [...allGifts];
-    
-    // [プチギフ] (100pt未満)
+    // 特殊カテゴリ: プチギフ (< 100pt)
     giftsByCategory['プチギフ'] = allGifts.filter(g => getPt(g.src) < 100);
-    
-    // [ポイント別] (100pt以上)
+
+    // 特殊カテゴリ: ポイント別 (>= 100pt)
     giftsByCategory['ポイント別'] = allGifts.filter(g => getPt(g.src) >= 100);
 
-    // 各カテゴリ内でポイント順にソート
+    // 2. 各カテゴリ内をポイント順(昇順)にソート
     for (const key in giftsByCategory) {
         giftsByCategory[key].sort((a, b) => getPt(a.src) - getPt(b.src));
     }
 
-    // 3. 表示順の定義 (AllGift.jsに準拠 + 全ギフト)
-    const preferredOrder = ["全ギフト", "ネタ", "笑", "定番", "専用", "えらい", "挨拶", "ステージ", "LOVE", "プチギフ", "ポイント別"];
-    
-    // 定義順にリストを作成 (存在するカテゴリのみ)
-    categoriesList = preferredOrder.filter(c => giftsByCategory[c] && giftsByCategory[c].length > 0);
-    
-    // 定義外のカテゴリがあれば末尾に追加
-    Array.from(catSet).forEach(c => {
-        if (!categoriesList.includes(c)) categoriesList.push(c);
+    // 3. プルダウン表示用のリストを作成 (AllGift順 + 全ギフト)
+    categoriesList = ['全ギフト', ...targetCategories];
+
+    // もしJSONに未知のカテゴリがあれば末尾に追加
+    Object.keys(giftsByCategory).forEach(key => {
+        if (!categoriesList.includes(key)) {
+            categoriesList.push(key);
+        }
     });
 }
 
