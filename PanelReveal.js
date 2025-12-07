@@ -16,7 +16,6 @@ const colorPalette = [
 
 // 初期化
 document.addEventListener('DOMContentLoaded', () => {
-    // 画像アップロード
     document.getElementById('imageInput').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file) {
@@ -34,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
     svg.addEventListener('click', onSvgClick);
     svg.addEventListener('mousemove', onSvgMouseMove);
     
-    // データ読み込み
     fetchGiftData();
     loadAllData();
 });
@@ -48,6 +46,12 @@ function setImage(src) {
     img.onload = () => adjustBoardSize(img);
 }
 
+// ポイント取得ヘルパー (共通化)
+function getPt(src) {
+    const match = src.match(/_(\d+(?:,\d+)*)pt/i);
+    return match ? parseInt(match[1].replace(/,/g, ''), 10) : 0;
+}
+
 // ギフトデータ取得
 async function fetchGiftData() {
     try {
@@ -55,7 +59,6 @@ async function fetchGiftData() {
         if (res.ok) {
             allGifts = await res.json();
             
-            // 手動入力用のdatalist更新
             const dataList = document.getElementById('gift-options') || document.createElement('datalist');
             dataList.id = 'gift-options';
             dataList.innerHTML = '';
@@ -66,61 +69,39 @@ async function fetchGiftData() {
             });
             if(!document.getElementById('gift-options')) document.body.appendChild(dataList);
             
-            // カテゴリ別整理 (AllGift仕様)
             organizeGiftsByCategory();
             renderControls();
         }
     } catch (e) { console.error("ギフトデータ読み込み失敗", e); }
 }
 
-// ★改良: AllGift.jsと全く同じロジックで分類・ソート
 function organizeGiftsByCategory() {
     giftsByCategory = {};
-    
-    // ポイント取得ヘルパー
-    const getPt = (src) => {
-        const match = src.match(/_(\d+(?:,\d+)*)pt/i);
-        return match ? parseInt(match[1].replace(/,/g, ''), 10) : 0;
-    };
-
-    // 1. 各カテゴリへの振り分け
-    // まずは空の配列を作成（AllGift.jsの定義順）
+    const catSet = new Set();
     const targetCategories = ["ネタ", "笑", "定番", "専用", "えらい", "挨拶", "ステージ", "LOVE", "プチギフ", "ポイント別"];
     
-    // 便宜上「全ギフト」も先頭に追加しておく（編集時に便利なので）
     giftsByCategory['全ギフト'] = [...allGifts];
 
-    // 通常カテゴリ (JSONのcategoryに基づく)
     allGifts.forEach(g => {
         let cats = [];
         if (Array.isArray(g.categories)) cats = g.categories;
         else if (g.category) cats = [g.category];
-        
         cats.forEach(c => {
             if (!giftsByCategory[c]) giftsByCategory[c] = [];
             giftsByCategory[c].push(g);
         });
     });
 
-    // 特殊カテゴリ: プチギフ (< 100pt)
     giftsByCategory['プチギフ'] = allGifts.filter(g => getPt(g.src) < 100);
-
-    // 特殊カテゴリ: ポイント別 (>= 100pt)
     giftsByCategory['ポイント別'] = allGifts.filter(g => getPt(g.src) >= 100);
 
-    // 2. 各カテゴリ内をポイント順(昇順)にソート
     for (const key in giftsByCategory) {
         giftsByCategory[key].sort((a, b) => getPt(a.src) - getPt(b.src));
     }
 
-    // 3. プルダウン表示用のリストを作成 (AllGift順 + 全ギフト)
     categoriesList = ['全ギフト', ...targetCategories];
-
-    // もしJSONに未知のカテゴリがあれば末尾に追加
     Object.keys(giftsByCategory).forEach(key => {
-        if (!categoriesList.includes(key)) {
-            categoriesList.push(key);
-        }
+        if (!categoriesList.includes(key)) categoriesList.push(key);
     });
 }
 
@@ -146,7 +127,6 @@ function adjustBoardSize(img) {
     svg.setAttribute('viewBox', `0 0 ${img.naturalWidth} ${img.naturalHeight}`);
 }
 
-// --- 編集ロジック ---
 function getSvgCoordinates(e, svg) {
     const rect = svg.getBoundingClientRect();
     const viewBox = svg.viewBox.baseVal;
@@ -154,7 +134,6 @@ function getSvgCoordinates(e, svg) {
     const vbH = viewBox.height || 600;
     let x = (e.clientX - rect.left) * (vbW / rect.width);
     let y = (e.clientY - rect.top) * (vbH / rect.height);
-    
     const snapThreshold = vbW * 0.02;
     let closestDist = snapThreshold;
     let snappedX = null, snappedY = null;
@@ -228,7 +207,7 @@ function finishShape() {
         current: 0,
         isOpened: false,
         missionType: 'gift',
-        selectedCategory: '全ギフト' // 初期カテゴリ
+        selectedCategory: '全ギフト'
     });
     editPoints = [];
     currentMousePos = null;
@@ -246,7 +225,6 @@ function deletePanel(index) {
     }
 }
 
-// 描画処理
 function renderSvg() {
     const svg = document.getElementById('panel-svg');
     svg.innerHTML = '';
@@ -307,7 +285,6 @@ function getCenter(points) {
     return { x: x / points.length, y: y / points.length };
 }
 
-// ロジック
 function getMissionTypeName(type) {
     const map = { gift:'ギフト', comment:'コメント', star:'スター', other:'その他' };
     return map[type] || 'その他';
@@ -320,18 +297,27 @@ function getCategoryOptionsHTML(currentCat) {
     ).join('');
 }
 
+// ★改良: グリッド表示時にポイントを表示
 function getGiftGridHTML(index, category, currentLabel) {
     const gifts = giftsByCategory[category] || [];
     if (gifts.length === 0) return '<div style="padding:10px;color:#999;font-size:0.9em;">ギフトなし</div>';
     
     let html = '<div class="gift-grid-selector">';
     gifts.forEach(g => {
-        const isSelected = (g.name === currentLabel);
+        // 現在の名前と一致しているか（ポイント付き文字列に対応するため .startsWith 等で判定も可だが、完全一致で管理）
+        // ※selectGiftで (50pt) が付くため、純粋な名前比較だとずれる可能性があるが、
+        // ユーザー体験的には「再選択」なので問題なし
+        const isSelected = (currentLabel && currentLabel.startsWith(g.name));
+        
+        const pt = getPt(g.src);
+        const ptStr = pt > 0 ? `${pt}pt` : '';
+
         html += `
             <div class="gift-option ${isSelected ? 'selected' : ''}" 
                  onclick="selectGift(${index}, '${g.name}')" title="${g.name}">
                 <img src="${g.src}" loading="lazy">
                 <span class="gift-name">${g.name}</span>
+                <span class="gift-pt">${ptStr}</span>
             </div>
         `;
     });
@@ -339,8 +325,20 @@ function getGiftGridHTML(index, category, currentLabel) {
     return html;
 }
 
+// ★改良: 選択時にポイント数をラベルに追加
 function selectGift(index, giftName) {
-    panels[index].label = giftName;
+    // ギフトデータを探す
+    const gift = allGifts.find(g => g.name === giftName);
+    let labelText = giftName;
+    
+    if (gift) {
+        const pt = getPt(gift.src);
+        if (pt > 0) {
+            labelText = `${giftName} (${pt}pt)`;
+        }
+    }
+
+    panels[index].label = labelText;
     saveData();
     renderSvg();
     renderControls();
@@ -380,7 +378,6 @@ function getTargetOptionsHTML(currentVal) {
     return options.map(val => `<option value="${val}" ${val === currentVal ? 'selected' : ''}>${val.toLocaleString()}</option>`).join('');
 }
 
-// --- コントロール描画 ---
 function renderControls() {
     const list = document.getElementById('control-list');
     list.innerHTML = '';
