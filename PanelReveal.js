@@ -14,6 +14,10 @@ const colorPalette = [
     "#b2ebf2", "#ffccbc", "#d7ccc8", "#f0f4c3", "#d1c4e9"
 ];
 
+const layers = psd.tree().children();
+const backgroundLayer = layers[layers.length - 1]; // これが背景
+const panelLayers = layers.slice(0, -1); // それ以外がパネル
+
 // PSDファイルを解析してパネルと背景を設定する関数
 async function handlePSDInput(file) {
     const PSD = require('psd');
