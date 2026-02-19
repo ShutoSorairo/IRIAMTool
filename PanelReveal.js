@@ -1,3 +1,25 @@
+// PSDファイルを解析してパネルと背景を設定する関数
+async function handlePSDInput(file) {
+    const PSD = require('psd');
+    const psd = await PSD.fromEvent(event);
+    
+    // 全レイヤーを取得（一番下が背景、それ以外がパネルと想定）
+    const allLayers = psd.tree().children();
+    
+    // 1. 背景の抽出（一番背面のレイヤー）
+    const backgroundLayer = allLayers[allLayers.length - 1];
+    const backgroundData = backgroundLayer.layer.image.toPng(); // 実際にはCanvas等で変換
+    document.getElementById('bg-preview').src = backgroundData;
+
+    // 2. パネルの抽出（背景以外のレイヤー）
+    const panelLayers = allLayers.slice(0, -1);
+    const panelImages = panelLayers.map(layer => {
+        return layer.layer.image.toPng(); // 各レイヤーを画像化
+    });
+
+    // 既存のパネル生成ロジックに渡す
+    renderPanelsFromPSD(panelImages);
+}
 // --- データ管理 ---
 let panels = []; 
 let editPoints = []; 
