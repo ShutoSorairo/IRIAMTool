@@ -1,3 +1,19 @@
+// --- データ管理 ---
+let panels = []; 
+let editPoints = []; 
+let isEditMode = false;
+let currentMousePos = null; 
+
+// ギフトデータ管理用
+let allGifts = [];
+let giftsByCategory = {};
+let categoriesList = [];
+
+const colorPalette = [
+    "#ffcdd2", "#bbdefb", "#c8e6c9", "#fff9c4", "#e1bee7", 
+    "#b2ebf2", "#ffccbc", "#d7ccc8", "#f0f4c3", "#d1c4e9"
+];
+
 // PSDファイルを解析してパネルと背景を設定する関数
 async function handlePSDInput(file) {
     const PSD = require('psd');
@@ -20,21 +36,6 @@ async function handlePSDInput(file) {
     // 既存のパネル生成ロジックに渡す
     renderPanelsFromPSD(panelImages);
 }
-// --- データ管理 ---
-let panels = []; 
-let editPoints = []; 
-let isEditMode = false;
-let currentMousePos = null; 
-
-// ギフトデータ管理用
-let allGifts = [];
-let giftsByCategory = {};
-let categoriesList = [];
-
-const colorPalette = [
-    "#ffcdd2", "#bbdefb", "#c8e6c9", "#fff9c4", "#e1bee7", 
-    "#b2ebf2", "#ffccbc", "#d7ccc8", "#f0f4c3", "#d1c4e9"
-];
 
 // 初期化
 document.addEventListener('DOMContentLoaded', () => {
