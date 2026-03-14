@@ -663,40 +663,57 @@ document.getElementById('psd-upload').addEventListener('change', function(e) {
     const reader = new FileReader();
     reader.onload = function(event) {
         const buffer = event.target.result;
-        const PSD = window.require("psd"); // ブラウザ環境でのPSD.js呼び出し
+        
+        // PSD.jsの初期化（ブラウザ版の呼び出し方に合わせる）
+        const PSD = window.require("psd");
         const psd = new PSD(new Uint8Array(buffer));
         
-        psd.parse();
+        try {
+            psd.parse();
+        } catch (err) {
+            alert("PSDの解析に失敗しました。ファイルが破損しているか、対応していない形式です。");
+            return;
+        }
 
-        // パネルをリセット（必要に応じて）
-        panels = [];
+        // PSD内の全レイヤーをリスト化（グループを除いた実レイヤーのみ）
+        // descendants() は「重なり順の上から」取得される
+        let allLayers = psd.tree().descendants().filter(n => n.isLayer());
         
-        // レイヤーを走査してパネル情報を抽出
-        const layers = psd.tree().descendants();
+        if (allLayers.length < 2) {
+            alert("背景とパネル、最低2枚のレイヤーが必要です。");
+            return;
+        }
+
+        // --- 背景の処理 ---
+        // 配列の最後（一番下のレイヤー）を背景として取り出す
+        const bgNode = allLayers.pop(); 
         
-        layers.forEach(layer => {
-            // グループではなく、実際の画像レイヤーのみを対象にする
-            if (layer.isLayer() && !layer.isHidden()) {
-                const node = layer.export();
-                
-                // パネルオブジェクトの作成
-                const newPanel = {
-                    id: Date.now() + Math.random(),
-                    name: node.name,
-                    x: node.left,
-                    y: node.top,
-                    width: node.width,
-                    height: node.height,
-                    isRevealed: false,
-                    assignedGift: null // 必要に応じて初期化
-                };
-                
-                panels.push(newPanel);
-            }
+        // 背景画像をセット
+        const bgImageBase64 = bgNode.layer.image.toPng().src;
+        backgroundImage = new Image();
+        backgroundImage.src = bgImageBase64;
+
+        // --- パネルの処理 ---
+        // 残ったレイヤー（2枚目以降）をすべてパネルに変換
+        panels = allLayers.map(layer => {
+            const node = layer.export();
+            return {
+                id: 'panel-' + Date.now() + Math.random().toString(36).substr(2, 9),
+                name: node.name,
+                x: node.left,
+                y: node.top,
+                width: node.width,
+                height: node.height,
+                isRevealed: false,
+                assignedGift: null
+            };
         });
 
-        console.log(`${panels.length} 個のパネルを読み込みました`);
-        renderCanvas(); // キャンバスを再描画
+        // 背景の読み込み完了を待ってから全体を再描画
+        backgroundImage.onload = () => {
+            console.log(`背景と ${panels.length} 枚のパネルを読み込みました。`);
+            renderCanvas(); 
+        };
     };
     reader.readAsArrayBuffer(file);
 });
