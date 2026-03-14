@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>パネル開け</title>
+    <title>パネル開け - PSD対応版</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="index.css">
     <link rel="stylesheet" href="PanelReveal.css">
@@ -13,84 +13,45 @@
 <body>
     <a href="index.html" class="home-btn">ホームへ戻る</a>
 
-    <datalist id="gift-options"></datalist>
-
-    <div id="shape-confirm-popup" class="confirm-popup" style="display:none;">
-        <p>形を閉じますか？</p>
-        <div class="popup-btns">
-            <button onclick="confirmFinish()" class="btn-ok">OK</button>
-            <button onclick="cancelFinish()" class="btn-cancel">キャンセル</button>
-        </div>
-    </div>
-
     <div class="main-container">
         <h1>パネル開け</h1>
         
         <div class="global-settings">
             <div class="setting-group">
-                <label for="imageInput" class="upload-btn">📁 画像を選択</label>
-                <input type="file" id="imageInput" accept="image/*" style="display:none;">
-            </div>
-            <div class="setting-group">
-                <button onclick="setMode('play')" id="btn-play" class="mode-btn active">パセル開け</button>
-                <button onclick="setMode('edit')" id="btn-edit" class="mode-btn">パネル編集</button>
-            </div>
-            <div class="setting-group">
-                <button onclick="copyBoardImage()" class="btn-tweet">📸 画像コピー</button>
-            </div>
-
-            <div class="controls">
-                <div class="control-group">
-                <label>背景画像:</label>
-                <input type="file" id="bg-upload" accept="image/*">
-            </div>
-
-            <div class="control-group">
-                <label for="psd-upload" class="btn-psd">PSDからパネル生成</label>
+                <label for="psd-upload" class="upload-btn">📁 PSDファイルを読み込む</label>
                 <input type="file" id="psd-upload" accept=".psd" style="display:none;">
             </div>
-    
-            <button id="reset-panels">パネルリセット</button>
+            <div class="setting-group">
+                <button onclick="toggleControlPopup()" class="btn-open-list">📋 パネル操作</button>
+            </div>
+            <div class="setting-group">
+                <button onclick="copyBoardImage()" class="btn-tweet">📸 画像をコピー</button>
+            </div>
+            <div class="setting-group">
+                <button id="reset-panels" class="btn-reset">🔄 リセット</button>
+            </div>
         </div>
-    </div>
         
         <div class="workspace">
-            
             <div class="board-area">
-                <div id="instruction" class="instruction-box">
-                    編集モード: 画像の上をクリックして点を打ち、多角形を作ってください。<br>
-                    <b>始点(赤い点)をクリック</b>すると、完了確認が出ます。
-                </div>
-
                 <div id="capture-target" class="board-wrapper">
                     <img id="hidden-image" src="" alt="">
-                    <div id="no-image-text">画像を選択してください</div>
+                    <div id="no-image-text">PSDファイルを読み込んでください</div>
                     <svg id="panel-svg" class="panel-layer" xmlns="http://www.w3.org/2000/svg"></svg>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <div class="control-area">
-                <h3>▼ 操作パネル</h3>
-                <div id="control-list" class="control-list">
-                    <div style="color:#999; padding:20px;">パネルを作成してください</div>
-                </div>
+    <div id="control-popup" class="modal-overlay" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>パネル操作一覧</h3>
+                <button onclick="toggleControlPopup()" class="btn-close">&times;</button>
             </div>
-
+            <div id="control-list" class="control-list">
+                </div>
         </div>
     </div>
-<div class="setting-group">
-    <button onclick="toggleControlPopup()" class="btn-open-list">📋 パネル一覧・操作</button>
-</div>
-
-<div id="control-popup" class="modal-overlay" style="display:none;">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>パネル操作一覧</h3>
-            <button onclick="toggleControlPopup()" class="btn-close">&times;</button>
-        </div>
-        <div id="control-list" class="control-list"></div>
-    </div>
-</div>
-    <script src="PanelReveal.js"></script>
 </body>
 </html>
