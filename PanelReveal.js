@@ -4,659 +4,56 @@ let editPoints = [];
 let isEditMode = false;
 let currentMousePos = null; 
 
-// ギフトデータ管理用
+// 背景画像保持用
+let backgroundImage = new Image();
+
+// ギフトデータ用（必要に応じて）
 let allGifts = [];
-let giftsByCategory = {};
-let categoriesList = [];
 
-const colorPalette = [
-    "#ffcdd2", "#bbdefb", "#c8e6c9", "#fff9c4", "#e1bee7", 
-    "#b2ebf2", "#ffccbc", "#d7ccc8", "#f0f4c3", "#d1c4e9"
-];
-
-const layers = psd.tree().children();
-const backgroundLayer = layers[layers.length - 1]; // これが背景
-const panelLayers = layers.slice(0, -1); // それ以外がパネル
-
-// PSDファイルを解析してパネルと背景を設定する関数
-async function handlePSDInput(file) {
-    const PSD = require('psd');
-    const psd = await PSD.fromEvent(event);
-    
-    // 全レイヤーを取得（一番下が背景、それ以外がパネルと想定）
-    const allLayers = psd.tree().children();
-    
-    // 1. 背景の抽出（一番背面のレイヤー）
-    const backgroundLayer = allLayers[allLayers.length - 1];
-    const backgroundData = backgroundLayer.layer.image.toPng(); // 実際にはCanvas等で変換
-    document.getElementById('bg-preview').src = backgroundData;
-
-    // 2. パネルの抽出（背景以外のレイヤー）
-    const panelLayers = allLayers.slice(0, -1);
-    const panelImages = panelLayers.map(layer => {
-        return layer.layer.image.toPng(); // 各レイヤーを画像化
-    });
-
-    // 既存のパネル生成ロジックに渡す
-    renderPanelsFromPSD(panelImages);
-}
-
-// 初期化
-document.addEventListener('DOMContentLoaded', () => {
-    // 画像アップロード
-    document.getElementById('imageInput').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(evt) {
-                const result = evt.target.result;
-                setImage(result);
-                try { localStorage.setItem('iriam_free_panel_bg', result); } catch(e) {}
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    const svg = document.getElementById('panel-svg');
-    svg.addEventListener('click', onSvgClick);
-    svg.addEventListener('mousemove', onSvgMouseMove);
-    
-    // データ読み込み
-    fetchGiftData();
-    loadAllData();
-});
-
-function setImage(src) {
-    const img = document.getElementById('hidden-image');
-    const noImgText = document.getElementById('no-image-text');
-    img.src = src;
-    img.style.display = 'block';
-    noImgText.style.display = 'none';
-    img.onload = () => adjustBoardSize(img);
-}
-
-// ポイント取得ヘルパー
-function getPt(src) {
-    const match = src.match(/_(\d+(?:,\d+)*)pt/i);
-    return match ? parseInt(match[1].replace(/,/g, ''), 10) : 0;
-}
-
-// ギフトデータ取得
-async function fetchGiftData() {
-    try {
-        const res = await fetch('gifts.json');
-        if (res.ok) {
-            allGifts = await res.json();
-            
-            const dataList = document.getElementById('gift-options') || document.createElement('datalist');
-            dataList.id = 'gift-options';
-            dataList.innerHTML = '';
-            allGifts.forEach(g => {
-                const option = document.createElement('option');
-                option.value = g.name;
-                dataList.appendChild(option);
-            });
-            if(!document.getElementById('gift-options')) document.body.appendChild(dataList);
-            
-            organizeGiftsByCategory();
-            renderControls();
-        }
-    } catch (e) { console.error("ギフトデータ読み込み失敗", e); }
-}
-
-function organizeGiftsByCategory() {
-    giftsByCategory = {};
-    const catSet = new Set();
-    const targetCategories = ["ネタ", "笑", "定番", "専用", "えらい", "挨拶", "ステージ", "LOVE", "プチギフ", "ポイント別"];
-    
-    giftsByCategory['全ギフト'] = [...allGifts];
-
-    allGifts.forEach(g => {
-        let cats = [];
-        if (Array.isArray(g.categories)) cats = g.categories;
-        else if (g.category) cats = [g.category];
-        cats.forEach(c => {
-            catSet.add(c);
-            if (!giftsByCategory[c]) giftsByCategory[c] = [];
-            giftsByCategory[c].push(g);
-        });
-    });
-
-    giftsByCategory['プチギフ'] = allGifts.filter(g => getPt(g.src) < 100);
-    giftsByCategory['ポイント別'] = allGifts.filter(g => getPt(g.src) >= 100);
-
-    for (const key in giftsByCategory) {
-        giftsByCategory[key].sort((a, b) => getPt(a.src) - getPt(b.src));
+// --- ページ読み込み時の初期化 ---
+window.onload = function() {
+    // PSD読み込みイベントの登録
+    const psdInput = document.getElementById('psd-upload');
+    if (psdInput) {
+        psdInput.addEventListener('change', handlePSDInput);
     }
 
-    categoriesList = ['全ギフト', ...targetCategories];
-    Array.from(catSet).forEach(c => {
-        if (!categoriesList.includes(c)) categoriesList.push(c);
-    });
-}
-
-function setMode(mode) {
-    isEditMode = (mode === 'edit');
-    document.getElementById('btn-play').className = isEditMode ? 'mode-btn' : 'mode-btn active';
-    document.getElementById('btn-edit').className = isEditMode ? 'mode-btn active' : 'mode-btn';
-    document.getElementById('instruction').style.display = isEditMode ? 'block' : 'none';
-    hideConfirmPopup();
-    
-    if (!isEditMode) {
-        editPoints = [];
-        currentMousePos = null;
-        renderSvg();
-    }
-    renderControls();
-}
-
-function adjustBoardSize(img) {
-    const wrapper = document.getElementById('capture-target');
-    wrapper.style.aspectRatio = `${img.naturalWidth} / ${img.naturalHeight}`;
-    const svg = document.getElementById('panel-svg');
-    svg.setAttribute('viewBox', `0 0 ${img.naturalWidth} ${img.naturalHeight}`);
-}
-
-// --- 編集ロジック ---
-function getSvgCoordinates(e, svg) {
-    const rect = svg.getBoundingClientRect();
-    const viewBox = svg.viewBox.baseVal;
-    const vbW = viewBox.width || 800; 
-    const vbH = viewBox.height || 600;
-    let x = (e.clientX - rect.left) * (vbW / rect.width);
-    let y = (e.clientY - rect.top) * (vbH / rect.height);
-    
-    const snapThreshold = vbW * 0.02;
-    let closestDist = snapThreshold;
-    let snappedX = null, snappedY = null;
-
-    panels.forEach(p => {
-        p.points.forEach(pt => {
-            const dist = Math.sqrt(Math.pow(x - pt.x, 2) + Math.pow(y - pt.y, 2));
-            if (dist < closestDist) { closestDist = dist; snappedX = pt.x; snappedY = pt.y; }
-        });
-    });
-
-    if (editPoints.length > 2) {
-        const start = editPoints[0];
-        const dist = Math.sqrt(Math.pow(x - start.x, 2) + Math.pow(y - start.y, 2));
-        if (dist < (snapThreshold * 1.5) && dist < closestDist) {
-            closestDist = dist; snappedX = start.x; snappedY = start.y;
-        }
-    }
-
-    if (snappedX !== null) { x = snappedX; y = snappedY; }
-    else {
-        const borderSnap = 10;
-        if (x < borderSnap) x = 0;
-        if (x > vbW - borderSnap) x = vbW;
-        if (y < borderSnap) y = 0;
-        if (y > vbH - borderSnap) y = vbH;
-    }
-    return { x, y };
-}
-
-function onSvgClick(e) {
-    if (!isEditMode) return;
-    if (document.getElementById('shape-confirm-popup') && document.getElementById('shape-confirm-popup').style.display === 'block') return;
-    const svg = document.getElementById('panel-svg');
-    const pos = getSvgCoordinates(e, svg);
-    if (editPoints.length > 2 && pos.x === editPoints[0].x && pos.y === editPoints[0].y) {
-        showConfirmPopup(e.clientX, e.clientY);
-        return;
-    }
-    editPoints.push(pos);
-    renderSvg();
-}
-
-function onSvgMouseMove(e) {
-    if (!isEditMode) return;
-    const svg = document.getElementById('panel-svg');
-    currentMousePos = getSvgCoordinates(e, svg);
-    renderSvg();
-}
-
-function showConfirmPopup(x, y) {
-    const popup = document.getElementById('shape-confirm-popup');
-    popup.style.left = (x + 15) + 'px';
-    popup.style.top = (y + 15) + 'px';
-    popup.style.display = 'block';
-}
-function hideConfirmPopup() { document.getElementById('shape-confirm-popup').style.display = 'none'; }
-function confirmFinish() { hideConfirmPopup(); finishShape(); }
-function cancelFinish() { hideConfirmPopup(); }
-function forceFinishShape() { if(editPoints.length<3){alert("3点以上必要です");return;} finishShape(); }
-
-function finishShape() {
-    const color = colorPalette[panels.length % colorPalette.length];
-    panels.push({
-        id: Date.now(),
-        type: 'polygon', 
-        points: [...editPoints],
-        color: color,
-        label: `パネル${panels.length + 1}`,
-        target: 10,
-        current: 0,
-        isOpened: false,
-        missionType: 'gift',
-        selectedCategory: '全ギフト'
-    });
-    editPoints = [];
-    currentMousePos = null;
-    saveData();
-    renderSvg();
-    renderControls();
-}
-
-function deletePanel(index) {
-    if(confirm(`パネル「${panels[index].label}」を削除しますか？`)) {
-        panels.splice(index, 1);
-        saveData();
-        renderSvg();
-        renderControls();
-    }
-}
-
-// ★改良: 描画処理 (開いたパネルの文字・バーを非表示)
-function renderSvg() {
-    const svg = document.getElementById('panel-svg');
-    svg.innerHTML = '';
-    panels.forEach((p) => {
-        // 1. パネル本体
-        const poly = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-        const pointsStr = p.points.map(pt => `${pt.x},${pt.y}`).join(" ");
-        poly.setAttribute("points", pointsStr);
-        poly.setAttribute("fill", p.color);
-        if (p.isOpened) poly.classList.add("cleared");
-        svg.appendChild(poly);
-        
-        // ★ここが重要: パネルが開いている場合は、文字とバーの生成自体をスキップする
-        if (!p.isOpened) {
-            // --- 共通座標 ---
-            const center = getCenter(p.points);
-
-            // 2. テキスト設定
-            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            text.setAttribute("x", center.x);
-            text.setAttribute("y", center.y);
-            
-            let line1 = ""; 
-            let line2 = ""; 
-            const remaining = Math.max(0, p.target - p.current);
-            const remStr = remaining.toLocaleString();
-
-            if(p.missionType === 'comment' || p.missionType === 'star') {
-                line1 = getMissionTypeName(p.missionType);
-                line2 = `あと ${remStr}`; 
-            } else {
-                line1 = p.label.split('\n')[0]; 
-                line2 = `あと ${remStr}個`; 
+    // 既存の背景アップロード（通常の画像）
+    const bgUpload = document.getElementById('bg-upload');
+    if (bgUpload) {
+        bgUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const img = document.getElementById('hidden-image');
+                    img.src = ev.target.result;
+                    backgroundImage.src = ev.target.result;
+                    document.getElementById('no-image-text').style.display = 'none';
+                    renderCanvas();
+                };
+                reader.readAsDataURL(file);
             }
-
-            const tspan1 = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
-            tspan1.textContent = line1;
-            tspan1.setAttribute("x", center.x);
-            tspan1.setAttribute("dy", "-0.6em"); 
-
-            const tspan2 = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
-            tspan2.textContent = line2;
-            tspan2.setAttribute("x", center.x);
-            tspan2.setAttribute("dy", "1.4em"); 
-            
-            text.appendChild(tspan1);
-            text.appendChild(tspan2);
-            svg.appendChild(text);
-
-            // 3. プログレスバー
-            const barWidth = 160; 
-            const barHeight = 15; 
-            const barX = center.x - barWidth / 2;
-            const barY = center.y + 60; 
-
-            // 背景バー
-            const barBg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-            barBg.setAttribute("x", barX); barBg.setAttribute("y", barY);
-            barBg.setAttribute("width", barWidth); barBg.setAttribute("height", barHeight);
-            barBg.setAttribute("rx", barHeight / 2);
-            barBg.setAttribute("fill", "rgba(255,255,255,0.7)");
-            barBg.setAttribute("stroke", "#fff"); 
-            barBg.setAttribute("stroke-width", "1");
-            svg.appendChild(barBg);
-
-            // 中身バー
-            const progressPct = Math.min(1, p.current / p.target);
-            const barFillWidth = Math.max(0, barWidth * progressPct);
-            const barFill = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-            barFill.setAttribute("x", barX); barFill.setAttribute("y", barY);
-            barFill.setAttribute("width", barFillWidth); barFill.setAttribute("height", barHeight);
-            barFill.setAttribute("rx", barHeight / 2);
-            barFill.setAttribute("fill", p.current >= p.target ? "#e91e63" : "#4caf50");
-            svg.appendChild(barFill);
-        }
-    });
-
-    if (isEditMode && editPoints.length > 0) {
-        const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
-        const ptsStr = editPoints.map(pt => `${pt.x},${pt.y}`).join(" ");
-        polyline.setAttribute("points", ptsStr);
-        polyline.setAttribute("fill", "none");
-        polyline.setAttribute("stroke", "#e91e63");
-        polyline.setAttribute("stroke-width", "3");
-        svg.appendChild(polyline);
-        
-        editPoints.forEach((pt) => {
-            const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-            c.setAttribute("cx", pt.x); c.setAttribute("cy", pt.y); c.setAttribute("r", 4);
-            c.setAttribute("fill", "white"); c.setAttribute("stroke", "#e91e63");
-            svg.appendChild(c);
         });
-
-        if (currentMousePos) {
-            const lastPt = editPoints[editPoints.length - 1];
-            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-            line.setAttribute("x1", lastPt.x); line.setAttribute("y1", lastPt.y);
-            line.setAttribute("x2", currentMousePos.x); line.setAttribute("y2", currentMousePos.y);
-            line.setAttribute("stroke", "#e91e63"); line.setAttribute("stroke-width", "2");
-            line.setAttribute("stroke-dasharray", "5,5"); line.setAttribute("opacity", "0.6");
-            svg.appendChild(line);
-        }
     }
-}
 
-function getCenter(points) {
-    let x = 0, y = 0;
-    points.forEach(p => { x += p.x; y += p.y; });
-    return { x: x / points.length, y: y / points.length };
-}
-
-function getMissionTypeName(type) {
-    const map = { gift:'ギフト', comment:'コメント', star:'スター', other:'その他' };
-    return map[type] || 'その他';
-}
-
-function getCategoryOptionsHTML(currentCat) {
-    if(categoriesList.length === 0) return '<option>読込中...</option>';
-    return categoriesList.map(cat => 
-        `<option value="${cat}" ${cat === currentCat ? 'selected' : ''}>${cat}</option>`
-    ).join('');
-}
-
-function getGiftGridHTML(index, category, currentLabel) {
-    const gifts = giftsByCategory[category] || [];
-    if (gifts.length === 0) return '<div style="padding:10px;color:#999;font-size:0.9em;">ギフトなし</div>';
-    
-    let html = '<div class="gift-grid-selector">';
-    gifts.forEach(g => {
-        const isSelected = (currentLabel && currentLabel.startsWith(g.name));
-        const pt = getPt(g.src);
-        const ptStr = pt > 0 ? `${pt}pt` : '';
-
-        html += `
-            <div class="gift-option ${isSelected ? 'selected' : ''}" 
-                 onclick="selectGift(${index}, '${g.name}')" title="${g.name}">
-                <img src="${g.src}" loading="lazy">
-                <span class="gift-name">${g.name}</span>
-                <span class="gift-pt">${ptStr}</span>
-            </div>
-        `;
-    });
-    html += '</div>';
-    return html;
-}
-
-function selectGift(index, giftName) {
-    const gift = allGifts.find(g => g.name === giftName);
-    let labelText = giftName;
-    if (gift) {
-        const pt = getPt(gift.src);
-        if (pt > 0) labelText = `${giftName} (${pt}pt)`;
-    }
-    panels[index].label = labelText;
-    saveData();
-    renderSvg();
-    renderControls();
-}
-
-function getNextValue(current, direction, type) {
-    if (type !== 'comment' && type !== 'star') {
-        return Math.max(0, current + direction);
-    }
-    let step = 1000;
-    if (current >= 200000) step = 10000;
-    else if (current >= 10000) step = 5000;
-
-    let nextVal;
-    if (direction > 0) {
-        nextVal = Math.floor(current / step) * step + step;
-        if (current < 10000 && nextVal > 10000) nextVal = 10000;
-        else if (current < 200000 && nextVal > 200000) nextVal = 200000;
-        return Math.min(10000000, nextVal);
-    } else {
-        if (current <= 10000) step = 1000;
-        else if (current <= 200000) step = 5000;
-        else step = 10000;
-        nextVal = Math.ceil(current / step) * step - step;
-        if (current > 200000 && nextVal < 200000) nextVal = 200000;
-        else if (current > 10000 && nextVal < 10000) nextVal = 10000;
-        return Math.max(0, nextVal);
-    }
-}
-
-function getTargetOptionsHTML(currentVal) {
-    let options = [];
-    for(let i=1000; i<=10000; i+=1000) options.push(i);
-    for(let i=20000; i<=100000; i+=10000) options.push(i);
-    for(let i=200000; i<=1000000; i+=100000) options.push(i);
-    for(let i=2000000; i<=10000000; i+=1000000) options.push(i);
-    return options.map(val => `<option value="${val}" ${val === currentVal ? 'selected' : ''}>${val.toLocaleString()}</option>`).join('');
-}
-
-// --- コントロール描画 ---
-function renderControls() {
-    const list = document.getElementById('control-list');
-    list.innerHTML = '';
-
-    panels.forEach((p, index) => {
-        const item = document.createElement('div');
-        let statusClass = '';
-        const isComplete = p.current >= p.target; // 達成フラグ
-
-        if (p.isOpened) statusClass = 'done';
-        else if (isComplete) statusClass = 'active';
-        
-        item.className = `ctrl-item ${statusClass}`;
-        item.style.borderLeftColor = p.isOpened ? '#4caf50' : p.color;
-
-        // ★改良: 未達成ならボタンをdisabledにする
-        let btnText = "未達成";
-        let btnClass = "";
-        let isDisabled = "";
-
-        if (p.isOpened) { 
-            btnText = "OPEN済"; 
-            btnClass = "opened"; 
-        } else if (isComplete) { 
-            btnText = "OPEN!"; 
-            btnClass = "ready"; 
-        } else {
-            // 未達成
-            isDisabled = "disabled";
-            // 見た目も薄くするなどのスタイルはCSSで対応(disabled属性で制御)
-        }
-
-        let contentHTML = `
-            <div class="ctrl-header">
-                <span style="display:flex; align-items:center; gap:5px;">
-                    <span style="width:12px; height:12px; background:${p.color}; border:1px solid #999;"></span>
-                    パネル ${index + 1}
-                </span>
-                <div style="display:flex; gap:5px;">
-                    <button class="open-toggle-btn ${btnClass}" onclick="toggleOpen(${index})" ${isDisabled}>${btnText}</button>
-                    ${isEditMode ? `<button class="btn-trash" onclick="deletePanel(${index})">🗑️</button>` : ''}
-                </div>
-            </div>
-        `;
-
-        if (isEditMode) {
-            // (編集モードのコードは変更なし)
-            const typeOptions = `
-                <option value="gift" ${p.missionType==='gift'?'selected':''}>ギフト</option>
-                <option value="comment" ${p.missionType==='comment'?'selected':''}>コメント</option>
-                <option value="star" ${p.missionType==='star'?'selected':''}>スター</option>
-                <option value="other" ${p.missionType==='other'?'selected':''}>その他</option>
-            `;
-            let inputArea = '';
-            if (p.missionType === 'gift') {
-                inputArea = `
-                    <div class="gift-settings-container">
-                        <div style="display:flex; gap:5px; margin-bottom:5px;">
-                            <select class="cat-select" onchange="updateData(${index}, 'selectedCategory', this.value)">
-                                ${getCategoryOptionsHTML(p.selectedCategory)}
-                            </select>
-                            <div class="target-setting">
-                                <span>目標:</span>
-                                <input type="number" class="target-input" value="${p.target}" onchange="updateData(${index}, 'target', this.value)">
-                            </div>
-                        </div>
-                        ${getGiftGridHTML(index, p.selectedCategory, p.label)}
-                        <div style="font-size:0.85em; color:#1976d2; margin-top:2px;">選択中: <b>${p.label}</b></div>
-                    </div>
-                `;
-            } else if (p.missionType === 'comment' || p.missionType === 'star') {
-                inputArea = `
-                    <div style="flex:1; font-weight:bold; color:#555; padding:6px;">${getMissionTypeName(p.missionType)}</div>
-                    <select class="target-select" onchange="updateData(${index}, 'target', this.value)">
-                        ${getTargetOptionsHTML(p.target)}
-                    </select>
-                `;
-            } else {
-                inputArea = `
-                    <input type="text" class="label-input" value="${p.label}" placeholder="内容" list="gift-options"
-                        onchange="updateData(${index}, 'label', this.value)">
-                    <div class="target-setting">
-                        <span style="font-size:0.8em;">目標:</span>
-                        <input type="number" class="target-input" value="${p.target}" onchange="updateData(${index}, 'target', this.value)">
-                    </div>
-                `;
+    // パネルリセットボタン
+    const resetBtn = document.getElementById('reset-panels');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            if (confirm("すべてのパネルを削除しますか？")) {
+                panels = [];
+                renderCanvas();
+                renderControlList();
             }
-            contentHTML += `
-                <div class="ctrl-edit-column">
-                    <div style="margin-bottom:5px;">
-                        <span style="font-size:0.8em; color:#666;">種類:</span>
-                        <select class="type-select" onchange="updateData(${index}, 'missionType', this.value)">${typeOptions}</select>
-                    </div>
-                    ${inputArea}
-                </div>
-            `;
-        } else {
-            // (プレイモード)
-            let labelText = p.label;
-            if(p.missionType === 'comment' || p.missionType === 'star') labelText = getMissionTypeName(p.missionType);
-            
-            const remaining = Math.max(0, p.target - p.current);
-            const pct = Math.min(100, (p.current / p.target) * 100);
-
-            contentHTML += `
-                <div class="ctrl-play-info">
-                    <div class="mission-header">
-                        <span class="mission-title">${labelText}</span>
-                        <span class="mission-val">${p.current.toLocaleString()} / ${p.target.toLocaleString()}</span>
-                    </div>
-                    <div class="mission-remaining">あと <span class="rem-num">${remaining.toLocaleString()}</span></div>
-                </div>
-                
-                <div class="ctrl-progress-row">
-                    <div class="ctrl-progress-track">
-                        <div class="ctrl-progress-fill" style="width:${pct}%; background:${p.current>=p.target?'#e91e63':'#4caf50'};"></div>
-                    </div>
-                </div>
-
-                <div class="ctrl-actions">
-                    <button class="count-btn btn-minus" onclick="adjustCount(${index}, -1)">-</button>
-                    <button class="count-btn btn-plus" onclick="adjustCount(${index}, 1)">+</button>
-                </div>
-            `;
-        }
-
-        item.innerHTML = contentHTML;
-        list.appendChild(item);
-    });
-}
-
-function updateData(index, key, value) {
-    if (key === 'target') value = parseInt(value);
-    panels[index][key] = value;
-    if (key === 'missionType') {
-        if (value === 'comment' || value === 'star') {
-            panels[index].target = 10000;
-            panels[index].label = getMissionTypeName(value);
-        } else {
-            panels[index].target = 10;
-            if(value==='gift') panels[index].selectedCategory = '全ギフト';
-            panels[index].label = '';
-        }
-        panels[index].current = 0;
-    }
-    saveData();
-    renderSvg();
-    renderControls();
-}
-
-function adjustTarget(index, direction) {
-    const p = panels[index];
-    p.target = getNextValue(p.target, direction, p.missionType);
-    saveData();
-    renderControls();
-}
-
-function adjustCount(index, direction) {
-    const p = panels[index];
-    p.current = getNextValue(p.current, direction, p.missionType);
-    saveData();
-    renderControls();
-}
-
-// ★改良: オープン処理 (達成チェックを追加)
-function toggleOpen(index) {
-    const p = panels[index];
-    
-    // 達成していない、かつまだ開いていない場合は開けない
-    if (!p.isOpened && p.current < p.target) {
-        // 必要ならアラートを出すなど (今回は無反応にする)
-        return;
-    }
-
-    p.isOpened = !p.isOpened;
-    saveData();
-    renderSvg();
-    renderControls();
-}
-
-function saveData() { localStorage.setItem('iriam_free_panel', JSON.stringify(panels)); }
-
-function loadAllData() {
-    const bgData = localStorage.getItem('iriam_free_panel_bg');
-    if (bgData) {
-        setImage(bgData);
-    }
-    const data = localStorage.getItem('iriam_free_panel');
-    if (data) { panels = JSON.parse(data); renderSvg(); renderControls(); }
-}
-
-function copyBoardImage() {
-    const target = document.getElementById('capture-target');
-    if (window.getComputedStyle(document.getElementById('hidden-image')).display === 'none') { alert("画像が設定されていません"); return; }
-    html2canvas(target, { useCORS: true, scale: 2 }).then(canvas => {
-        canvas.toBlob(blob => {
-            try {
-                const item = new ClipboardItem({ "image/png": blob });
-                navigator.clipboard.write([item]).then(() => alert("画像をコピーしました！"));
-            } catch(e) { alert("コピー失敗"); }
         });
-    });
-}
+    }
+};
 
-document.getElementById('psd-upload').addEventListener('change', function(e) {
+/**
+ * PSDファイルを解析してパネルと背景を一括設定する
+ */
+function handlePSDInput(e) {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -664,19 +61,25 @@ document.getElementById('psd-upload').addEventListener('change', function(e) {
     reader.onload = function(event) {
         const buffer = event.target.result;
         
-        // PSD.jsの初期化（ブラウザ版の呼び出し方に合わせる）
-        const PSD = window.require("psd");
+        // ブラウザ版 PSD.js の取得
+        const PSD = window.require ? window.require("psd") : window.PSD;
+        if (!PSD) {
+            alert("PSD.js ライブラリが読み込まれていません。");
+            return;
+        }
+
         const psd = new PSD(new Uint8Array(buffer));
         
         try {
             psd.parse();
         } catch (err) {
-            alert("PSDの解析に失敗しました。ファイルが破損しているか、対応していない形式です。");
+            alert("PSDの解析に失敗しました。ファイルが破損しているか、対応していない形式（RGBモード以外など）の可能性があります。");
+            console.error(err);
             return;
         }
 
-        // PSD内の全レイヤーをリスト化（グループを除いた実レイヤーのみ）
-        // descendants() は「重なり順の上から」取得される
+        // 1. 全レイヤーを取得（グループを除外し、実際のレイヤーのみを抽出）
+        // descendants() は重なり順の「上から順」に取得される
         let allLayers = psd.tree().descendants().filter(n => n.isLayer());
         
         if (allLayers.length < 2) {
@@ -684,17 +87,17 @@ document.getElementById('psd-upload').addEventListener('change', function(e) {
             return;
         }
 
-        // --- 背景の処理 ---
-        // 配列の最後（一番下のレイヤー）を背景として取り出す
+        // 2. 背景の処理（一番下のレイヤーを抽出）
+        // pop() は配列の最後の要素（＝一番下のレイヤー）を取り出す
         const bgNode = allLayers.pop(); 
-        
-        // 背景画像をセット
         const bgImageBase64 = bgNode.layer.image.toPng().src;
-        backgroundImage = new Image();
+        
+        const hiddenImg = document.getElementById('hidden-image');
+        hiddenImg.src = bgImageBase64;
         backgroundImage.src = bgImageBase64;
+        document.getElementById('no-image-text').style.display = 'none';
 
-        // --- パネルの処理 ---
-        // 残ったレイヤー（2枚目以降）をすべてパネルに変換
+        // 3. パネルの処理（残りのレイヤーをすべてパネルに変換）
         panels = allLayers.map(layer => {
             const node = layer.export();
             return {
@@ -705,15 +108,102 @@ document.getElementById('psd-upload').addEventListener('change', function(e) {
                 width: node.width,
                 height: node.height,
                 isRevealed: false,
-                assignedGift: null
+                assignedGift: null,
+                // PSDの座標情報を維持した多角形データ（長方形として生成）
+                points: [
+                    {x: node.left, y: node.top},
+                    {x: node.left + node.width, y: node.top},
+                    {x: node.left + node.width, y: node.top + node.height},
+                    {x: node.left, y: node.top + node.height}
+                ]
             };
         });
 
-        // 背景の読み込み完了を待ってから全体を再描画
+        // 背景の読み込み完了を待ってから再描画
         backgroundImage.onload = () => {
-            console.log(`背景と ${panels.length} 枚のパネルを読み込みました。`);
             renderCanvas(); 
+            renderControlList();
+            alert(`背景をセットし、${panels.length}枚のパネルを読み込みました。`);
         };
     };
     reader.readAsArrayBuffer(file);
-});
+}
+
+/**
+ * キャンバス（SVGエリア）の描画更新
+ */
+function renderCanvas() {
+    const svg = document.getElementById('panel-svg');
+    if (!svg) return;
+    svg.innerHTML = '';
+
+    panels.forEach(panel => {
+        if (panel.isRevealed) return; // 開けられたパネルは描画しない
+
+        const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+        const pointsStr = panel.points.map(p => `${p.x},${p.y}`).join(' ');
+        
+        polygon.setAttribute("points", pointsStr);
+        polygon.setAttribute("fill", "#1976d2"); // パネルの色
+        polygon.setAttribute("stroke", "white");
+        polygon.setAttribute("stroke-width", "2");
+        polygon.setAttribute("opacity", "0.8");
+        polygon.style.cursor = "pointer";
+
+        // クリックでパネルを開くイベント
+        polygon.onclick = () => revealPanel(panel.id);
+        
+        svg.appendChild(polygon);
+    });
+}
+
+/**
+ * 操作パネル側のリスト描画更新
+ */
+function renderControlList() {
+    const listArea = document.getElementById('control-list');
+    if (!listArea) return;
+    
+    if (panels.length === 0) {
+        listArea.innerHTML = '<div style="color:#999; padding:20px;">パネルを作成してください</div>';
+        return;
+    }
+
+    listArea.innerHTML = '';
+    panels.forEach(panel => {
+        const item = document.createElement('div');
+        item.className = 'control-item';
+        item.style.padding = '10px';
+        item.style.borderBottom = '1px solid #eee';
+        item.style.display = 'flex';
+        item.style.justifyContent = 'space-between';
+        
+        item.innerHTML = `
+            <span>${panel.name}</span>
+            <button onclick="revealPanel('${panel.id}')" class="btn-sm">
+                ${panel.isRevealed ? '閉じる' : '開ける'}
+            </button>
+        `;
+        listArea.appendChild(item);
+    });
+}
+
+/**
+ * パネルを開く/閉じる
+ */
+function revealPanel(panelId) {
+    const panel = panels.find(p => p.id === panelId);
+    if (panel) {
+        panel.isRevealed = !panel.isRevealed;
+        renderCanvas();
+        renderControlList();
+    }
+}
+
+// モード切替（HTMLのonclick="setMode"に対応）
+function setMode(mode) {
+    isEditMode = (mode === 'edit');
+    document.getElementById('btn-play').classList.toggle('active', mode === 'play');
+    document.getElementById('btn-edit').classList.toggle('active', mode === 'edit');
+    document.getElementById('instruction').style.display = isEditMode ? 'block' : 'none';
+}
