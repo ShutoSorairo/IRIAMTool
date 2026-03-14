@@ -106,30 +106,43 @@ h1 { margin-bottom: 20px; color: #333; }
    3. ワークスペース (左右分割)
    ========================================= */
 .workspace {
-    display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; align-items: flex-start;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: 0;
 }
-
 /* --- 左側: ボードエリア --- */
 .board-area {
-    flex: 1; min-width: 300px; max-width: 800px;
-    background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    flex: 1;
+    min-width: 0; /* Flex内の潰れ防止 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
-
 .instruction-box {
     background: #fff3e0; color: #e65100; padding: 10px; margin-bottom: 10px;
     border-radius: 4px; font-size: 0.9em; display: none;
 }
 
 .board-wrapper {
-    position: relative; width: 100%; background: #eee; overflow: hidden;
-    border: 2px solid #333; user-select: none;
-    min-height: 300px;
-    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    width: 100%;
+    max-width: 100%; /* 親要素をはみ出さない */
+    max-height: 70vh; /* 縦も画面の7割までに制限 */
+    background-color: #f0f0f0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    overflow: hidden; /* 画像のはみ出しを隠す */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #hidden-image {
-    width: 100%; height: 100%; object-fit: cover;
-    pointer-events: none; display: none; position: absolute; top: 0; left: 0;
+    width: 100%;  /* wrapperの幅に合わせる */
+    height: 100%; /* wrapperの高さに合わせる */
+    object-fit: contain; /* アスペクト比を維持して収める */
+    display: block;
 }
 
 #no-image-text {
@@ -138,10 +151,12 @@ h1 { margin-bottom: 20px; color: #333; }
 
 /* SVGレイヤー */
 .panel-layer {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10;
-    overflow: visible; /* テキストのはみ出しを許可 */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
-
 /* SVG要素 */
 polygon {
     stroke: #fff; stroke-width: 3; transition: fill-opacity 0.5s; cursor: pointer;
