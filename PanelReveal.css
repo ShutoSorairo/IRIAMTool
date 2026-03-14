@@ -87,6 +87,21 @@ h1 { margin-bottom: 20px; color: #333; }
 }
 .home-btn:hover { background: #1565c0; }
 
+/* PSDのボタン */
+.btn-psd {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #007bff; /* 青系などお好みの色 */
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+.btn-psd:hover {
+    background-color: #0056b3;
+}
 /* =========================================
    3. ワークスペース (左右分割)
    ========================================= */
