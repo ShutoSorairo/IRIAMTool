@@ -38,7 +38,21 @@
                 <button onclick="copyBoardImage()" class="btn-tweet">📸 画像コピー</button>
             </div>
         </div>
+        
+<div class="controls">
+    <div class="control-group">
+        <label>背景画像:</label>
+        <input type="file" id="bg-upload" accept="image/*">
+    </div>
 
+    <div class="control-group">
+        <label for="psd-upload" class="btn-psd">PSDからパネル生成</label>
+        <input type="file" id="psd-upload" accept=".psd" style="display:none;">
+    </div>
+    
+    <button id="reset-panels">パネルリセット</button>
+</div>
+        
         <div class="workspace">
             
             <div class="board-area">
