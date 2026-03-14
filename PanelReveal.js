@@ -6,6 +6,11 @@ window.onload = function() {
     const psdInput = document.getElementById('psd-upload');
     if (psdInput) psdInput.addEventListener('change', handlePSDInput);
 
+    // 画像コピーボタン
+    const copyBtn = document.querySelector('.btn-tweet');
+    if (copyBtn) copyBtn.onclick = copyBoardImage;
+
+    // リセットボタン
     const resetBtn = document.getElementById('reset-panels');
     if (resetBtn) {
         resetBtn.onclick = () => {
@@ -16,20 +21,12 @@ window.onload = function() {
             }
         };
     }
-
-    // モーダル外クリックで閉じる
-    window.onclick = (e) => {
-        const modal = document.getElementById('control-popup');
-        if (e.target == modal) toggleControlPopup();
-    };
 };
 
-function toggleControlPopup() {
-    const modal = document.getElementById('control-popup');
-    modal.style.display = (modal.style.display === 'none') ? 'flex' : 'none';
-    if (modal.style.display === 'flex') renderControlList();
-}
-
+/**
+ * PSD解析ロジック
+ * すべての基準を最下層レイヤーのサイズに設定
+ */
 async function handlePSDInput(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -52,31 +49,34 @@ async function handlePSDInput(e) {
             return;
         }
 
-        // 一番下のレイヤーを背景にする
+        // --- 基準となる最下層レイヤーの取得 ---
         const bgNode = allLayers.pop(); 
-        const bgNodeData = bgNode.export();
+        const bgNodeData = bgNode.export(); // ここに width, height, top, left が入る
         const bgImgUri = bgNode.layer.image.toPng().src;
 
-        // 縮尺とサイズの自動調整
+        // --- 表示枠とSVGを「最下層のサイズ」に固定 ---
         const target = document.getElementById('capture-target');
         const svg = document.getElementById('panel-svg');
         const hiddenImg = document.getElementById('hidden-image');
 
+        // CSSのaspect-ratioで崩れを防止し、内部解像度(viewBox)を背景サイズに合わせる
         target.style.aspectRatio = `${bgNodeData.width} / ${bgNodeData.height}`;
         target.style.maxWidth = bgNodeData.width + "px";
+        target.style.width = "100%";
+        
+        // SVGの座標空間を背景のピクセルサイズと1:1にする
         svg.setAttribute("viewBox", `0 0 ${bgNodeData.width} ${bgNodeData.height}`);
 
         hiddenImg.src = bgImgUri;
         backgroundImage.src = bgImgUri;
         document.getElementById('no-image-text').style.display = 'none';
 
-        // パネル生成 + ギフト判定ロジック
+        // --- パネル生成 (背景からの相対位置を計算) ---
         panels = allLayers.map(layer => {
             const node = layer.export();
             let giftName = node.name;
             let giftPoint = 0;
 
-            // レイヤー名からポイント抽出 (例: ハート_100pt)
             if (node.name.includes('_')) {
                 const parts = node.name.split('_');
                 giftName = parts[0];
@@ -88,6 +88,7 @@ async function handlePSDInput(e) {
                 id: 'p-' + Math.random().toString(36).substr(2, 9),
                 name: giftName,
                 point: giftPoint,
+                // 背景の左上を(0,0)とした相対座標に変換
                 x: node.left - bgNodeData.left,
                 y: node.top - bgNodeData.top,
                 width: node.width,
@@ -100,17 +101,56 @@ async function handlePSDInput(e) {
         backgroundImage.onload = () => {
             renderCanvas();
             renderControlList();
-            alert("PSDの読み込みが完了しました！「パネル操作」から開閉できます。");
+            alert(`背景サイズ(${bgNodeData.width}x${bgNodeData.height})に合わせて同期しました。`);
         };
     };
     reader.readAsArrayBuffer(file);
 }
 
+/**
+ * 画像コピー機能
+ * 背景レイヤーの解像度で正確に出力
+ */
+function copyBoardImage() {
+    const target = document.getElementById('capture-target');
+    const svg = document.getElementById('panel-svg');
+    
+    if (!backgroundImage.src) return alert("画像がありません");
+
+    // 背景(viewBox)の解像度を取得
+    const viewBox = svg.getAttribute("viewBox").split(' ');
+    const exportW = parseFloat(viewBox[2]);
+    const exportH = parseFloat(viewBox[3]);
+
+    html2canvas(target, {
+        useCORS: true,
+        width: exportW,
+        height: exportH,
+        scale: 1, // 1倍で元のピクセル数にする
+        backgroundColor: null,
+        onclone: (clonedDoc) => {
+            const clonedTarget = clonedDoc.getElementById('capture-target');
+            clonedTarget.style.width = exportW + "px";
+            clonedTarget.style.height = exportH + "px";
+        }
+    }).then(canvas => {
+        canvas.toBlob(blob => {
+            const item = new ClipboardItem({ "image/png": blob });
+            navigator.clipboard.write([item]).then(() => alert("背景サイズで画像をコピーしました！"));
+        });
+    });
+}
+
+// ポップアップ開閉
+function toggleControlPopup() {
+    const modal = document.getElementById('control-popup');
+    modal.style.display = (modal.style.display === 'none') ? 'flex' : 'none';
+    if (modal.style.display === 'flex') renderControlList();
+}
+
 function renderCanvas() {
     const svg = document.getElementById('panel-svg');
-    if (!svg) return;
     svg.innerHTML = '';
-
     panels.forEach(p => {
         if (p.isRevealed) return;
         const img = document.createElementNS("http://www.w3.org/2000/svg", "image");
@@ -127,80 +167,21 @@ function renderCanvas() {
 
 function revealPanel(id) {
     const p = panels.find(x => x.id === id);
-    if (p) {
-        p.isRevealed = !p.isRevealed;
-        renderCanvas();
-        renderControlList();
-    }
+    if (p) { p.isRevealed = !p.isRevealed; renderCanvas(); renderControlList(); }
 }
 
 function renderControlList() {
     const list = document.getElementById('control-list');
-    if (!list) return;
-    list.innerHTML = panels.length ? '' : '<div style="padding:20px; color:#999;">PSDを読み込んでください</div>';
-
+    list.innerHTML = panels.length ? '' : 'PSDを読み込んでください';
     panels.forEach(p => {
         const item = document.createElement('div');
         item.className = 'control-item';
+        item.style = "display:flex; align-items:center; gap:10px; padding:10px; border-bottom:1px solid #f5f5f5;";
         const pt = p.point > 0 ? `<span style="background:#ff9800; color:white; padding:2px 6px; border-radius:10px; font-size:10px;">${p.point}pt</span>` : '';
         item.innerHTML = `
-            <img src="${p.image}" style="width:40px; height:40px; object-fit:contain; background:#eee; border-radius:4px;">
-            <div style="flex:1; text-align:left; font-size:13px;"><b>${p.name}</b><br>${pt}</div>
-            <button onclick="revealPanel('${p.id}')" style="padding:5px 10px;">${p.isRevealed ? '閉じる' : '開ける'}</button>
-        `;
+            <img src="${p.image}" style="width:40px;height:40px;object-fit:contain;background:#eee;">
+            <div style="flex:1;text-align:left;font-size:12px;"><b>${p.name}</b> ${pt}</div>
+            <button onclick="revealPanel('${p.id}')">${p.isRevealed ? '閉' : '開'}</button>`;
         list.appendChild(item);
-    });
-}
-
-/**
- * 画像コピー機能 (背景 + 閉じているパネル)
- * 解像度ズレを修正したバージョン
- */
-function copyBoardImage() {
-    const target = document.getElementById('capture-target');
-    const svg = document.getElementById('panel-svg');
-    
-    if (!backgroundImage.src || backgroundImage.src === window.location.href) {
-        alert("画像が読み込まれていません。");
-        return;
-    }
-
-    // PSD本来の解像度を取得（viewBoxから抽出）
-    const viewBox = svg.getAttribute("viewBox").split(' ');
-    const originalWidth = parseFloat(viewBox[2]);
-    const originalHeight = parseFloat(viewBox[3]);
-
-    // html2canvasの設定を最適化
-    html2canvas(target, {
-        useCORS: true,
-        // 表示サイズではなく、PSD本来のピクセルサイズで書き出す
-        width: originalWidth,
-        height: originalHeight,
-        // スケーリングを1に固定して計算をシンプルにする（scale 2だと巨大になりすぎる場合があるため）
-        scale: 1, 
-        backgroundColor: null,
-        // レンダリング前に元の解像度で再計算させるためのヒント
-        onclone: (clonedDoc) => {
-            const clonedTarget = clonedDoc.getElementById('capture-target');
-            clonedTarget.style.width = originalWidth + "px";
-            clonedTarget.style.height = originalHeight + "px";
-        }
-    }).then(canvas => {
-        canvas.toBlob(blob => {
-            try {
-                const item = new ClipboardItem({ "image/png": blob });
-                navigator.clipboard.write([item]).then(() => {
-                    alert("PSDと同じ解像度で画像をコピーしました！");
-                });
-            } catch (err) {
-                // Clipboard APIが失敗した時のフォールバック
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = "panel_reveal.png";
-                a.click();
-                alert("ブラウザの制限により、画像をダウンロードしました。");
-            }
-        });
     });
 }
