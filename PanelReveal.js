@@ -152,14 +152,55 @@ function renderControlList() {
     });
 }
 
+/**
+ * 画像コピー機能 (背景 + 閉じているパネル)
+ * 解像度ズレを修正したバージョン
+ */
 function copyBoardImage() {
     const target = document.getElementById('capture-target');
-    if (!backgroundImage.src) return alert("画像がありません");
+    const svg = document.getElementById('panel-svg');
+    
+    if (!backgroundImage.src || backgroundImage.src === window.location.href) {
+        alert("画像が読み込まれていません。");
+        return;
+    }
 
-    html2canvas(target, { useCORS: true, scale: 2 }).then(canvas => {
+    // PSD本来の解像度を取得（viewBoxから抽出）
+    const viewBox = svg.getAttribute("viewBox").split(' ');
+    const originalWidth = parseFloat(viewBox[2]);
+    const originalHeight = parseFloat(viewBox[3]);
+
+    // html2canvasの設定を最適化
+    html2canvas(target, {
+        useCORS: true,
+        // 表示サイズではなく、PSD本来のピクセルサイズで書き出す
+        width: originalWidth,
+        height: originalHeight,
+        // スケーリングを1に固定して計算をシンプルにする（scale 2だと巨大になりすぎる場合があるため）
+        scale: 1, 
+        backgroundColor: null,
+        // レンダリング前に元の解像度で再計算させるためのヒント
+        onclone: (clonedDoc) => {
+            const clonedTarget = clonedDoc.getElementById('capture-target');
+            clonedTarget.style.width = originalWidth + "px";
+            clonedTarget.style.height = originalHeight + "px";
+        }
+    }).then(canvas => {
         canvas.toBlob(blob => {
-            const item = new ClipboardItem({ "image/png": blob });
-            navigator.clipboard.write([item]).then(() => alert("現在の状態（閉じているパネルを結合）でコピーしました！"));
+            try {
+                const item = new ClipboardItem({ "image/png": blob });
+                navigator.clipboard.write([item]).then(() => {
+                    alert("PSDと同じ解像度で画像をコピーしました！");
+                });
+            } catch (err) {
+                // Clipboard APIが失敗した時のフォールバック
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = "panel_reveal.png";
+                a.click();
+                alert("ブラウザの制限により、画像をダウンロードしました。");
+            }
         });
     });
 }
