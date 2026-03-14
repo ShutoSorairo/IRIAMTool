@@ -655,3 +655,48 @@ function copyBoardImage() {
         });
     });
 }
+
+document.getElementById('psd-upload').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const buffer = event.target.result;
+        const PSD = window.require("psd"); // ブラウザ環境でのPSD.js呼び出し
+        const psd = new PSD(new Uint8Array(buffer));
+        
+        psd.parse();
+
+        // パネルをリセット（必要に応じて）
+        panels = [];
+        
+        // レイヤーを走査してパネル情報を抽出
+        const layers = psd.tree().descendants();
+        
+        layers.forEach(layer => {
+            // グループではなく、実際の画像レイヤーのみを対象にする
+            if (layer.isLayer() && !layer.isHidden()) {
+                const node = layer.export();
+                
+                // パネルオブジェクトの作成
+                const newPanel = {
+                    id: Date.now() + Math.random(),
+                    name: node.name,
+                    x: node.left,
+                    y: node.top,
+                    width: node.width,
+                    height: node.height,
+                    isRevealed: false,
+                    assignedGift: null // 必要に応じて初期化
+                };
+                
+                panels.push(newPanel);
+            }
+        });
+
+        console.log(`${panels.length} 個のパネルを読み込みました`);
+        renderCanvas(); // キャンバスを再描画
+    };
+    reader.readAsArrayBuffer(file);
+});
