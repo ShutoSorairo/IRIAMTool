@@ -28,6 +28,24 @@ async function handlePSDInput(e) {
             return;
         }
 
+        // --- 0. PSDのキャンバスサイズに合わせて枠をリサイズ ---
+        const header = psd.header;
+        const psdWidth = header.width;
+        const psdHeight = header.height;
+
+        const target = document.getElementById('capture-target');
+        const svg = document.getElementById('panel-svg');
+        const hiddenImg = document.getElementById('hidden-image');
+
+        // 表示枠のサイズを固定（PSDの等倍にする）
+        if (target) {
+            target.style.width = psdWidth + "px";
+            target.style.height = psdHeight + "px";
+        }
+        if (svg) {
+            svg.setAttribute("viewBox", `0 0 ${psdWidth} ${psdHeight}`);
+        }
+
         // 実レイヤーのみ抽出（上から順）
         let allLayers = psd.tree().descendants().filter(n => n.isLayer());
         if (allLayers.length < 2) {
@@ -35,21 +53,20 @@ async function handlePSDInput(e) {
             return;
         }
 
-        // 1. 一番下のレイヤーを背景として設定
+        // --- 1. 一番下のレイヤーを背景として設定 ---
         const bgNode = allLayers.pop();
-        const bgImgUri = bgNode.layer.image.toPng().src; // 画像データ取得
+        const bgImgUri = bgNode.layer.image.toPng().src;
         
-        const hiddenImg = document.getElementById('hidden-image');
         hiddenImg.src = bgImgUri;
         backgroundImage.src = bgImgUri;
         document.getElementById('no-image-text').style.display = 'none';
 
-        // 2. パネルの処理（画像も抽出）
+        // --- 2. パネルの処理（画像も抽出） ---
         panels = allLayers.map(layer => {
             const node = layer.export();
             let layerImage = "";
             try {
-                // レイヤー個別の画像をPNG形式のデータURIとして取得
+                // レイヤーの画像を抽出
                 layerImage = layer.layer.image.toPng().src;
             } catch (e) {
                 console.warn(`${node.name} の画像抽出に失敗しました`);
@@ -62,28 +79,22 @@ async function handlePSDInput(e) {
                 y: node.top,
                 width: node.width,
                 height: node.height,
-                image: layerImage, // ★ここが重要：レイヤー画像
-                isRevealed: false,
-                points: [
-                    {x: node.left, y: node.top},
-                    {x: node.left + node.width, y: node.top},
-                    {x: node.left + node.width, y: node.top + node.height},
-                    {x: node.left, y: node.top + node.height}
-                ]
+                image: layerImage,
+                isRevealed: false
             };
         });
 
         backgroundImage.onload = () => {
             renderCanvas();
             renderControlList();
-            alert("画像付きでパネルを読み込みました！");
+            alert(`解像度 ${psdWidth}x${psdHeight} で読み込みました！`);
         };
     };
     reader.readAsArrayBuffer(file);
 }
 
 /**
- * SVG内に「画像」としてパネルを描画する
+ * レイヤー画像を表示する
  */
 function renderCanvas() {
     const svg = document.getElementById('panel-svg');
@@ -93,10 +104,8 @@ function renderCanvas() {
     panels.forEach(panel => {
         if (panel.isRevealed) return;
 
-        // SVG内に画像を配置するための要素
-        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        // 画像要素を作成
         const img = document.createElementNS("http://www.w3.org/2000/svg", "image");
-        
         img.setAttributeNS(null, "href", panel.image);
         img.setAttributeNS(null, "x", panel.x);
         img.setAttributeNS(null, "y", panel.y);
@@ -104,26 +113,11 @@ function renderCanvas() {
         img.setAttributeNS(null, "height", panel.height);
         img.style.cursor = "pointer";
         
-        // クリックで消去（開ける）
         img.onclick = () => revealPanel(panel.id);
-
-        // 枠線（必要なら）
-        const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-        rect.setAttribute("x", panel.x);
-        rect.setAttribute("y", panel.y);
-        rect.setAttribute("width", panel.width);
-        rect.setAttribute("height", panel.height);
-        rect.setAttribute("fill", "none");
-        rect.setAttribute("stroke", "rgba(255,255,255,0.3)");
-        rect.style.pointerEvents = "none";
-
-        g.appendChild(img);
-        g.appendChild(rect);
-        svg.appendChild(g);
+        svg.appendChild(img);
     });
 }
 
-// 以下、revealPanel と renderControlList は前回と同じ
 function revealPanel(panelId) {
     const panel = panels.find(p => p.id === panelId);
     if (panel) {
@@ -140,10 +134,15 @@ function renderControlList() {
     panels.forEach(panel => {
         const item = document.createElement('div');
         item.className = 'control-item';
+        item.style = "display:flex; align-items:center; gap:10px; padding:8px; border-bottom:1px solid #eee;";
         item.innerHTML = `
-            <img src="${panel.image}" style="width:30px; height:30px; object-fit:contain; background:#eee;">
-            <span>${panel.name}</span>
-            <button onclick="revealPanel('${panel.id}')">${panel.isRevealed ? '閉' : '開'}</button>
+            <img src="${panel.image}" style="width:40px; height:40px; object-fit:contain; background:#f0f0f0; border-radius:4px;">
+            <div style="flex:1; text-align:left;">
+                <div style="font-weight:bold; font-size:12px;">${panel.name}</div>
+            </div>
+            <button onclick="revealPanel('${panel.id}')" style="padding:4px 8px;">
+                ${panel.isRevealed ? '閉じる' : '開ける'}
+            </button>
         `;
         listArea.appendChild(item);
     });
