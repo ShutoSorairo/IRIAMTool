@@ -108,35 +108,72 @@ async function handlePSDInput(e) {
 }
 
 /**
- * 画像コピー機能
- * 背景レイヤーの解像度で正確に出力
+ * 画像コピー機能 (背景サイズ完全同期版)
+ * 画面上の縮小に関わらず、最下層レイヤーの解像度で出力します
  */
 function copyBoardImage() {
     const target = document.getElementById('capture-target');
     const svg = document.getElementById('panel-svg');
     
-    if (!backgroundImage.src) return alert("画像がありません");
+    if (!backgroundImage.src || backgroundImage.src === window.location.href) {
+        alert("画像が読み込まれていません。");
+        return;
+    }
 
-    // 背景(viewBox)の解像度を取得
+    // SVGのviewBoxから最下層レイヤーの本来の解像度を取得
     const viewBox = svg.getAttribute("viewBox").split(' ');
     const exportW = parseFloat(viewBox[2]);
     const exportH = parseFloat(viewBox[3]);
 
+    // ポップアップが開いている場合は一時的に隠す（写り込み防止）
+    const modal = document.getElementById('control-popup');
+    const originalModalDisplay = modal.style.display;
+    modal.style.display = 'none';
+
     html2canvas(target, {
         useCORS: true,
+        // ここが重要：表示サイズではなく、本来の解像度を指定
         width: exportW,
         height: exportH,
-        scale: 1, // 1倍で元のピクセル数にする
+        scale: 1, 
         backgroundColor: null,
+        logging: false,
         onclone: (clonedDoc) => {
+            // 複製されたDOM要素をPSDのフルサイズに強制設定
             const clonedTarget = clonedDoc.getElementById('capture-target');
+            const clonedImg = clonedDoc.getElementById('hidden-image');
+            const clonedSvg = clonedDoc.getElementById('panel-svg');
+
             clonedTarget.style.width = exportW + "px";
             clonedTarget.style.height = exportH + "px";
+            clonedTarget.style.transform = "none"; // 変形を解除
+            
+            clonedImg.style.width = "100%";
+            clonedImg.style.height = "100%";
+            clonedImg.style.objectFit = "fill";
+
+            clonedSvg.style.width = "100%";
+            clonedSvg.style.height = "100%";
         }
     }).then(canvas => {
+        // 元のポップアップ表示状態を戻す
+        modal.style.display = originalModalDisplay;
+
         canvas.toBlob(blob => {
-            const item = new ClipboardItem({ "image/png": blob });
-            navigator.clipboard.write([item]).then(() => alert("背景サイズで画像をコピーしました！"));
+            try {
+                const item = new ClipboardItem({ "image/png": blob });
+                navigator.clipboard.write([item]).then(() => {
+                    alert("最下層レイヤーの解像度（" + exportW + "x" + exportH + "）でコピーしました！");
+                });
+            } catch (err) {
+                // Clipboard APIが失敗した場合、ダウンロードさせる
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = "panel_combined.png";
+                a.click();
+                alert("クリップボードへのコピーに失敗したため、画像を保存しました。");
+            }
         });
     });
 }
