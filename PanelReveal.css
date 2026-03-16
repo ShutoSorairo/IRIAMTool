@@ -20,6 +20,8 @@ body {
 .btn-open-list { background: #ff9800; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
 .btn-tweet { background: #4caf50; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
 .btn-reset { background: #f44336; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+.home-btn { position: absolute; top: 20px; left: 20px; background: #1976d2; color: #fff; border: none; border-radius: 4px; padding: 10px 30px; text-decoration: none; z-index: 100; }
+.home-btn:hover { background: #1565c0; }
 
 /* ボードエリア (縮尺自動調整) */
 .board-wrapper {
