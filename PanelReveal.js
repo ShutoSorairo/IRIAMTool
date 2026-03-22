@@ -93,7 +93,7 @@ function renderCanvas() {
     const ns = "http://www.w3.org/2000/svg";
 
     // --- 設定 ---
-    const baseFontSize = 14; // 基本のフォントサイズ
+    const baseFontSize = 50; // 基本のフォントサイズ
     const lineSpacing = 1.2; // 行間
 
     panels.forEach(p => {
