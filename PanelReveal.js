@@ -1,3 +1,8 @@
+/**
+ * IRIAM パネル開けツール - PanelReveal.js (テキスト表示統合版)
+ */
+
+// --- グローバル変数 ---
 let panels = []; 
 let backgroundImage = new Image();
 
@@ -18,6 +23,7 @@ window.onload = function() {
 
 function toggleControlPopup() {
     const modal = document.getElementById('control-popup');
+    if (!modal) return;
     modal.style.display = (modal.style.display === 'none') ? 'flex' : 'none';
     if (modal.style.display === 'flex') renderControlList();
 }
@@ -33,7 +39,6 @@ async function handlePSDInput(e) {
         try { psd.parse(); } catch (err) { alert("PSD解析失敗"); return; }
 
         let allLayers = psd.tree().descendants().filter(n => n.isLayer());
-        // 最下層を背景として取得
         const bgNode = allLayers.pop(); 
         const bgNodeData = bgNode.export();
 
@@ -41,10 +46,11 @@ async function handlePSDInput(e) {
         const svg = document.getElementById('panel-svg');
         const hiddenImg = document.getElementById('hidden-image');
 
-        // ★修正: 枠のサイズを背景の解像度に完全に合わせ、CSSでの歪みを防ぐ
+        // 背景解像度を厳密に固定
         target.style.width = bgNodeData.width + "px";
         target.style.height = bgNodeData.height + "px";
-        // 表示が大きすぎる場合はCSSのmax-widthで縮小されるが、比率は維持される
+        target.style.aspectRatio = `${bgNodeData.width} / ${bgNodeData.height}`;
+        target.style.maxWidth = "100%"; // 画面幅に収める
         
         svg.setAttribute("viewBox", `0 0 ${bgNodeData.width} ${bgNodeData.height}`);
 
@@ -77,18 +83,103 @@ async function handlePSDInput(e) {
     reader.readAsArrayBuffer(file);
 }
 
+/**
+ * ★修正: SVGキャンバスの描画 (画像 + テキストオーバーレイ)
+ */
 function renderCanvas() {
     const svg = document.getElementById('panel-svg');
+    if (!svg) return;
     svg.innerHTML = '';
+    const ns = "http://www.w3.org/2000/svg";
+
     panels.forEach(p => {
-        if (p.isRevealed) return;
-        const img = document.createElementNS("http://www.w3.org/2000/svg", "image");
+        if (p.isRevealed) return; // 開いたパネルは描画しない
+
+        // 1. パネル画像の描画
+        const img = document.createElementNS(ns, "image");
         img.setAttributeNS(null, "href", p.image);
-        img.setAttributeNS(null, "x", p.x); img.setAttributeNS(null, "y", p.y);
-        img.setAttributeNS(null, "width", p.width); img.setAttributeNS(null, "height", p.height);
+        img.setAttributeNS(null, "x", p.x);
+        img.setAttributeNS(null, "y", p.y);
+        img.setAttributeNS(null, "width", p.width);
+        img.setAttributeNS(null, "height", p.height);
+        img.style.cursor = "pointer";
         img.onclick = () => revealPanel(p.id);
         svg.appendChild(img);
+
+        // --- 2. テキストオーバーレイの描画 (ご提示のデザイン) ---
+        // パネルが小さすぎる場合はテキストを表示しない（任意）
+        if (p.width < 50 || p.height < 30) return;
+
+        // パネルサイズに応じたフォントサイズの計算 (幅の1/10くらい、最小10px)
+        const fontSize = Math.max(10, p.width / 10);
+        const textX = p.x + p.width / 2; // 中央配置
+        const textY = p.y + p.height / 2; // 中央配置
+
+        // テキストのコンテナ（g要素）を作成してまとめて配置
+        const textGroup = document.createElementNS(ns, "g");
+        textGroup.setAttribute("font-family", "sans-serif");
+        textGroup.setAttribute("font-size", fontSize + "px");
+        textGroup.setAttribute("text-anchor", "middle"); // 中央揃え
+        textGroup.setAttribute("dominant-baseline", "central"); // 垂直中央揃え
+        textGroup.style.pointerEvents = "none"; // テキスト自体はクリック不可に
+
+        // 白い縁取り（袋文字）用のスタイル
+        const strokeStyle = "stroke: white; stroke-width: 2px; paint-order: stroke;";
+
+        // ギフト名 + pt数 (例: ハート・50pt)
+        const nameText = document.createElementNS(ns, "text");
+        nameText.setAttribute("x", textX);
+        nameText.setAttribute("y", textY - fontSize); // 少し上に
+        nameText.setAttribute("fill", "#333");
+        nameText.setAttribute("style", strokeStyle);
+        nameText.textContent = `${p.name}・${p.giftValue}pt`;
+        textGroup.appendChild(nameText);
+
+        // 個数カウンター (例: 達成:1 / ノルマ:3)
+        const countText = document.createElementNS(ns, "text");
+        countText.setAttribute("x", textX);
+        countText.setAttribute("y", textY + fontSize); // 少し下に
+        countText.setAttribute("font-weight", "bold");
+        
+        // ノルマ達成時は文字色を変える (緑)
+        const isFull = p.currentCount >= p.currentTarget;
+        countText.setAttribute("fill", isFull ? "#4caf50" : "#ff9800");
+        countText.setAttribute("style", strokeStyle);
+        countText.textContent = `達成:${p.currentCount} / ノルマ:${p.currentTarget}`;
+        textGroup.appendChild(countText);
+
+        svg.appendChild(textGroup);
     });
+}
+
+/**
+ * 数値更新ロジック (更新後にCanvasを再描画する)
+ */
+function updateCounter(id, amount) {
+    const p = panels.find(x => x.id === id);
+    if (p) {
+        p.currentCount = Math.max(0, p.currentCount + amount);
+        renderControlList();
+        renderCanvas(); // ★追加: Canvas（SVG）も再描画してテキストを更新
+    }
+}
+
+function updateTarget(id, amount) {
+    const p = panels.find(x => x.id === id);
+    if (p) {
+        p.currentTarget = Math.max(1, p.currentTarget + amount);
+        renderControlList();
+        renderCanvas(); // ★追加: Canvasも再描画
+    }
+}
+
+function revealPanel(id) {
+    const p = panels.find(x => x.id === id);
+    if (p) {
+        p.isRevealed = !p.isRevealed;
+        renderCanvas();
+        renderControlList();
+    }
 }
 
 function copyBoardImage() {
@@ -103,6 +194,7 @@ function copyBoardImage() {
         width: w,
         height: h,
         scale: 1,
+        backgroundColor: null,
         onclone: (doc) => {
             const t = doc.getElementById('capture-target');
             t.style.width = w + "px";
@@ -112,24 +204,14 @@ function copyBoardImage() {
         }
     }).then(canvas => {
         canvas.toBlob(blob => {
-            const item = new ClipboardItem({ "image/png": blob });
-            navigator.clipboard.write([item]).then(() => alert("背景と同じサイズでコピーしました"));
+            try {
+                const item = new ClipboardItem({ "image/png": blob });
+                navigator.clipboard.write([item]).then(() => alert("背景と同じ解像度でコピーしました（テキスト含む）"));
+            } catch (err) {
+                alert("コピーに失敗しました。画像を保存してください。");
+            }
         });
     });
-}
-
-// updateCounter, updateTarget, revealPanel, renderControlList は変更なし
-function updateCounter(id, amount) {
-    const p = panels.find(x => x.id === id);
-    if (p) { p.currentCount = Math.max(0, p.currentCount + amount); renderControlList(); }
-}
-function updateTarget(id, amount) {
-    const p = panels.find(x => x.id === id);
-    if (p) { p.currentTarget = Math.max(1, p.currentTarget + amount); renderControlList(); }
-}
-function revealPanel(id) {
-    const p = panels.find(x => x.id === id);
-    if (p) { p.isRevealed = !p.isRevealed; renderCanvas(); renderControlList(); }
 }
 
 function renderControlList() {
