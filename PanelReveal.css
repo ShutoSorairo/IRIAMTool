@@ -84,3 +84,19 @@ body {
 .btn-minus { color: #1e88e5; font-weight: bold; }
 .btn-reveal { background: #4caf50 !important; color: white !important; border: none !important; padding: 7px 15px !important; font-weight: bold; border-radius: 6px !important; }
 .btn-reveal.opened { background: #b0bec5 !important; }
+/* ホームボタン */
+.home-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: #1976d2;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 30px;
+    text-decoration: none;
+    z-index: 100;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: background 0.2s;
+}
+.home-btn:hover { background: #1565c0; }
