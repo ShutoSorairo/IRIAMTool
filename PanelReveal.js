@@ -1,3 +1,4 @@
+
 // --- データ管理 ---
 let panels = []; 
 let backgroundImage = new Image();
@@ -73,23 +74,22 @@ async function handlePSDInput(e) {
 
         // --- パネル生成 (背景からの相対位置を計算) ---
         panels = allLayers.map(layer => {
-        const node = layer.export();
-        let giftName = node.name;
-        let giftValue = 0; // ギフトの単価（種類）
+  　  　const node = layer.export();
+    　　let giftName = node.name;
+    　　let giftPoint = 0;
 
         if (node.name.includes('_')) {
             const parts = node.name.split('_');
             giftName = parts[0];
             const ptMatch = parts[1].match(/(\d+)pt/);
-            if (ptMatch) giftValue = parseInt(ptMatch[1]);
+            if (ptMatch) giftPoint = parseInt(ptMatch[1]);
         }
 
         return {
             id: 'p-' + Math.random().toString(36).substr(2, 9),
             name: giftName,
-            giftValue: giftValue,    // ギフトの単価（500ptなど）を表示用として保持
-            currentTarget: 1,        // 目標個数（デフォルトは1個に設定）
-            currentCount: 0,         // 現在届いた個数
+            targetPoint: giftPoint, // 目標ポイント
+            currentPoint: 0,        // 現在のポイント（初期値0）
             x: node.left - bgNodeData.left,
             y: node.top - bgNodeData.top,
             width: node.width,
@@ -98,42 +98,33 @@ async function handlePSDInput(e) {
             isRevealed: false
         };
     });
-               
-    backgroundImage.onload = () => {
-           renderCanvas();
-           renderControlList();
-           alert(`背景サイズ(${bgNodeData.width}x${bgNodeData.height})に合わせて同期しました。`);
-      };
-    ;
+        
+    /**
+     * ポイントを加算・減算する関数
+     */
+    function updateCounter(id, amount) {
+        const p = panels.find(x => x.id === id);
+        if (!p) return;
+
+        p.currentPoint = Math.max(0, p.currentPoint + amount);
+    
+        // 目標に達したら自動で開く演出（お好みで）
+        if (p.targetPoint > 0 && p.currentPoint >= p.targetPoint && !p.isRevealed) {
+            // p.isRevealed = true; // 自動で開けたい場合はコメントアウトを外す
+        }
+    
+        renderControlList();
+        renderCanvas();
+    }
+        backgroundImage.onload = () => {
+            renderCanvas();
+            renderControlList();
+            alert(`背景サイズ(${bgNodeData.width}x${bgNodeData.height})に合わせて同期しました。`);
+        };
+    };
     reader.readAsArrayBuffer(file);
 }
-    
-/**
- * カウンターの数値を更新する関数
- */
-function updateCounter(id, amount) {
-    const p = panels.find(x => x.id === id);
-    if (!p) return;
 
-    p.currentCount = Math.max(0, p.currentCount + amount);
-    
-    // 目標個数に達したら自動で開ける場合はここを有効化
-    // if (p.currentCount >= p.currentTarget) { p.isRevealed = true; }
-    
-    renderControlList();
-    renderCanvas();
-}
-
-/**
- * 目標個数（ノルマ）を変更する関数
- */
-function updateTarget(id, amount) {
-    const p = panels.find(x => x.id === id);
-    if (!p) return;
-    p.currentTarget = Math.max(1, p.currentTarget + amount);
-    renderControlList();
-}
-    
 /**
  * 画像コピー機能 (背景サイズ完全同期版)
  * 画面上の縮小に関わらず、最下層レイヤーの解像度で出力します
@@ -236,48 +227,34 @@ function revealPanel(id) {
 
 function renderControlList() {
     const list = document.getElementById('control-list');
-    if (!list) return;
-    list.innerHTML = panels.length ? '' : '<div style="padding:20px; color:#999;">PSDを読み込んでください</div>';
+    list.innerHTML = panels.length ? '' : 'PSDを読み込んでください';
 
     panels.forEach(p => {
         const item = document.createElement('div');
-        item.className = 'panel-card';
+        item.className = 'control-item';
+        item.style = "display:flex; align-items:center; gap:10px; padding:12px; border-bottom:1px solid #f0f0f0;";
         
-        // 進捗率（プログレスバー用）
-        const progress = Math.min(100, (p.currentCount / p.currentTarget) * 100);
-        const isFull = p.currentCount >= p.currentTarget;
+        // 進捗率の計算
+        const progress = p.targetPoint > 0 ? Math.min(100, (p.currentPoint / p.targetPoint) * 100) : 0;
+        const isCleared = p.targetPoint > 0 && p.currentPoint >= p.targetPoint;
 
         item.innerHTML = `
-            <div class="card-main">
-                <img src="${p.image}" class="card-img">
-                <div class="card-info">
-                    <div class="card-title">
-                        <span class="gift-name">${p.name}</span>
-                        <span class="gift-value">${p.giftValue}pt</span>
-                    </div>
-                    <div class="card-counter">
-                        <span class="count-label">達成:</span>
-                        <span class="count-num ${isFull ? 'full' : ''}">${p.currentCount}</span>
-                        <span class="count-separator">/</span>
-                        <span class="count-target">ノルマ:${p.currentTarget}個</span>
-                    </div>
-                    <div class="card-progress-bar">
-                        <div class="progress-fill" style="width: ${progress}%; background: ${isFull ? '#4caf50' : '#ff9800'};"></div>
-                    </div>
+            <img src="${p.image}" style="width:50px; height:50px; object-fit:contain; background:#eee; border-radius:4px;">
+            <div style="flex:1; text-align:left;">
+                <div style="font-weight:bold; font-size:13px;">${p.name}</div>
+                <div style="font-size:11px; color:#666;">
+                    ${p.currentPoint} / ${p.targetPoint} pt
+                </div>
+                <div style="width:100%; height:6px; background:#eee; border-radius:3px; margin-top:4px;">
+                    <div style="width:${progress}%; height:100%; background:${isCleared ? '#4caf50' : '#ff9800'}; border-radius:3px; transition:0.3s;"></div>
                 </div>
             </div>
-            <div class="card-actions">
-                <div class="action-group">
-                    <span class="group-label">個数</span>
-                    <button onclick="updateCounter('${p.id}', 1)" class="btn-plus">＋</button>
-                    <button onclick="updateCounter('${p.id}', -1)" class="btn-minus">－</button>
+            <div style="display:flex; flex-direction:column; gap:4px;">
+                <div style="display:flex; gap:2px;">
+                    <button onclick="updateCounter('${p.id}', 1)" style="padding:2px 8px;">+</button>
+                    <button onclick="updateCounter('${p.id}', -1)" style="padding:2px 8px;">-</button>
                 </div>
-                <div class="action-group">
-                    <span class="group-label">ノルマ</span>
-                    <button onclick="updateTarget('${p.id}', 1)" class="btn-up">▲</button>
-                    <button onclick="updateTarget('${p.id}', -1)" class="btn-down">▼</button>
-                </div>
-                <button onclick="revealPanel('${p.id}')" class="btn-reveal ${p.isRevealed ? 'opened' : ''}">
+                <button onclick="revealPanel('${p.id}')" style="font-size:10px; padding:4px;">
                     ${p.isRevealed ? '閉じる' : '開ける'}
                 </button>
             </div>
