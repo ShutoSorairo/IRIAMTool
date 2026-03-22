@@ -1,45 +1,67 @@
-/* 全体設定 */
+/* =========================================
+   1. 全体レイアウト
+   ========================================= */
 body {
     background: linear-gradient(120deg, #e0f7fa 0%, #fce4ec 100%);
     min-height: 100vh;
     padding: 20px;
-    font-family: 'Segoe UI', sans-serif;
+    color: #333;
+    font-family: 'Segoe UI', Meiryo, sans-serif;
     margin: 0;
 }
 
-.main-container { max-width: 1200px; margin: 40px auto; text-align: center; }
-
-/* 設定エリア */
-.global-settings {
-    background: #fff; padding: 15px; border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px;
-    display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; align-items: center;
+.main-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    text-align: center;
 }
 
+/* =========================================
+   2. 上部設定エリア
+   ========================================= */
+.global-settings {
+    background: #fff;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    align-items: center;
+}
+
+.setting-group { display: flex; gap: 10px; align-items: center; }
+
+/* ボタン類 */
 .upload-btn { background: #1976d2; color: white; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
 .btn-open-list { background: #ff9800; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
 .btn-tweet { background: #4caf50; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
 .btn-reset { background: #f44336; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
-.home-btn { position: absolute; top: 20px; left: 20px; background: #1976d2; color: #fff; border: none; border-radius: 4px; padding: 10px 30px; text-decoration: none; z-index: 100; }
-.home-btn:hover { background: #1565c0; }
 
-/* ボードエリア (縮尺自動調整) */
+/* =========================================
+   3. ボードエリア (縮尺自動調整・背景同期)
+   ========================================= */
 .board-wrapper {
     position: relative;
     width: 100%;
+    max-width: 100%;
+    max-height: 75vh;
     margin: 0 auto;
     background: #ccc;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    border-radius: 8px;
 }
 
 #hidden-image {
-    /* 常に親要素（最下層レイヤーサイズに基づいた枠）にフィットさせる */
     width: 100%;
     height: 100%;
-    object-fit: fill; /* 比率はJS側でaspect-ratio固定しているのでfillでOK */
+    object-fit: fill; /* JSで比率を制御しているためfillでOK */
     display: block;
 }
 
@@ -51,74 +73,81 @@ body {
     height: 100%;
 }
 
-/* ポップアップ（モーダル） */
+/* =========================================
+   4. ポップアップ（モーダル）
+   ========================================= */
 .modal-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.6); display: flex;
-    justify-content: center; align-items: center; z-index: 9999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
 }
 
 .modal-content {
-    background: white; width: 90%; max-width: 450px;
-    max-height: 80vh; border-radius: 15px; display: flex; flex-direction: column;
+    background: #f8f9fa;
+    width: 90%;
+    max-width: 480px;
+    max-height: 85vh;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
 }
 
 .modal-header {
-    padding: 15px 20px; border-bottom: 1px solid #eee;
-    display: flex; justify-content: space-between; align-items: center; background: #fafafa;
-}
-
-.control-list { flex: 1; overflow-y: auto; padding: 10px; }
-.control-item {
-    display: flex; align-items: center; gap: 12px; padding: 12px;
-    border-bottom: 1px solid #f0f0f0;
-}
-.btn-close { background: none; border: none; font-size: 28px; cursor: pointer; color: #aaa; }
-
-/* カウンターボタンのスタイル */
-.control-item button {
-    cursor: pointer;
-    border: 1px solid #ddd;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     background: #fff;
-    border-radius: 4px;
-    font-size: 12px;
 }
 
-.control-item button:hover {
-    background: #f0f0f0;
+.modal-header h3 { margin: 0; font-size: 1.2em; color: #333; }
+.btn-close { background: none; border: none; font-size: 32px; cursor: pointer; color: #bbb; line-height: 1; }
+
+.control-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
 }
 
-.control-item button:active {
-    background: #e0e0e0;
-}
-/* パネルカード全体 */
+/* =========================================
+   5. パネルカード (ご提示のデザイン)
+   ========================================= */
 .panel-card {
     background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    margin-bottom: 12px;
-    padding: 12px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 15px;
+    padding: 15px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    border: 1px solid #eee;
+    gap: 12px;
+    border: 1px solid #efefef;
 }
 
-/* 上部：情報エリア */
+/* カード上部：画像と基本情報 */
 .card-main {
     display: flex;
-    gap: 12px;
+    gap: 15px;
     align-items: center;
 }
 
 .card-img {
-    width: 60px;
-    height: 60px;
+    width: 70px;
+    height: 70px;
     object-fit: contain;
-    background: #f9f9f9;
-    border-radius: 6px;
-    border: 1px solid #eee;
+    background: #fdfdfd;
+    border-radius: 8px;
+    border: 1px solid #f0f0f0;
 }
 
 .card-info {
@@ -130,63 +159,83 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
 }
 
-.gift-name { font-weight: bold; font-size: 14px; color: #333; }
-.gift-value { font-size: 11px; color: #777; background: #eee; padding: 2px 6px; border-radius: 10px; }
+.gift-name { font-weight: bold; font-size: 15px; color: #222; }
+.gift-value { font-size: 11px; color: #666; background: #f0f0f0; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
 
-.card-counter { font-size: 13px; color: #555; margin-bottom: 4px; }
-.count-num { font-size: 18px; font-weight: bold; color: #e65100; }
-.count-num.full { color: #4caf50; }
+.card-counter { font-size: 13px; color: #444; margin-bottom: 6px; display: flex; align-items: baseline; gap: 4px; }
+.count-num { font-size: 22px; font-weight: 900; color: #ff6f00; font-family: 'Arial Black', sans-serif; }
+.count-num.full { color: #2e7d32; } /* ノルマ達成時 */
+.count-separator { color: #ccc; margin: 0 2px; }
 .count-target { color: #888; font-size: 12px; }
 
 /* プログレスバー */
 .card-progress-bar {
     width: 100%;
-    height: 8px;
-    background: #e0e0e0;
-    border-radius: 4px;
+    height: 10px;
+    background: #eee;
+    border-radius: 5px;
     overflow: hidden;
+    border: 1px solid #e0e0e0;
 }
-.progress-fill { height: 100%; transition: width 0.3s ease; }
 
-/* 下部：操作エリア */
+.progress-fill {
+    height: 100%;
+    transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* カード下部：操作ボタンエリア */
 .card-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-top: 1px solid #f5f5f5;
-    padding-top: 8px;
+    border-top: 1px solid #f9f9f9;
+    padding-top: 10px;
 }
 
 .action-group {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
 }
 
-.group-label { font-size: 10px; color: #999; margin-right: 2px; }
+.group-label { font-size: 10px; color: #aaa; font-weight: bold; text-transform: uppercase; }
 
 .card-actions button {
-    border: 1px solid #ddd;
+    border: 1px solid #e0e0e0;
     background: #fff;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
-    padding: 4px 8px;
-    font-size: 12px;
+    padding: 5px 10px;
+    font-size: 13px;
+    transition: all 0.2s;
 }
 
-.card-actions button:hover { background: #f0f0f0; }
+.card-actions button:hover { background: #f5f5f5; border-color: #ccc; }
+.card-actions button:active { transform: translateY(1px); }
 
-.btn-plus { color: #d32f2f; font-weight: bold; }
-.btn-minus { color: #1976d2; font-weight: bold; }
+.btn-plus { color: #e53935; font-weight: bold; }
+.btn-minus { color: #1e88e5; font-weight: bold; }
 
+/* 開ける/閉じるボタン */
 .btn-reveal {
     background: #4caf50 !important;
     color: white !important;
     border: none !important;
-    padding: 6px 15px !important;
+    padding: 7px 18px !important;
     font-weight: bold;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
 }
-.btn-reveal.opened { background: #9e9e9e !important; }
+
+.btn-reveal.opened {
+    background: #b0bec5 !important;
+    box-shadow: none !important;
+}
+
+#no-image-text {
+    color: #999;
+    font-size: 1.2em;
+}
