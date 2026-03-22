@@ -75,3 +75,20 @@ body {
     border-bottom: 1px solid #f0f0f0;
 }
 .btn-close { background: none; border: none; font-size: 28px; cursor: pointer; color: #aaa; }
+
+/* カウンターボタンのスタイル */
+.control-item button {
+    cursor: pointer;
+    border: 1px solid #ddd;
+    background: #fff;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.control-item button:hover {
+    background: #f0f0f0;
+}
+
+.control-item button:active {
+    background: #e0e0e0;
+}
