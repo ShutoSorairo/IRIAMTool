@@ -182,33 +182,84 @@ function revealPanel(id) {
     }
 }
 
+/**
+ * ★修正: 画像コピー機能 (解像度・パネルサイズ完全同期版)
+ * html2canvasのSVGレンダリングバグを回避し、最下層サイズで正確に出力します。
+ */
 function copyBoardImage() {
     const target = document.getElementById('capture-target');
     const svg = document.getElementById('panel-svg');
-    const vb = svg.getAttribute("viewBox").split(' ');
-    const w = parseFloat(vb[2]);
-    const h = parseFloat(vb[3]);
+    
+    if (!backgroundImage.src || backgroundImage.src === window.location.href) {
+        alert("画像が読み込まれていません。");
+        return;
+    }
 
-    html2canvas(target, {
+    // 1. 最下層基準の実解像度を取得 (viewBoxから)
+    const viewBox = svg.getAttribute("viewBox").split(' ');
+    const originalW = parseFloat(viewBox[2]);
+    const originalH = parseFloat(viewBox[3]);
+
+    // 2. 撮影専用の巨大な一時コンテナを作成 (画面外に配置)
+    const tempContainer = document.createElement('div');
+    tempContainer.style.position = 'absolute';
+    tempContainer.style.top = '-99999px'; // 画面外
+    tempContainer.style.left = '-99999px';
+    tempContainer.style.width = originalW + 'px'; // 実解像度
+    tempContainer.style.height = originalH + 'px';
+    tempContainer.style.overflow = 'hidden';
+    document.body.appendChild(tempContainer);
+
+    // 3. 一時コンテナ内に、html2canvas撮影用の構造を手動で構築
+    // --- A. 背景画像 (最下層) ---
+    const clonedBgImg = document.createElement('img');
+    clonedBgImg.src = backgroundImage.src; // 実画像データ
+    clonedBgImg.style.width = '100%'; // コンテナ（実解像度）いっぱいに広げる
+    clonedBgImg.style.height = '100%';
+    clonedBgImg.style.objectFit = 'fill';
+    clonedBgImg.style.position = 'absolute';
+    clonedBgImg.style.top = '0';
+    clonedBgImg.style.left = '0';
+    tempContainer.appendChild(clonedBgImg);
+
+    // --- B. パネル (SVGをそのままクローン) ---
+    const clonedSvg = svg.cloneNode(true); // 現在のSVG（画像+テキスト）を全コピー
+    clonedSvg.style.width = '100%'; // コンテナ（実解像度）いっぱいに広げる
+    clonedSvg.style.height = '100%';
+    clonedSvg.style.position = 'absolute';
+    clonedSvg.style.top = '0';
+    clonedSvg.style.left = '0';
+    // html2canvasにSVGであることを認識させるためのヒント
+    clonedSvg.setAttribute('width', originalW);
+    clonedSvg.setAttribute('height', originalH);
+    tempContainer.appendChild(clonedSvg);
+
+    // 4. 一時コンテナをhtml2canvasで撮影
+    html2canvas(tempContainer, {
         useCORS: true,
-        width: w,
-        height: h,
-        scale: 1,
+        width: originalW,  // 出力サイズ
+        height: originalH,
+        scale: 1,          // 1倍で出力
         backgroundColor: null,
-        onclone: (doc) => {
-            const t = doc.getElementById('capture-target');
-            t.style.width = w + "px";
-            t.style.height = h + "px";
-            t.style.maxWidth = "none";
-            t.style.maxHeight = "none";
-        }
+        logging: false,    // デバッグ用ログをオフ
     }).then(canvas => {
+        // 5. 撮影が終わったら一時コンテナを削除
+        document.body.removeChild(tempContainer);
+
         canvas.toBlob(blob => {
             try {
                 const item = new ClipboardItem({ "image/png": blob });
-                navigator.clipboard.write([item]).then(() => alert("背景と同じ解像度でコピーしました（テキスト含む）"));
+                navigator.clipboard.write([item]).then(() => {
+                    alert(`最下層サイズ(${originalW}x${originalH})で正確にコピーしました！パネル上のテキストも含まれます。`);
+                });
             } catch (err) {
-                alert("コピーに失敗しました。画像を保存してください。");
+                // Clipboard APIが失敗した場合は保存
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `panel_fixed_${Date.now()}.png`;
+                a.click();
+                alert("クリップボードへのコピーに制限があるため、画像を保存しました。");
             }
         });
     });
