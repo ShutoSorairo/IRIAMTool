@@ -84,7 +84,7 @@ async function handlePSDInput(e) {
 }
 
 /**
- * ★修正: SVGキャンバスの描画 (画像 + テキストオーバーレイ)
+ * SVGキャンバスの描画 (テキストサイズ統一 & はみ出し防止版)
  */
 function renderCanvas() {
     const svg = document.getElementById('panel-svg');
@@ -92,8 +92,11 @@ function renderCanvas() {
     svg.innerHTML = '';
     const ns = "http://www.w3.org/2000/svg";
 
+    // 全体の基準となるフォントサイズ (16px前後が配信画面で見やすい)
+    const baseFontSize = 16; 
+
     panels.forEach(p => {
-        if (p.isRevealed) return; // 開いたパネルは描画しない
+        if (p.isRevealed) return;
 
         // 1. パネル画像の描画
         const img = document.createElementNS(ns, "image");
@@ -106,46 +109,51 @@ function renderCanvas() {
         img.onclick = () => revealPanel(p.id);
         svg.appendChild(img);
 
-        // --- 2. テキストオーバーレイの描画 (ご提示のデザイン) ---
-        // パネルが小さすぎる場合はテキストを表示しない（任意）
-        if (p.width < 50 || p.height < 30) return;
+        // --- 2. テキストオーバーレイ (はみ出し防止ロジック) ---
+        // パネルが極端に小さい場合は非表示
+        if (p.width < 40 || p.height < 25) return;
 
-        // パネルサイズに応じたフォントサイズの計算 (幅の1/10くらい、最小10px)
-        const fontSize = Math.max(10, p.width / 10);
-        const textX = p.x + p.width / 2; // 中央配置
-        const textY = p.y + p.height / 2; // 中央配置
+        // パネルの幅に合わせてフォントサイズを微調整 (基本はbaseFontSize)
+        // 幅が狭いパネルの場合だけ、文字がはみ出さないように縮小させる
+        let fontSize = baseFontSize;
+        const maxTextLen = `${p.name}・${p.giftValue}pt`.length;
+        if (p.width < (maxTextLen * fontSize * 0.6)) {
+            fontSize = Math.max(10, p.width / (maxTextLen * 0.7));
+        }
 
-        // テキストのコンテナ（g要素）を作成してまとめて配置
+        const textX = p.x + p.width / 2;
+        const textY = p.y + p.height / 2;
+
         const textGroup = document.createElementNS(ns, "g");
         textGroup.setAttribute("font-family", "sans-serif");
         textGroup.setAttribute("font-size", fontSize + "px");
-        textGroup.setAttribute("text-anchor", "middle"); // 中央揃え
-        textGroup.setAttribute("dominant-baseline", "central"); // 垂直中央揃え
-        textGroup.style.pointerEvents = "none"; // テキスト自体はクリック不可に
+        textGroup.setAttribute("font-weight", "bold");
+        textGroup.setAttribute("text-anchor", "middle");
+        textGroup.setAttribute("dominant-baseline", "central");
+        textGroup.style.pointerEvents = "none";
 
-        // 白い縁取り（袋文字）用のスタイル
-        const strokeStyle = "stroke: white; stroke-width: 2px; paint-order: stroke;";
+        // 袋文字（縁取り）スタイル
+        const strokeStyle = "stroke: white; stroke-width: 3px; paint-order: stroke; stroke-linejoin: round;";
 
-        // ギフト名 + pt数 (例: ハート・50pt)
+        // 上段：ギフト名・単価
         const nameText = document.createElementNS(ns, "text");
         nameText.setAttribute("x", textX);
-        nameText.setAttribute("y", textY - fontSize); // 少し上に
+        nameText.setAttribute("y", textY - (fontSize * 0.7)); 
         nameText.setAttribute("fill", "#333");
         nameText.setAttribute("style", strokeStyle);
-        nameText.textContent = `${p.name}・${p.giftValue}pt`;
+        // 文字列が長すぎる場合はカット（または入り切る工夫）
+        let displayName = `${p.name}・${p.giftValue}pt`;
+        nameText.textContent = displayName;
         textGroup.appendChild(nameText);
 
-        // 個数カウンター (例: 達成:1 / ノルマ:3)
+        // 下段：達成状況
         const countText = document.createElementNS(ns, "text");
         countText.setAttribute("x", textX);
-        countText.setAttribute("y", textY + fontSize); // 少し下に
-        countText.setAttribute("font-weight", "bold");
-        
-        // ノルマ達成時は文字色を変える (緑)
+        countText.setAttribute("y", textY + (fontSize * 0.8));
         const isFull = p.currentCount >= p.currentTarget;
-        countText.setAttribute("fill", isFull ? "#4caf50" : "#ff9800");
+        countText.setAttribute("fill", isFull ? "#2e7d32" : "#e65100");
         countText.setAttribute("style", strokeStyle);
-        countText.textContent = `達成:${p.currentCount} / ノルマ:${p.currentTarget}`;
+        countText.textContent = `${p.currentCount} / ${p.currentTarget}`;
         textGroup.appendChild(countText);
 
         svg.appendChild(textGroup);
