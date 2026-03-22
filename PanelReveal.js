@@ -73,22 +73,23 @@ async function handlePSDInput(e) {
 
         // --- パネル生成 (背景からの相対位置を計算) ---
         panels = allLayers.map(layer => {
-  　  　const node = layer.export();
-    　　let giftName = node.name;
-    　　let giftPoint = 0;
+        const node = layer.export();
+        let giftName = node.name;
+        let giftValue = 0; // ギフトの単価（種類）
 
         if (node.name.includes('_')) {
             const parts = node.name.split('_');
             giftName = parts[0];
             const ptMatch = parts[1].match(/(\d+)pt/);
-            if (ptMatch) giftPoint = parseInt(ptMatch[1]);
+            if (ptMatch) giftValue = parseInt(ptMatch[1]);
         }
 
         return {
             id: 'p-' + Math.random().toString(36).substr(2, 9),
             name: giftName,
-            targetPoint: giftPoint, // 目標ポイント
-            currentPoint: 0,        // 現在のポイント（初期値0）
+            giftValue: giftValue,    // ギフトの単価（500ptなど）を表示用として保持
+            currentTarget: 1,        // 目標個数（デフォルトは1個に設定）
+            currentCount: 0,         // 現在届いた個数
             x: node.left - bgNodeData.left,
             y: node.top - bgNodeData.top,
             width: node.width,
@@ -97,33 +98,42 @@ async function handlePSDInput(e) {
             isRevealed: false
         };
     });
-        
-    /**
-     * ポイントを加算・減算する関数
-     */
-    function updateCounter(id, amount) {
-        const p = panels.find(x => x.id === id);
-        if (!p) return;
-
-        p.currentPoint = Math.max(0, p.currentPoint + amount);
-    
-        // 目標に達したら自動で開く演出（お好みで）
-        if (p.targetPoint > 0 && p.currentPoint >= p.targetPoint && !p.isRevealed) {
-            // p.isRevealed = true; // 自動で開けたい場合はコメントアウトを外す
-        }
-    
-        renderControlList();
-        renderCanvas();
-    }
-        backgroundImage.onload = () => {
-            renderCanvas();
-            renderControlList();
-            alert(`背景サイズ(${bgNodeData.width}x${bgNodeData.height})に合わせて同期しました。`);
-        };
-    };
+               
+    backgroundImage.onload = () => {
+           renderCanvas();
+           renderControlList();
+           alert(`背景サイズ(${bgNodeData.width}x${bgNodeData.height})に合わせて同期しました。`);
+      };
+    ;
     reader.readAsArrayBuffer(file);
 }
+    
+/**
+ * カウンターの数値を更新する関数
+ */
+function updateCounter(id, amount) {
+    const p = panels.find(x => x.id === id);
+    if (!p) return;
 
+    p.currentCount = Math.max(0, p.currentCount + amount);
+    
+    // 目標個数に達したら自動で開ける場合はここを有効化
+    // if (p.currentCount >= p.currentTarget) { p.isRevealed = true; }
+    
+    renderControlList();
+    renderCanvas();
+}
+
+/**
+ * 目標個数（ノルマ）を変更する関数
+ */
+function updateTarget(id, amount) {
+    const p = panels.find(x => x.id === id);
+    if (!p) return;
+    p.currentTarget = Math.max(1, p.currentTarget + amount);
+    renderControlList();
+}
+    
 /**
  * 画像コピー機能 (背景サイズ完全同期版)
  * 画面上の縮小に関わらず、最下層レイヤーの解像度で出力します
@@ -233,27 +243,36 @@ function renderControlList() {
         item.className = 'control-item';
         item.style = "display:flex; align-items:center; gap:10px; padding:12px; border-bottom:1px solid #f0f0f0;";
         
-        // 進捗率の計算
-        const progress = p.targetPoint > 0 ? Math.min(100, (p.currentPoint / p.targetPoint) * 100) : 0;
-        const isCleared = p.targetPoint > 0 && p.currentPoint >= p.targetPoint;
+        // ギフト単価のバッジ
+        const valBadge = p.giftValue > 0 
+            ? `<span style="background:#607d8b; color:white; padding:2px 6px; border-radius:10px; font-size:10px;">${p.giftValue}pt相当</span>` 
+            : '';
 
         item.innerHTML = `
             <img src="${p.image}" style="width:50px; height:50px; object-fit:contain; background:#eee; border-radius:4px;">
             <div style="flex:1; text-align:left;">
-                <div style="font-weight:bold; font-size:13px;">${p.name}</div>
-                <div style="font-size:11px; color:#666;">
-                    ${p.currentPoint} / ${p.targetPoint} pt
-                </div>
-                <div style="width:100%; height:6px; background:#eee; border-radius:3px; margin-top:4px;">
-                    <div style="width:${progress}%; height:100%; background:${isCleared ? '#4caf50' : '#ff9800'}; border-radius:3px; transition:0.3s;"></div>
+                <div style="font-weight:bold; font-size:13px;">${p.name} ${valBadge}</div>
+                <div style="font-size:12px; margin-top:4px;">
+                    達成: <b style="color:#e65100; font-size:1.2em;">${p.currentCount}</b> / 
+                    <span style="color:#666;">ノルマ:${p.currentTarget}個</span>
                 </div>
             </div>
-            <div style="display:flex; flex-direction:column; gap:4px;">
-                <div style="display:flex; gap:2px;">
-                    <button onclick="updateCounter('${p.id}', 1)" style="padding:2px 8px;">+</button>
-                    <button onclick="updateCounter('${p.id}', -1)" style="padding:2px 8px;">-</button>
+            <div style="display:flex; flex-direction:column; gap:5px;">
+                <div style="display:flex; flex-direction:column; gap:2px; align-items:center;">
+                    <span style="font-size:9px; color:#999;">個数</span>
+                    <div style="display:flex; gap:2px;">
+                        <button onclick="updateCounter('${p.id}', 1)" style="width:30px;">+</button>
+                        <button onclick="updateCounter('${p.id}', -1)" style="width:30px;">-</button>
+                    </div>
                 </div>
-                <button onclick="revealPanel('${p.id}')" style="font-size:10px; padding:4px;">
+                <div style="display:flex; flex-direction:column; gap:2px; align-items:center;">
+                    <span style="font-size:9px; color:#999;">ノルマ変更</span>
+                    <div style="display:flex; gap:2px;">
+                        <button onclick="updateTarget('${p.id}', 1)" style="font-size:10px;">▲</button>
+                        <button onclick="updateTarget('${p.id}', -1)" style="font-size:10px;">▼</button>
+                    </div>
+                </div>
+                <button onclick="revealPanel('${p.id}')" style="margin-top:5px; font-size:11px;">
                     ${p.isRevealed ? '閉じる' : '開ける'}
                 </button>
             </div>
