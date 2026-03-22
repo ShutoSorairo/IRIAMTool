@@ -84,7 +84,7 @@ async function handlePSDInput(e) {
 }
 
 /**
- * SVGキャンバスの描画 (テキストサイズ統一 & はみ出し防止版)
+ * SVGキャンバスの描画 (3段表示・フォントサイズ統一版)
  */
 function renderCanvas() {
     const svg = document.getElementById('panel-svg');
@@ -92,8 +92,9 @@ function renderCanvas() {
     svg.innerHTML = '';
     const ns = "http://www.w3.org/2000/svg";
 
-    // 全体の基準となるフォントサイズ (16px前後が配信画面で見やすい)
-    const baseFontSize = 16; 
+    // --- 設定 ---
+    const baseFontSize = 14; // 基本のフォントサイズ
+    const lineSpacing = 1.2; // 行間
 
     panels.forEach(p => {
         if (p.isRevealed) return;
@@ -109,16 +110,18 @@ function renderCanvas() {
         img.onclick = () => revealPanel(p.id);
         svg.appendChild(img);
 
-        // --- 2. テキストオーバーレイ (はみ出し防止ロジック) ---
-        // パネルが極端に小さい場合は非表示
-        if (p.width < 40 || p.height < 25) return;
+        // --- 2. テキストオーバーレイ (3段表示ロジック) ---
+        if (p.width < 40 || p.height < 40) return; // 小さすぎるパネルは非表示
 
-        // パネルの幅に合わせてフォントサイズを微調整 (基本はbaseFontSize)
-        // 幅が狭いパネルの場合だけ、文字がはみ出さないように縮小させる
+        // パネル幅に合わせてフォントサイズを自動調整（はみ出し防止）
+        // 最も長い行（1段目か3段目）を基準に計算
+        const longestText = p.name.length > 8 ? p.name : `達成:${p.currentCount} / ノルマ:${p.currentTarget}`;
         let fontSize = baseFontSize;
-        const maxTextLen = `${p.name}・${p.giftValue}pt`.length;
-        if (p.width < (maxTextLen * fontSize * 0.6)) {
-            fontSize = Math.max(10, p.width / (maxTextLen * 0.7));
+        const availableWidth = p.width * 0.9; // 左右に少し余白
+        const estimatedTextWidth = longestText.length * fontSize * 0.8;
+        
+        if (estimatedTextWidth > availableWidth) {
+            fontSize = Math.max(9, availableWidth / (longestText.length * 0.8));
         }
 
         const textX = p.x + p.width / 2;
@@ -132,24 +135,32 @@ function renderCanvas() {
         textGroup.setAttribute("dominant-baseline", "central");
         textGroup.style.pointerEvents = "none";
 
-        // 袋文字（縁取り）スタイル
+        // 袋文字（縁取り）
         const strokeStyle = "stroke: white; stroke-width: 3px; paint-order: stroke; stroke-linejoin: round;";
 
-        // 上段：ギフト名・単価
+        // 1段目：ギフト名
         const nameText = document.createElementNS(ns, "text");
         nameText.setAttribute("x", textX);
-        nameText.setAttribute("y", textY - (fontSize * 0.7)); 
+        nameText.setAttribute("y", textY - (fontSize * lineSpacing));
         nameText.setAttribute("fill", "#333");
         nameText.setAttribute("style", strokeStyle);
-        // 文字列が長すぎる場合はカット（または入り切る工夫）
-        let displayName = `${p.name}・${p.giftValue}pt`;
-        nameText.textContent = displayName;
+        nameText.textContent = p.name;
         textGroup.appendChild(nameText);
 
-        // 下段：達成状況
+        // 2段目：ポイント数 (---pt)
+        const priceText = document.createElementNS(ns, "text");
+        priceText.setAttribute("x", textX);
+        priceText.setAttribute("y", textY);
+        priceText.setAttribute("fill", "#666");
+        priceText.setAttribute("style", strokeStyle);
+        priceText.setAttribute("font-size", (fontSize * 0.9) + "px"); // ポイントは少し小さめに
+        priceText.textContent = `(${p.giftValue}pt)`;
+        textGroup.appendChild(priceText);
+
+        // 3段目：達成度合い
         const countText = document.createElementNS(ns, "text");
         countText.setAttribute("x", textX);
-        countText.setAttribute("y", textY + (fontSize * 0.8));
+        countText.setAttribute("y", textY + (fontSize * lineSpacing));
         const isFull = p.currentCount >= p.currentTarget;
         countText.setAttribute("fill", isFull ? "#2e7d32" : "#e65100");
         countText.setAttribute("style", strokeStyle);
