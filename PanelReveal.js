@@ -73,31 +73,48 @@ async function handlePSDInput(e) {
 
         // --- パネル生成 (背景からの相対位置を計算) ---
         panels = allLayers.map(layer => {
-            const node = layer.export();
-            let giftName = node.name;
-            let giftPoint = 0;
+  　  　const node = layer.export();
+    　　let giftName = node.name;
+    　　let giftPoint = 0;
 
-            if (node.name.includes('_')) {
-                const parts = node.name.split('_');
-                giftName = parts[0];
-                const ptMatch = parts[1].match(/(\d+)pt/);
-                if (ptMatch) giftPoint = parseInt(ptMatch[1]);
-            }
+        if (node.name.includes('_')) {
+            const parts = node.name.split('_');
+            giftName = parts[0];
+            const ptMatch = parts[1].match(/(\d+)pt/);
+            if (ptMatch) giftPoint = parseInt(ptMatch[1]);
+        }
 
-            return {
-                id: 'p-' + Math.random().toString(36).substr(2, 9),
-                name: giftName,
-                point: giftPoint,
-                // 背景の左上を(0,0)とした相対座標に変換
-                x: node.left - bgNodeData.left,
-                y: node.top - bgNodeData.top,
-                width: node.width,
-                height: node.height,
-                image: layer.layer.image.toPng().src,
-                isRevealed: false
-            };
-        });
+        return {
+            id: 'p-' + Math.random().toString(36).substr(2, 9),
+            name: giftName,
+            targetPoint: giftPoint, // 目標ポイント
+            currentPoint: 0,        // 現在のポイント（初期値0）
+            x: node.left - bgNodeData.left,
+            y: node.top - bgNodeData.top,
+            width: node.width,
+            height: node.height,
+            image: layer.layer.image.toPng().src,
+            isRevealed: false
+        };
+    });
+        
+    /**
+     * ポイントを加算・減算する関数
+     */
+    function updateCounter(id, amount) {
+        const p = panels.find(x => x.id === id);
+        if (!p) return;
 
+        p.currentPoint = Math.max(0, p.currentPoint + amount);
+    
+        // 目標に達したら自動で開く演出（お好みで）
+        if (p.targetPoint > 0 && p.currentPoint >= p.targetPoint && !p.isRevealed) {
+            // p.isRevealed = true; // 自動で開けたい場合はコメントアウトを外す
+        }
+    
+        renderControlList();
+        renderCanvas();
+    }
         backgroundImage.onload = () => {
             renderCanvas();
             renderControlList();
@@ -210,15 +227,37 @@ function revealPanel(id) {
 function renderControlList() {
     const list = document.getElementById('control-list');
     list.innerHTML = panels.length ? '' : 'PSDを読み込んでください';
+
     panels.forEach(p => {
         const item = document.createElement('div');
         item.className = 'control-item';
-        item.style = "display:flex; align-items:center; gap:10px; padding:10px; border-bottom:1px solid #f5f5f5;";
-        const pt = p.point > 0 ? `<span style="background:#ff9800; color:white; padding:2px 6px; border-radius:10px; font-size:10px;">${p.point}pt</span>` : '';
+        item.style = "display:flex; align-items:center; gap:10px; padding:12px; border-bottom:1px solid #f0f0f0;";
+        
+        // 進捗率の計算
+        const progress = p.targetPoint > 0 ? Math.min(100, (p.currentPoint / p.targetPoint) * 100) : 0;
+        const isCleared = p.targetPoint > 0 && p.currentPoint >= p.targetPoint;
+
         item.innerHTML = `
-            <img src="${p.image}" style="width:40px;height:40px;object-fit:contain;background:#eee;">
-            <div style="flex:1;text-align:left;font-size:12px;"><b>${p.name}</b> ${pt}</div>
-            <button onclick="revealPanel('${p.id}')">${p.isRevealed ? '閉' : '開'}</button>`;
+            <img src="${p.image}" style="width:50px; height:50px; object-fit:contain; background:#eee; border-radius:4px;">
+            <div style="flex:1; text-align:left;">
+                <div style="font-weight:bold; font-size:13px;">${p.name}</div>
+                <div style="font-size:11px; color:#666;">
+                    ${p.currentPoint} / ${p.targetPoint} pt
+                </div>
+                <div style="width:100%; height:6px; background:#eee; border-radius:3px; margin-top:4px;">
+                    <div style="width:${progress}%; height:100%; background:${isCleared ? '#4caf50' : '#ff9800'}; border-radius:3px; transition:0.3s;"></div>
+                </div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:4px;">
+                <div style="display:flex; gap:2px;">
+                    <button onclick="updateCounter('${p.id}', 1)" style="padding:2px 8px;">+</button>
+                    <button onclick="updateCounter('${p.id}', -1)" style="padding:2px 8px;">-</button>
+                </div>
+                <button onclick="revealPanel('${p.id}')" style="font-size:10px; padding:4px;">
+                    ${p.isRevealed ? '閉じる' : '開ける'}
+                </button>
+            </div>
+        `;
         list.appendChild(item);
     });
 }
