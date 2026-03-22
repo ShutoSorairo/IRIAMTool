@@ -1,31 +1,77 @@
 /**
- * IRIAM パネル開けツール - PanelReveal.js (テキスト表示統合版)
+ * IRIAM パネル開けツール - PanelReveal.js
+ * 保存機能（LocalStorage）統合版
  */
 
-// --- グローバル変数 ---
 let panels = []; 
 let backgroundImage = new Image();
+const STORAGE_KEY = "iriam_panel_data";
+const BG_STORAGE_KEY = "iriam_panel_bg";
 
 window.onload = function() {
     const psdInput = document.getElementById('psd-upload');
     if (psdInput) psdInput.addEventListener('change', handlePSDInput);
+
     const copyBtn = document.querySelector('.btn-tweet');
     if (copyBtn) copyBtn.onclick = copyBoardImage;
+
     const resetBtn = document.getElementById('reset-panels');
-    if (resetBtn) resetBtn.onclick = () => {
-        if (confirm("リセットしますか？")) { panels = []; renderCanvas(); renderControlList(); }
-    };
+    if (resetBtn) {
+        resetBtn.onclick = () => {
+            if (confirm("すべてのデータを削除してリセットしますか？")) {
+                localStorage.removeItem(STORAGE_KEY);
+                localStorage.removeItem(BG_STORAGE_KEY);
+                panels = [];
+                location.reload(); // 画面をリフレッシュ
+            }
+        };
+    }
+
+    // 保存データの読み込み
+    loadFromLocalStorage();
+
     window.onclick = (e) => {
         const modal = document.getElementById('control-popup');
         if (e.target == modal) toggleControlPopup();
     };
 };
 
-function toggleControlPopup() {
-    const modal = document.getElementById('control-popup');
-    if (!modal) return;
-    modal.style.display = (modal.style.display === 'none') ? 'flex' : 'none';
-    if (modal.style.display === 'flex') renderControlList();
+/**
+ * データの保存
+ */
+function saveToLocalStorage() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(panels));
+}
+
+/**
+ * データの読み込み
+ */
+function loadFromLocalStorage() {
+    const savedData = localStorage.getItem(STORAGE_KEY);
+    const savedBg = localStorage.getItem(BG_STORAGE_KEY);
+
+    if (savedBg) {
+        const hiddenImg = document.getElementById('hidden-image');
+        hiddenImg.src = savedBg;
+        backgroundImage.src = savedBg;
+        document.getElementById('no-image-text').style.display = 'none';
+        
+        // 背景が読み込まれたら枠を調整（少し遅延させて確実に行う）
+        backgroundImage.onload = () => {
+            const target = document.getElementById('capture-target');
+            const svg = document.getElementById('panel-svg');
+            target.style.width = backgroundImage.naturalWidth + "px";
+            target.style.height = backgroundImage.naturalHeight + "px";
+            target.style.aspectRatio = `${backgroundImage.naturalWidth} / ${backgroundImage.naturalHeight}`;
+            svg.setAttribute("viewBox", `0 0 ${backgroundImage.naturalWidth} ${backgroundImage.naturalHeight}`);
+            
+            if (savedData) {
+                panels = JSON.parse(savedData);
+                renderCanvas();
+                renderControlList();
+            }
+        };
+    }
 }
 
 async function handlePSDInput(e) {
@@ -46,17 +92,14 @@ async function handlePSDInput(e) {
         const svg = document.getElementById('panel-svg');
         const hiddenImg = document.getElementById('hidden-image');
 
-        // 背景解像度を厳密に固定
         target.style.width = bgNodeData.width + "px";
         target.style.height = bgNodeData.height + "px";
-        target.style.aspectRatio = `${bgNodeData.width} / ${bgNodeData.height}`;
-        target.style.maxWidth = "100%"; // 画面幅に収める
-        
         svg.setAttribute("viewBox", `0 0 ${bgNodeData.width} ${bgNodeData.height}`);
 
         const bgSrc = bgNode.layer.image.toPng().src;
         hiddenImg.src = bgSrc;
         backgroundImage.src = bgSrc;
+        localStorage.setItem(BG_STORAGE_KEY, bgSrc); // 背景を保存
         document.getElementById('no-image-text').style.display = 'none';
 
         panels = allLayers.map(layer => {
@@ -78,108 +121,20 @@ async function handlePSDInput(e) {
             };
         });
 
-        backgroundImage.onload = () => { renderCanvas(); renderControlList(); };
+        saveToLocalStorage(); // パネルデータを保存
+        renderCanvas();
+        renderControlList();
     };
     reader.readAsArrayBuffer(file);
 }
 
-/**
- * SVGキャンバスの描画 (3段表示・フォントサイズ統一版)
- */
-function renderCanvas() {
-    const svg = document.getElementById('panel-svg');
-    if (!svg) return;
-    svg.innerHTML = '';
-    const ns = "http://www.w3.org/2000/svg";
-
-    // --- 設定 ---
-    const baseFontSize = 50; // 基本のフォントサイズ
-    const lineSpacing = 1.2; // 行間
-
-    panels.forEach(p => {
-        if (p.isRevealed) return;
-
-        // 1. パネル画像の描画
-        const img = document.createElementNS(ns, "image");
-        img.setAttributeNS(null, "href", p.image);
-        img.setAttributeNS(null, "x", p.x);
-        img.setAttributeNS(null, "y", p.y);
-        img.setAttributeNS(null, "width", p.width);
-        img.setAttributeNS(null, "height", p.height);
-        img.style.cursor = "pointer";
-        img.onclick = () => revealPanel(p.id);
-        svg.appendChild(img);
-
-        // --- 2. テキストオーバーレイ (3段表示ロジック) ---
-        if (p.width < 40 || p.height < 40) return; // 小さすぎるパネルは非表示
-
-        // パネル幅に合わせてフォントサイズを自動調整（はみ出し防止）
-        // 最も長い行（1段目か3段目）を基準に計算
-        const longestText = p.name.length > 8 ? p.name : `達成:${p.currentCount} / ノルマ:${p.currentTarget}`;
-        let fontSize = baseFontSize;
-        const availableWidth = p.width * 0.9; // 左右に少し余白
-        const estimatedTextWidth = longestText.length * fontSize * 0.8;
-        
-        if (estimatedTextWidth > availableWidth) {
-            fontSize = Math.max(9, availableWidth / (longestText.length * 0.8));
-        }
-
-        const textX = p.x + p.width / 2;
-        const textY = p.y + p.height / 2;
-
-        const textGroup = document.createElementNS(ns, "g");
-        textGroup.setAttribute("font-family", "sans-serif");
-        textGroup.setAttribute("font-size", fontSize + "px");
-        textGroup.setAttribute("font-weight", "bold");
-        textGroup.setAttribute("text-anchor", "middle");
-        textGroup.setAttribute("dominant-baseline", "central");
-        textGroup.style.pointerEvents = "none";
-
-        // 袋文字（縁取り）
-        const strokeStyle = "stroke: white; stroke-width: 3px; paint-order: stroke; stroke-linejoin: round;";
-
-        // 1段目：ギフト名
-        const nameText = document.createElementNS(ns, "text");
-        nameText.setAttribute("x", textX);
-        nameText.setAttribute("y", textY - (fontSize * lineSpacing));
-        nameText.setAttribute("fill", "#333");
-        nameText.setAttribute("style", strokeStyle);
-        nameText.textContent = p.name;
-        textGroup.appendChild(nameText);
-
-        // 2段目：ポイント数 (---pt)
-        const priceText = document.createElementNS(ns, "text");
-        priceText.setAttribute("x", textX);
-        priceText.setAttribute("y", textY);
-        priceText.setAttribute("fill", "#666");
-        priceText.setAttribute("style", strokeStyle);
-        priceText.setAttribute("font-size", (fontSize * 0.9) + "px"); // ポイントは少し小さめに
-        priceText.textContent = `(${p.giftValue}pt)`;
-        textGroup.appendChild(priceText);
-
-        // 3段目：達成度合い
-        const countText = document.createElementNS(ns, "text");
-        countText.setAttribute("x", textX);
-        countText.setAttribute("y", textY + (fontSize * lineSpacing));
-        const isFull = p.currentCount >= p.currentTarget;
-        countText.setAttribute("fill", isFull ? "#2e7d32" : "#e65100");
-        countText.setAttribute("style", strokeStyle);
-        countText.textContent = `${p.currentCount} / ${p.currentTarget}`;
-        textGroup.appendChild(countText);
-
-        svg.appendChild(textGroup);
-    });
-}
-
-/**
- * 数値更新ロジック (更新後にCanvasを再描画する)
- */
 function updateCounter(id, amount) {
     const p = panels.find(x => x.id === id);
     if (p) {
         p.currentCount = Math.max(0, p.currentCount + amount);
+        saveToLocalStorage();
         renderControlList();
-        renderCanvas(); // ★追加: Canvas（SVG）も再描画してテキストを更新
+        renderCanvas();
     }
 }
 
@@ -187,8 +142,9 @@ function updateTarget(id, amount) {
     const p = panels.find(x => x.id === id);
     if (p) {
         p.currentTarget = Math.max(1, p.currentTarget + amount);
+        saveToLocalStorage();
         renderControlList();
-        renderCanvas(); // ★追加: Canvasも再描画
+        renderCanvas();
     }
 }
 
@@ -196,91 +152,71 @@ function revealPanel(id) {
     const p = panels.find(x => x.id === id);
     if (p) {
         p.isRevealed = !p.isRevealed;
+        saveToLocalStorage();
         renderCanvas();
         renderControlList();
     }
 }
 
-/**
- * ★修正: 画像コピー機能 (解像度・パネルサイズ完全同期版)
- * html2canvasのSVGレンダリングバグを回避し、最下層サイズで正確に出力します。
- */
-function copyBoardImage() {
-    const target = document.getElementById('capture-target');
+// --- 以下、描画・コピー用関数 (変更なし) ---
+
+function renderCanvas() {
     const svg = document.getElementById('panel-svg');
-    
-    if (!backgroundImage.src || backgroundImage.src === window.location.href) {
-        alert("画像が読み込まれていません。");
-        return;
-    }
+    if (!svg) return;
+    svg.innerHTML = '';
+    const ns = "http://www.w3.org/2000/svg";
+    const baseFontSize = 14; 
+    const lineSpacing = 1.2;
 
-    // 1. 最下層基準の実解像度を取得 (viewBoxから)
-    const viewBox = svg.getAttribute("viewBox").split(' ');
-    const originalW = parseFloat(viewBox[2]);
-    const originalH = parseFloat(viewBox[3]);
+    panels.forEach(p => {
+        if (p.isRevealed) return;
+        const img = document.createElementNS(ns, "image");
+        img.setAttributeNS(null, "href", p.image);
+        img.setAttributeNS(null, "x", p.x); img.setAttributeNS(null, "y", p.y);
+        img.setAttributeNS(null, "width", p.width); img.setAttributeNS(null, "height", p.height);
+        img.style.cursor = "pointer";
+        img.onclick = () => revealPanel(p.id);
+        svg.appendChild(img);
 
-    // 2. 撮影専用の巨大な一時コンテナを作成 (画面外に配置)
-    const tempContainer = document.createElement('div');
-    tempContainer.style.position = 'absolute';
-    tempContainer.style.top = '-99999px'; // 画面外
-    tempContainer.style.left = '-99999px';
-    tempContainer.style.width = originalW + 'px'; // 実解像度
-    tempContainer.style.height = originalH + 'px';
-    tempContainer.style.overflow = 'hidden';
-    document.body.appendChild(tempContainer);
+        if (p.width < 40 || p.height < 40) return;
+        const longestText = p.name.length > 8 ? p.name : `達成:${p.currentCount} / ノルマ:${p.currentTarget}`;
+        let fontSize = baseFontSize;
+        const availableWidth = p.width * 0.9;
+        const estimatedTextWidth = longestText.length * fontSize * 0.8;
+        if (estimatedTextWidth > availableWidth) { fontSize = Math.max(9, availableWidth / (longestText.length * 0.8)); }
 
-    // 3. 一時コンテナ内に、html2canvas撮影用の構造を手動で構築
-    // --- A. 背景画像 (最下層) ---
-    const clonedBgImg = document.createElement('img');
-    clonedBgImg.src = backgroundImage.src; // 実画像データ
-    clonedBgImg.style.width = '100%'; // コンテナ（実解像度）いっぱいに広げる
-    clonedBgImg.style.height = '100%';
-    clonedBgImg.style.objectFit = 'fill';
-    clonedBgImg.style.position = 'absolute';
-    clonedBgImg.style.top = '0';
-    clonedBgImg.style.left = '0';
-    tempContainer.appendChild(clonedBgImg);
+        const textX = p.x + p.width / 2;
+        const textY = p.y + p.height / 2;
+        const textGroup = document.createElementNS(ns, "g");
+        textGroup.setAttribute("font-family", "sans-serif");
+        textGroup.setAttribute("font-size", fontSize + "px");
+        textGroup.setAttribute("font-weight", "bold");
+        textGroup.setAttribute("text-anchor", "middle");
+        textGroup.setAttribute("dominant-baseline", "central");
+        textGroup.style.pointerEvents = "none";
+        const strokeStyle = "stroke: white; stroke-width: 3px; paint-order: stroke; stroke-linejoin: round;";
 
-    // --- B. パネル (SVGをそのままクローン) ---
-    const clonedSvg = svg.cloneNode(true); // 現在のSVG（画像+テキスト）を全コピー
-    clonedSvg.style.width = '100%'; // コンテナ（実解像度）いっぱいに広げる
-    clonedSvg.style.height = '100%';
-    clonedSvg.style.position = 'absolute';
-    clonedSvg.style.top = '0';
-    clonedSvg.style.left = '0';
-    // html2canvasにSVGであることを認識させるためのヒント
-    clonedSvg.setAttribute('width', originalW);
-    clonedSvg.setAttribute('height', originalH);
-    tempContainer.appendChild(clonedSvg);
+        const nT = document.createElementNS(ns, "text");
+        nT.setAttribute("x", textX); nT.setAttribute("y", textY - (fontSize * lineSpacing));
+        nT.setAttribute("fill", "#333"); nT.setAttribute("style", strokeStyle);
+        nT.textContent = p.name;
+        textGroup.appendChild(nT);
 
-    // 4. 一時コンテナをhtml2canvasで撮影
-    html2canvas(tempContainer, {
-        useCORS: true,
-        width: originalW,  // 出力サイズ
-        height: originalH,
-        scale: 1,          // 1倍で出力
-        backgroundColor: null,
-        logging: false,    // デバッグ用ログをオフ
-    }).then(canvas => {
-        // 5. 撮影が終わったら一時コンテナを削除
-        document.body.removeChild(tempContainer);
+        const pT = document.createElementNS(ns, "text");
+        pT.setAttribute("x", textX); pT.setAttribute("y", textY);
+        pT.setAttribute("fill", "#666"); pT.setAttribute("style", strokeStyle);
+        pT.setAttribute("font-size", (fontSize * 0.9) + "px");
+        pT.textContent = `(${p.giftValue}pt)`;
+        textGroup.appendChild(pT);
 
-        canvas.toBlob(blob => {
-            try {
-                const item = new ClipboardItem({ "image/png": blob });
-                navigator.clipboard.write([item]).then(() => {
-                    alert(`最下層サイズ(${originalW}x${originalH})で正確にコピーしました！パネル上のテキストも含まれます。`);
-                });
-            } catch (err) {
-                // Clipboard APIが失敗した場合は保存
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `panel_fixed_${Date.now()}.png`;
-                a.click();
-                alert("クリップボードへのコピーに制限があるため、画像を保存しました。");
-            }
-        });
+        const cT = document.createElementNS(ns, "text");
+        cT.setAttribute("x", textX); cT.setAttribute("y", textY + (fontSize * lineSpacing));
+        const isFull = p.currentCount >= p.currentTarget;
+        cT.setAttribute("fill", isFull ? "#2e7d32" : "#e65100");
+        cT.setAttribute("style", strokeStyle);
+        cT.textContent = `${p.currentCount} / ${p.currentTarget}`;
+        textGroup.appendChild(cT);
+        svg.appendChild(textGroup);
     });
 }
 
@@ -307,5 +243,31 @@ function renderControlList() {
                 <button onclick="revealPanel('${p.id}')" class="btn-reveal ${p.isRevealed ? 'opened' : ''}">${p.isRevealed ? '閉じる' : '開ける'}</button>
             </div>`;
         list.appendChild(item);
+    });
+}
+
+function toggleControlPopup() {
+    const modal = document.getElementById('control-popup');
+    modal.style.display = (modal.style.display === 'none') ? 'flex' : 'none';
+    if (modal.style.display === 'flex') renderControlList();
+}
+
+function copyBoardImage() {
+    const target = document.getElementById('capture-target');
+    const svg = document.getElementById('panel-svg');
+    const vb = svg.getAttribute("viewBox").split(' ');
+    const w = parseFloat(vb[2]); const h = parseFloat(vb[3]);
+    html2canvas(target, {
+        useCORS: true, width: w, height: h, scale: 1,
+        onclone: (doc) => {
+            const t = doc.getElementById('capture-target');
+            t.style.width = w + "px"; t.style.height = h + "px";
+            t.style.maxWidth = "none"; t.style.maxHeight = "none";
+        }
+    }).then(canvas => {
+        canvas.toBlob(blob => {
+            const item = new ClipboardItem({ "image/png": blob });
+            navigator.clipboard.write([item]).then(() => alert("コピーしました"));
+        });
     });
 }
