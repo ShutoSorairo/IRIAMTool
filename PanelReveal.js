@@ -4,12 +4,12 @@ let backgroundImage = new Image();
 window.onload = function() {
     const psdInput = document.getElementById('psd-upload');
     if (psdInput) psdInput.addEventListener('change', handlePSDInput);
-
+    const copyBtn = document.querySelector('.btn-tweet');
+    if (copyBtn) copyBtn.onclick = copyBoardImage;
     const resetBtn = document.getElementById('reset-panels');
     if (resetBtn) resetBtn.onclick = () => {
         if (confirm("リセットしますか？")) { panels = []; renderCanvas(); renderControlList(); }
     };
-
     window.onclick = (e) => {
         const modal = document.getElementById('control-popup');
         if (e.target == modal) toggleControlPopup();
@@ -33,6 +33,7 @@ async function handlePSDInput(e) {
         try { psd.parse(); } catch (err) { alert("PSD解析失敗"); return; }
 
         let allLayers = psd.tree().descendants().filter(n => n.isLayer());
+        // 最下層を背景として取得
         const bgNode = allLayers.pop(); 
         const bgNodeData = bgNode.export();
 
@@ -40,12 +41,16 @@ async function handlePSDInput(e) {
         const svg = document.getElementById('panel-svg');
         const hiddenImg = document.getElementById('hidden-image');
 
-        target.style.aspectRatio = `${bgNodeData.width} / ${bgNodeData.height}`;
-        target.style.maxWidth = bgNodeData.width + "px";
+        // ★修正: 枠のサイズを背景の解像度に完全に合わせ、CSSでの歪みを防ぐ
+        target.style.width = bgNodeData.width + "px";
+        target.style.height = bgNodeData.height + "px";
+        // 表示が大きすぎる場合はCSSのmax-widthで縮小されるが、比率は維持される
+        
         svg.setAttribute("viewBox", `0 0 ${bgNodeData.width} ${bgNodeData.height}`);
 
-        hiddenImg.src = bgNode.layer.image.toPng().src;
-        backgroundImage.src = hiddenImg.src;
+        const bgSrc = bgNode.layer.image.toPng().src;
+        hiddenImg.src = bgSrc;
+        backgroundImage.src = bgSrc;
         document.getElementById('no-image-text').style.display = 'none';
 
         panels = allLayers.map(layer => {
@@ -72,16 +77,6 @@ async function handlePSDInput(e) {
     reader.readAsArrayBuffer(file);
 }
 
-function updateCounter(id, amount) {
-    const p = panels.find(x => x.id === id);
-    if (p) { p.currentCount = Math.max(0, p.currentCount + amount); renderControlList(); }
-}
-
-function updateTarget(id, amount) {
-    const p = panels.find(x => x.id === id);
-    if (p) { p.currentTarget = Math.max(1, p.currentTarget + amount); renderControlList(); }
-}
-
 function renderCanvas() {
     const svg = document.getElementById('panel-svg');
     svg.innerHTML = '';
@@ -96,6 +91,42 @@ function renderCanvas() {
     });
 }
 
+function copyBoardImage() {
+    const target = document.getElementById('capture-target');
+    const svg = document.getElementById('panel-svg');
+    const vb = svg.getAttribute("viewBox").split(' ');
+    const w = parseFloat(vb[2]);
+    const h = parseFloat(vb[3]);
+
+    html2canvas(target, {
+        useCORS: true,
+        width: w,
+        height: h,
+        scale: 1,
+        onclone: (doc) => {
+            const t = doc.getElementById('capture-target');
+            t.style.width = w + "px";
+            t.style.height = h + "px";
+            t.style.maxWidth = "none";
+            t.style.maxHeight = "none";
+        }
+    }).then(canvas => {
+        canvas.toBlob(blob => {
+            const item = new ClipboardItem({ "image/png": blob });
+            navigator.clipboard.write([item]).then(() => alert("背景と同じサイズでコピーしました"));
+        });
+    });
+}
+
+// updateCounter, updateTarget, revealPanel, renderControlList は変更なし
+function updateCounter(id, amount) {
+    const p = panels.find(x => x.id === id);
+    if (p) { p.currentCount = Math.max(0, p.currentCount + amount); renderControlList(); }
+}
+function updateTarget(id, amount) {
+    const p = panels.find(x => x.id === id);
+    if (p) { p.currentTarget = Math.max(1, p.currentTarget + amount); renderControlList(); }
+}
 function revealPanel(id) {
     const p = panels.find(x => x.id === id);
     if (p) { p.isRevealed = !p.isRevealed; renderCanvas(); renderControlList(); }
@@ -124,23 +155,5 @@ function renderControlList() {
                 <button onclick="revealPanel('${p.id}')" class="btn-reveal ${p.isRevealed ? 'opened' : ''}">${p.isRevealed ? '閉じる' : '開ける'}</button>
             </div>`;
         list.appendChild(item);
-    });
-}
-
-function copyBoardImage() {
-    const target = document.getElementById('capture-target');
-    const svg = document.getElementById('panel-svg');
-    const vb = svg.getAttribute("viewBox").split(' ');
-    html2canvas(target, {
-        useCORS: true, width: parseFloat(vb[2]), height: parseFloat(vb[3]), scale: 1,
-        onclone: (doc) => {
-            const t = doc.getElementById('capture-target');
-            t.style.width = vb[2] + "px"; t.style.height = vb[3] + "px";
-        }
-    }).then(canvas => {
-        canvas.toBlob(blob => {
-            const item = new ClipboardItem({ "image/png": blob });
-            navigator.clipboard.write([item]).then(() => alert("画像をコピーしました！"));
-        });
     });
 }
