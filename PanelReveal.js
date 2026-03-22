@@ -236,43 +236,48 @@ function revealPanel(id) {
 
 function renderControlList() {
     const list = document.getElementById('control-list');
-    list.innerHTML = panels.length ? '' : 'PSDを読み込んでください';
+    if (!list) return;
+    list.innerHTML = panels.length ? '' : '<div style="padding:20px; color:#999;">PSDを読み込んでください</div>';
 
     panels.forEach(p => {
         const item = document.createElement('div');
-        item.className = 'control-item';
-        item.style = "display:flex; align-items:center; gap:10px; padding:12px; border-bottom:1px solid #f0f0f0;";
+        item.className = 'panel-card';
         
-        // ギフト単価のバッジ
-        const valBadge = p.giftValue > 0 
-            ? `<span style="background:#607d8b; color:white; padding:2px 6px; border-radius:10px; font-size:10px;">${p.giftValue}pt相当</span>` 
-            : '';
+        // 進捗率（プログレスバー用）
+        const progress = Math.min(100, (p.currentCount / p.currentTarget) * 100);
+        const isFull = p.currentCount >= p.currentTarget;
 
         item.innerHTML = `
-            <img src="${p.image}" style="width:50px; height:50px; object-fit:contain; background:#eee; border-radius:4px;">
-            <div style="flex:1; text-align:left;">
-                <div style="font-weight:bold; font-size:13px;">${p.name} ${valBadge}</div>
-                <div style="font-size:12px; margin-top:4px;">
-                    達成: <b style="color:#e65100; font-size:1.2em;">${p.currentCount}</b> / 
-                    <span style="color:#666;">ノルマ:${p.currentTarget}個</span>
+            <div class="card-main">
+                <img src="${p.image}" class="card-img">
+                <div class="card-info">
+                    <div class="card-title">
+                        <span class="gift-name">${p.name}</span>
+                        <span class="gift-value">${p.giftValue}pt</span>
+                    </div>
+                    <div class="card-counter">
+                        <span class="count-label">達成:</span>
+                        <span class="count-num ${isFull ? 'full' : ''}">${p.currentCount}</span>
+                        <span class="count-separator">/</span>
+                        <span class="count-target">ノルマ:${p.currentTarget}個</span>
+                    </div>
+                    <div class="card-progress-bar">
+                        <div class="progress-fill" style="width: ${progress}%; background: ${isFull ? '#4caf50' : '#ff9800'};"></div>
+                    </div>
                 </div>
             </div>
-            <div style="display:flex; flex-direction:column; gap:5px;">
-                <div style="display:flex; flex-direction:column; gap:2px; align-items:center;">
-                    <span style="font-size:9px; color:#999;">個数</span>
-                    <div style="display:flex; gap:2px;">
-                        <button onclick="updateCounter('${p.id}', 1)" style="width:30px;">+</button>
-                        <button onclick="updateCounter('${p.id}', -1)" style="width:30px;">-</button>
-                    </div>
+            <div class="card-actions">
+                <div class="action-group">
+                    <span class="group-label">個数</span>
+                    <button onclick="updateCounter('${p.id}', 1)" class="btn-plus">＋</button>
+                    <button onclick="updateCounter('${p.id}', -1)" class="btn-minus">－</button>
                 </div>
-                <div style="display:flex; flex-direction:column; gap:2px; align-items:center;">
-                    <span style="font-size:9px; color:#999;">ノルマ変更</span>
-                    <div style="display:flex; gap:2px;">
-                        <button onclick="updateTarget('${p.id}', 1)" style="font-size:10px;">▲</button>
-                        <button onclick="updateTarget('${p.id}', -1)" style="font-size:10px;">▼</button>
-                    </div>
+                <div class="action-group">
+                    <span class="group-label">ノルマ</span>
+                    <button onclick="updateTarget('${p.id}', 1)" class="btn-up">▲</button>
+                    <button onclick="updateTarget('${p.id}', -1)" class="btn-down">▼</button>
                 </div>
-                <button onclick="revealPanel('${p.id}')" style="margin-top:5px; font-size:11px;">
+                <button onclick="revealPanel('${p.id}')" class="btn-reveal ${p.isRevealed ? 'opened' : ''}">
                     ${p.isRevealed ? '閉じる' : '開ける'}
                 </button>
             </div>
