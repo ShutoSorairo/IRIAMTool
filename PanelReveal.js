@@ -252,35 +252,73 @@ function renderControlList() {
 }
 
 /**
- * 画像コピー機能 (背景サイズ完全同期)
+ * 画像コピー機能 (解像度・比率完全固定版)
  */
 function copyBoardImage() {
     const target = document.getElementById('capture-target');
     const svg = document.getElementById('panel-svg');
-    if (!backgroundImage.src) return alert("画像がありません");
+    const bgImg = document.getElementById('hidden-image');
+    
+    if (!backgroundImage.src || backgroundImage.src === window.location.href) {
+        alert("画像が読み込まれていません。");
+        return;
+    }
 
+    // 1. 最下層基準の解像度を取得
     const viewBox = svg.getAttribute("viewBox").split(' ');
-    const exportW = parseFloat(viewBox[2]);
-    const exportH = parseFloat(viewBox[3]);
+    const originalW = parseFloat(viewBox[2]);
+    const originalH = parseFloat(viewBox[3]);
 
+    // 2. 一時的に画面上のスタイルを「実サイズ」に固定して撮影する
     html2canvas(target, {
         useCORS: true,
-        width: exportW,
-        height: exportH,
-        scale: 1, 
+        width: originalW,   // 出力サイズを最下層の幅に固定
+        height: originalH,  // 出力サイズを最下層の高さに固定
+        scale: 1,           // デバイスピクセル比を無視して1倍で計算
         backgroundColor: null,
         onclone: (clonedDoc) => {
+            // クローンされた（撮影用の）DOMを直接操作
             const clonedTarget = clonedDoc.getElementById('capture-target');
-            clonedTarget.style.width = exportW + "px";
-            clonedTarget.style.height = exportH + "px";
+            const clonedImg = clonedDoc.getElementById('hidden-image');
+            const clonedSvg = clonedDoc.getElementById('panel-svg');
+
+            // 親枠を実サイズに強制
+            clonedTarget.style.width = originalW + "px";
+            clonedTarget.style.height = originalH + "px";
+            clonedTarget.style.maxWidth = "none";
+            clonedTarget.style.maxHeight = "none";
+            clonedTarget.style.transform = "none";
+
+            // 背景画像を枠いっぱいに広げる（ズレ防止）
+            clonedImg.style.width = "100%";
+            clonedImg.style.height = "100%";
+            clonedImg.style.position = "absolute";
+            clonedImg.style.top = "0";
+            clonedImg.style.left = "0";
+            clonedImg.style.objectFit = "fill";
+
+            // SVGも枠いっぱいに広げる
+            clonedSvg.style.width = "100%";
+            clonedSvg.style.height = "100%";
+            clonedSvg.style.position = "absolute";
+            clonedSvg.style.top = "0";
+            clonedSvg.style.left = "0";
         }
     }).then(canvas => {
         canvas.toBlob(blob => {
             try {
                 const item = new ClipboardItem({ "image/png": blob });
-                navigator.clipboard.write([item]).then(() => alert("背景サイズでコピーしました！"));
+                navigator.clipboard.write([item]).then(() => {
+                    alert(`最下層サイズ(${originalW}x${originalH})でコピーしました！`);
+                });
             } catch (err) {
-                alert("コピーに失敗しました。画像を保存してください。");
+                // Clipboard APIが失敗した場合は保存
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `panel_${Date.now()}.png`;
+                a.click();
+                alert("クリップボードへのコピーに制限があるため、画像を保存しました。");
             }
         });
     });
