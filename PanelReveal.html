@@ -28,8 +28,25 @@
                 <button onclick="copyBoardImage()" class="btn-tweet">📸 画像コピー</button>
             </div>
             <div class="control-group">
-                <button onclick="savePanelState()" class="btn-save">現在の状態を保存</button>
-                <button onclick="clearSavedState(); location.reload();" class="btn-load">保存データを削除</button>
+                <button id="saveBtn" onclick="savePanelState()">現在の状態を保存</button>
+                <button onclick="clearSavedState(); location.reload();">リセット</button>
+                <div id="lastSavedTime" style="font-size: 12px; color: #666; margin-top: 5px;">
+                    保存データはありません
+                </div>
+            </div>
+
+            <div id="saveMessage" style="
+                display: none; 
+                position: fixed; 
+                bottom: 20px; 
+                right: 20px; 
+                background: #4CAF50; 
+                color: white; 
+                padding: 10px 20px; 
+                border-radius: 5px; 
+                z-index: 1000;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                保存しました！
             </div>
             <div class="setting-group">
                 <button id="reset-panels" class="btn-reset">🔄 リセット</button>
