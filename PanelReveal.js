@@ -284,6 +284,37 @@ function copyBoardImage() {
     });
 }
 
+//  現在の状態を localStorage に保存する
+function savePanelState() {
+    const state = {
+        panels: panels,
+        backgroundImage: backgroundImage.src // 画像のデータURLを保存
+    };
+    localStorage.setItem('panelRevealState', JSON.stringify(state));
+}
+
+//  保存された状態を読み込んで復元する
+function loadPanelState() {
+    const savedState = localStorage.getItem('panelRevealState');
+    if (!savedState) return;
+
+    const state = JSON.parse(savedState);
+    panels = state.panels;
+    
+    if (state.backgroundImage) {
+        backgroundImage.src = state.backgroundImage;
+        backgroundImage.onload = () => {
+            drawCanvas(); // 画像読み込み後に再描画
+        };
+    } else {
+        drawCanvas();
+    }
+}
+
+//  保存データを削除する（リセット用）
+function clearSavedState() {
+    localStorage.removeItem('panelRevealState');
+}
 function renderControlList() {
     const list = document.getElementById('control-list');
     list.innerHTML = panels.length ? '' : 'PSDを読み込んでください';
