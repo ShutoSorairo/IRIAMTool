@@ -10,7 +10,7 @@ body {
     background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     margin-bottom: 20px; display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;
 }
-.upload-btn { background: #1976d2; color: white; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+.upload-btn { background: #1976d2; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
 .btn-open-list { background: #ff9800; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
 .btn-tweet { background: #4caf50; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
 .btn-reset { background: #f44336; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
