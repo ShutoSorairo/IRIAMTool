@@ -29,7 +29,7 @@
             </div>
             <div class="control-group">
                 <button id="saveBtn" onclick="savePanelState()">⏰️現在の状態を保存</button>
-                <button onclick="clearSavedState(); location.reload();">リセット</button>
+                <button onclick="clearSavedState(); location.reload();"class="btn-reset">🔄 リセット</button>
                 <div id="lastSavedTime" style="font-size: 12px; color: #666; margin-top: 5px;">
                     保存データはありません
                 </div>
@@ -47,9 +47,6 @@
                 z-index: 1000;
                 box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
                 保存しました！
-            </div>
-            <div class="setting-group">
-                <button id="reset-panels" class="btn-reset">🔄 リセット</button>
             </div>
         </div>
         
