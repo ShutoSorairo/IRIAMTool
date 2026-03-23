@@ -288,12 +288,47 @@ function copyBoardImage() {
 function savePanelState() {
     const state = {
         panels: panels,
-        backgroundImage: backgroundImage.src // 画像のデータURLを保存
+        backgroundImage: backgroundImage.src,
+        timestamp: new Date().toLocaleString() // 保存日時を追加
     };
-    localStorage.setItem('panelRevealState', JSON.stringify(state));
+    
+    try {
+        localStorage.setItem('panelRevealState', JSON.stringify(state));
+        
+        // 1. 通知メッセージを表示
+        showStatusMessage("保存しました！");
+        
+        // 2. 保存日時を更新
+        updateSavedDisplay(state.timestamp);
+        
+    } catch (e) {
+        console.error("保存に失敗しました", e);
+        showStatusMessage("保存容量がいっぱいです！", "#f44336");
+    }
 }
 
-//  保存された状態を読み込んで復元する
+// 通知を表示する関数
+function showStatusMessage(text, bgColor = "#4CAF50") {
+    const msg = document.getElementById('saveMessage');
+    msg.innerText = text;
+    msg.style.backgroundColor = bgColor;
+    msg.style.display = 'block';
+    
+    // 2秒後に自動で消える
+    setTimeout(() => {
+        msg.style.display = 'none';
+    }, 2000);
+}
+
+// 画面上の「保存日時」表示を更新する関数
+function updateSavedDisplay(timeStr) {
+    const display = document.getElementById('lastSavedTime');
+    if (display) {
+        display.innerText = "最終保存: " + timeStr;
+    }
+}
+
+// 読み込み
 function loadPanelState() {
     const savedState = localStorage.getItem('panelRevealState');
     if (!savedState) return;
@@ -301,11 +336,13 @@ function loadPanelState() {
     const state = JSON.parse(savedState);
     panels = state.panels;
     
-    if (state.backgroundImage) {
+    if (state.timestamp) {
+        updateSavedDisplay(state.timestamp);
+    }
+
+    if (state.backgroundImage && state.backgroundImage.startsWith("data:")) {
         backgroundImage.src = state.backgroundImage;
-        backgroundImage.onload = () => {
-            drawCanvas(); // 画像読み込み後に再描画
-        };
+        backgroundImage.onload = () => drawCanvas();
     } else {
         drawCanvas();
     }
