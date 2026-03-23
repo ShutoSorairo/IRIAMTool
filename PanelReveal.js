@@ -202,8 +202,8 @@ function revealPanel(id) {
 }
 
 /**
- * ★修正: 画像コピー機能 (解像度・パネルサイズ完全同期版)
- * html2canvasのSVGレンダリングバグを回避し、最下層サイズで正確に出力します。
+ * ★修正: 画像コピー機能
+ * html2canvasのSVGレンダリングバグを回避し、最下層サイズで正確に出力
  */
 function copyBoardImage() {
     const target = document.getElementById('capture-target');
@@ -214,12 +214,12 @@ function copyBoardImage() {
         return;
     }
 
-    // 1. 最下層基準の実解像度を取得 (viewBoxから)
+    // 最下層基準の実解像度を取得 (viewBoxから)
     const viewBox = svg.getAttribute("viewBox").split(' ');
     const originalW = parseFloat(viewBox[2]);
     const originalH = parseFloat(viewBox[3]);
 
-    // 2. 撮影専用の巨大な一時コンテナを作成 (画面外に配置)
+    // 撮影専用の巨大な一時コンテナを作成 (画面外に配置)
     const tempContainer = document.createElement('div');
     tempContainer.style.position = 'absolute';
     tempContainer.style.top = '-99999px'; // 画面外
@@ -229,8 +229,8 @@ function copyBoardImage() {
     tempContainer.style.overflow = 'hidden';
     document.body.appendChild(tempContainer);
 
-    // 3. 一時コンテナ内に、html2canvas撮影用の構造を手動で構築
-    // --- A. 背景画像 (最下層) ---
+    // 一時コンテナ内に、html2canvas撮影用の構造を手動で構築
+    // --- 背景画像 (最下層) ---
     const clonedBgImg = document.createElement('img');
     clonedBgImg.src = backgroundImage.src; // 実画像データ
     clonedBgImg.style.width = '100%'; // コンテナ（実解像度）いっぱいに広げる
@@ -241,7 +241,7 @@ function copyBoardImage() {
     clonedBgImg.style.left = '0';
     tempContainer.appendChild(clonedBgImg);
 
-    // --- B. パネル (SVGをそのままクローン) ---
+    // --- パネル (SVGをそのままクローン) ---
     const clonedSvg = svg.cloneNode(true); // 現在のSVG（画像+テキスト）を全コピー
     clonedSvg.style.width = '100%'; // コンテナ（実解像度）いっぱいに広げる
     clonedSvg.style.height = '100%';
@@ -253,7 +253,7 @@ function copyBoardImage() {
     clonedSvg.setAttribute('height', originalH);
     tempContainer.appendChild(clonedSvg);
 
-    // 4. 一時コンテナをhtml2canvasで撮影
+    // 一時コンテナをhtml2canvasで撮影
     html2canvas(tempContainer, {
         useCORS: true,
         width: originalW,  // 出力サイズ
