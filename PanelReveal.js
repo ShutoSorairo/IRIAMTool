@@ -11,7 +11,6 @@ window.onload = function() {
     if (psdInput) psdInput.addEventListener('change', handlePSDInput);
     const copyBtn = document.querySelector('.btn-tweet');
     if (copyBtn) copyBtn.onclick = copyBoardImage;
-    const resetBtn = document.getElementById('reset-panels');
     if (resetBtn) resetBtn.onclick = () => {
         if (confirm("リセットしますか？")) { panels = []; renderCanvas(); renderControlList(); }
     };
