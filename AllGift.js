@@ -3,8 +3,8 @@ const categories = [
     "おもちゃ", "ネタ", "笑", "定番", "専用", "えらい", "挨拶", "ステージ", "LOVE", "ポイント別"
 ];
 
-// 仮のギフトデータ（カテゴリ追加）
-const gifts = [
+// 静的ギフトデータ（Firestore読込前のベース）
+const staticGifts = [
     
     // ネタカテゴリ
     { name: 'もういっかい！', category: 'ネタ', src: 'ギフト/ネタ/もういっかい！_5pt.PNG' },
@@ -220,8 +220,7 @@ const gifts = [
     { name: '缶詰(花)', icon: '', category: '定番', src: 'ギフト/定番/缶詰(花)_5,000pt.PNG'  },
     { name: '缶詰タワー', icon: '', category: '定番', src: 'ギフト/定番/缶詰タワー_10,000pt.PNG'  },
 
-    // 専用カテゴリ
-    { name: 'わいわい投票', icon: '', category: '専用', src: 'ギフト/専用/わいわい投票_500pt.PNG' },
+    // 専用カテゴリはFirestoreから動的に読み込む
 
     // えらいカテゴリ
     { name: 'キリおめ', icon: '', category: 'えらい', src: 'ギフト/えらい/キリおめ_5pt.PNG' },
@@ -369,6 +368,9 @@ const gifts = [
     { name: 'あふれる想い', category: 'LOVE', src: 'ギフト/Love/あふれる想い_30,000pt.PNG' }
 ];
 
+// Firestoreデータをマージする作業用配列
+const gifts = [...staticGifts];
+
 // --- DOM操作 ---
 async function init() {
     // Firestoreのカスタムギフトを読み込んでマージ
@@ -410,6 +412,34 @@ async function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+// 外部から再読み込みできるよう公開
+window.reloadGifts = async function() {
+    // 静的ギフトのコピーを保持して再マージ
+    gifts.length = 0;
+    gifts.push(...staticGifts);
+    try {
+        const { db } = await import('./firebase-config.js');
+        const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js");
+        const sharedSnap = await getDocs(collection(db, 'gifts'));
+        sharedSnap.forEach(d => {
+            const g = d.data();
+            const cats = Array.isArray(g.categories) ? g.categories : [g.category];
+            cats.forEach(cat => gifts.push({ name: g.name, category: cat, src: g.src }));
+        });
+        const uid = localStorage.getItem('iriam_uid');
+        if (uid) {
+            const userSnap = await getDocs(collection(db, 'users', uid, 'gifts'));
+            userSnap.forEach(d => {
+                const g = d.data();
+                const cats = Array.isArray(g.categories) ? g.categories : [g.category];
+                cats.forEach(cat => gifts.push({ name: g.name, category: cat, src: g.src }));
+            });
+        }
+    } catch(e) {}
+    const activeBtn = document.querySelector('.tab-btn.active');
+    if (activeBtn) showGifts(activeBtn.textContent);
+};
 
 function selectTab(category, btn) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
