@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ユーザー登録 - IRIAMツール</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="shared.css">
+    <style>
+        .login-card {
+            max-width: 400px;
+            margin: 100px auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(79,140,255,0.12);
+            padding: 40px 32px;
+            text-align: center;
+        }
+        h1 { color: #4f8cff; margin: 0 0 8px; font-size: 1.6rem; }
+        .subtitle { color: #888; font-size: 0.9rem; margin-bottom: 32px; }
+        label { display: block; text-align: left; font-size: 0.9rem; color: #555; margin-bottom: 6px; }
+        input[type="text"] {
+            width: 100%; padding: 12px 14px; border: 1px solid #ddd; border-radius: 8px;
+            font-size: 1.1rem; box-sizing: border-box; outline: none; transition: border 0.2s;
+        }
+        input:focus { border-color: #4f8cff; }
+        .submit-btn {
+            width: 100%; margin-top: 20px; padding: 13px; background: #4f8cff; color: #fff;
+            border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer;
+            transition: background 0.2s;
+        }
+        .submit-btn:hover { background: #2563eb; }
+        .error-msg { color: #e53935; font-size: 0.9rem; margin-top: 10px; min-height: 20px; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h1>IRIAMツール</h1>
+        <p class="subtitle">ユーザー名を入力してください</p>
+        <form onsubmit="doRegister(event)">
+            <label>ユーザー名（配信者名など）</label>
+            <input type="text" id="username" required placeholder="例: 空天色しゅーと" maxlength="30" autofocus>
+            <button type="submit" class="submit-btn">始める</button>
+        </form>
+        <p class="error-msg" id="error-msg"></p>
+    </div>
+
+    <script type="module">
+        import { db } from './firebase-config.js';
+        import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
+
+        function generateUUID() {
+            return crypto.randomUUID ? crypto.randomUUID() : 'uid-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+        }
+
+        // すでにユーザー登録済みならトップへ
+        if (localStorage.getItem('iriam_uid')) {
+            location.href = 'index.html';
+        }
+
+        window.doRegister = async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('username').value.trim();
+            if (!name) return;
+
+            const uid = generateUUID();
+            localStorage.setItem('iriam_uid', uid);
+            localStorage.setItem('iriam_name', name);
+
+            // Firestoreへの保存はバックグラウンドで（失敗しても遷移する）
+            setDoc(doc(db, 'users', uid), {
+                displayName: name,
+                createdAt: serverTimestamp()
+            }).catch(err => console.warn('Firestore保存失敗:', err));
+
+            location.href = 'index.html';
+        };
+    </script>
+</body>
+</html>
