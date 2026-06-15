@@ -370,7 +370,21 @@ const gifts = [
 ];
 
 // --- DOM操作 ---
-document.addEventListener('DOMContentLoaded', () => {
+async function init() {
+    // Firestoreのカスタムギフトを読み込んでマージ
+    try {
+        const { db } = await import('./firebase-config.js');
+        const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js");
+        const snap = await getDocs(collection(db, 'gifts'));
+        snap.forEach(d => {
+            const g = d.data();
+            const cats = Array.isArray(g.categories) ? g.categories : [g.category];
+            cats.forEach(cat => gifts.push({ name: g.name, category: cat, src: g.src }));
+        });
+    } catch(e) {
+        console.warn('Firestoreカスタムギフト読込スキップ:', e);
+    }
+
     const tabContainer = document.getElementById('tabContainer');
     categories.forEach((cat, idx) => {
         const btn = document.createElement('button');
@@ -380,7 +394,9 @@ document.addEventListener('DOMContentLoaded', () => {
         tabContainer.appendChild(btn);
     });
     showGifts(categories[0]);
-});
+}
+
+document.addEventListener('DOMContentLoaded', init);
 
 function selectTab(category, btn) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));

@@ -13,7 +13,7 @@
     <div class="card" style="text-align:center; background:#fff3e0; border:2px dashed #ffb74d;">
         <h3 style="color:#e65100; margin-top:0;">💾 設定を保存する</h3>
         <p style="font-size:0.9em;">作業が終わったら必ずダウンロードしてください。</p>
-        <button onclick="downloadJSON()" class="btn-dl">gifts.json をダウンロード</button>
+        <p style="color:#888; font-size:0.85em;">ギフトはFirestoreに自動保存されます。</p>
     </div>
 
     <div class="card">
@@ -70,10 +70,10 @@
 
     <div class="card">
         <h3>🗑️ 登録済みギフトの管理</h3>
-        <input type="text" id="search-box" placeholder="🔍 名前で検索..." oninput="renderGiftList()" style="width:100%; margin-bottom:10px;">
+        <input type="text" id="search-box" placeholder="🔍 名前で検索..." oninput="filterGifts()" style="width:100%; margin-bottom:10px;">
         <div id="gift-list-container" class="gift-list-box"></div>
     </div>
 
-    <script src="AdminDashboard.js"></script>
+    <script type="module" src="AdminDashboard.js"></script>
 </body>
 </html>

@@ -1,5 +1,8 @@
-// フォルダマップ (画像パス生成用)
-// ※カテゴリ選択とは独立して、画像をどこに置くか決めるために使います
+import { db } from './firebase-config.js';
+import {
+    collection, doc, getDocs, addDoc, deleteDoc, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
+
 const folderMap = {
     "おもちゃ": "おもちゃ", "ネタ": "ネタ", "笑": "笑", "定番": "定番",
     "専用": "専用", "えらい": "えらい", "挨拶": "挨拶", "ステージ": "ステージ", "LOVE": "Love"
@@ -13,125 +16,90 @@ window.onload = async function() {
         window.location.href = "AdminLogin.html";
         return;
     }
-    try {
-        const res = await fetch('gifts.json');
-        if(res.ok) {
-            currentGifts = await res.json();
-            document.getElementById('current-count').textContent = currentGifts.length;
-            renderGiftList();
-        }
-    } catch(e) { console.error("JSON読込エラー", e); }
+    await loadGifts();
     updatePreview();
 };
 
-function updatePreview() {
-    const folderKey = document.getElementById('g-folder').value;
-    const folder = folderMap[folderKey] || folderKey;
-    
-    const filebase = document.getElementById('g-filebase').value;
-    const points = document.getElementById('g-points').value;
-    const ptStr = points ? points : ""; 
-    
-    const fullPath = `ギフト/${folder}/${filebase}_${ptStr}pt.PNG`;
-    document.getElementById('path-preview').textContent = fullPath;
+async function loadGifts() {
+    currentGifts = [];
+    const snap = await getDocs(collection(db, 'gifts'));
+    snap.forEach(d => currentGifts.push({ id: d.id, ...d.data() }));
+    document.getElementById('current-count').textContent = currentGifts.length;
+    renderGiftList();
 }
 
-function addGift() {
+window.updatePreview = function() {
+    const folderKey = document.getElementById('g-folder').value;
+    const folder = folderMap[folderKey] || folderKey;
+    const filebase = document.getElementById('g-filebase').value;
+    const points = document.getElementById('g-points').value;
+    const fullPath = `ギフト/${folder}/${filebase}_${points}pt.PNG`;
+    document.getElementById('path-preview').textContent = fullPath;
+};
+
+window.addGift = async function() {
     const name = document.getElementById('g-name').value;
     const filebase = document.getElementById('g-filebase').value;
     const points = document.getElementById('g-points').value;
-    
-    // チェックボックスからカテゴリを取得
     const checkboxes = document.querySelectorAll('input[name="cats"]:checked');
     const selectedCats = Array.from(checkboxes).map(cb => cb.value);
 
-    if(!name || !filebase || !points) {
-        alert("名前、ファイル名、ポイントを入力してください");
-        return;
-    }
-    if(selectedCats.length === 0) {
-        alert("カテゴリを最低1つ選択してください");
-        return;
-    }
+    if (!name || !filebase || !points) { alert("名前、ファイル名、ポイントを入力してください"); return; }
+    if (selectedCats.length === 0) { alert("カテゴリを最低1つ選択してください"); return; }
 
-    // パス生成
     const folderKey = document.getElementById('g-folder').value;
     const folder = folderMap[folderKey] || folderKey;
     const fullPath = `ギフト/${folder}/${filebase}_${points}pt.PNG`;
 
-    // ★ここが変更点: categories 配列として保存
-    currentGifts.push({
-        name: name,
-        categories: selectedCats, // 配列
-        src: fullPath
-    });
-
-    afterUpdate(`「${name}」を追加しました。\nカテゴリ: ${selectedCats.join(', ')}`);
-}
-
-function deleteGift(index) {
-    const target = currentGifts[index];
-    if(confirm(`「${target.name}」を削除しますか？`)) {
-        currentGifts.splice(index, 1);
-        afterUpdate(`「${target.name}」を削除しました。`);
+    try {
+        await addDoc(collection(db, 'gifts'), {
+            name, categories: selectedCats, src: fullPath, createdAt: serverTimestamp()
+        });
+        await loadGifts();
+        clearForm();
+        alert(`「${name}」を追加しました。`);
+    } catch(e) {
+        alert('保存に失敗しました: ' + e.message);
     }
-}
+};
+
+window.deleteGift = async function(docId, name) {
+    if (!confirm(`「${name}」を削除しますか？`)) return;
+    try {
+        await deleteDoc(doc(db, 'gifts', docId));
+        await loadGifts();
+    } catch(e) {
+        alert('削除に失敗しました: ' + e.message);
+    }
+};
 
 function renderGiftList() {
     const container = document.getElementById('gift-list-container');
     const searchText = document.getElementById('search-box').value.toLowerCase();
     container.innerHTML = '';
 
-    currentGifts.forEach((gift, index) => {
-        if (gift.name.toLowerCase().includes(searchText)) {
-            // カテゴリ表示の処理 (配列か文字列かで分岐)
-            let catDisplay = "";
-            if (Array.isArray(gift.categories)) {
-                catDisplay = gift.categories.join(", ");
-            } else {
-                catDisplay = gift.category || "なし";
-            }
-
-            const div = document.createElement('div');
-            div.className = 'list-item';
-            div.innerHTML = `
-                <div class="list-info">
-                    <b>${gift.name}</b> <span style="color:#1976d2; font-size:0.85em;">[${catDisplay}]</span><br>
-                    <small style="color:#888;">${gift.src}</small>
-                </div>
-                <button onclick="deleteGift(${index})" class="btn-delete">削除</button>
-            `;
-            container.appendChild(div);
-        }
+    currentGifts.forEach(gift => {
+        if (!gift.name.toLowerCase().includes(searchText)) return;
+        const catDisplay = Array.isArray(gift.categories) ? gift.categories.join(', ') : (gift.category || 'なし');
+        const div = document.createElement('div');
+        div.className = 'list-item';
+        div.innerHTML = `
+            <div class="list-info">
+                <b>${gift.name}</b> <span style="color:#1976d2; font-size:0.85em;">[${catDisplay}]</span><br>
+                <small style="color:#888;">${gift.src}</small>
+            </div>
+            <button onclick="deleteGift('${gift.id}', '${gift.name}')" class="btn-delete">削除</button>
+        `;
+        container.appendChild(div);
     });
 }
 
-function afterUpdate(msg) {
-    document.getElementById('current-count').textContent = currentGifts.length;
-    // 入力クリア
+window.filterGifts = renderGiftList;
+
+function clearForm() {
     document.getElementById('g-name').value = '';
     document.getElementById('g-filebase').value = '';
     document.getElementById('g-points').value = '';
-    // チェックボックスもクリア
     document.querySelectorAll('input[name="cats"]').forEach(cb => cb.checked = false);
-    
     updatePreview();
-    renderGiftList();
-    
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    setTimeout(() => {
-        alert(msg + "\n忘れずにJSONをダウンロードしてください。");
-    }, 100);
-}
-
-function downloadJSON() {
-    const jsonStr = JSON.stringify(currentGifts, null, 2);
-    const blob = new Blob([jsonStr], {type: "application/json"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = "gifts.json";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
 }
