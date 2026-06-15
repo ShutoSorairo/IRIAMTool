@@ -16,7 +16,10 @@ let config = {
     history: []
 };
 
-window.onload = function() { loadData(); };
+window.onload = function() {
+    if (!localStorage.getItem('iriam_uid')) loadData();
+    // ログイン中はGacha-firebase.jsがFirestoreから読み込んでloadData()を呼ぶ
+};
 
 // --- セクション開閉 ---
 function toggleSection(id, headerEl) {

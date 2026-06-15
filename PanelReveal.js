@@ -29,7 +29,9 @@ window.onload = () => {
         if (e.target === document.getElementById('control-popup')) toggleControlPopup();
     });
 
-    loadPanelState();
+    // Firestoreからの読み込みはPanelReveal-autosave.jsが担当
+    // localStorageのみ使用の場合はこちらで読み込む
+    if (!localStorage.getItem('iriam_uid')) loadPanelState();
 };
 
 // ---- SVG座標変換 ----
