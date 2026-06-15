@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>データ移行ツール</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="shared.css">
+    <style>
+        .card { max-width: 600px; margin: 60px auto; background: #fff; border-radius: 12px; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        h1 { color: #4f8cff; font-size: 1.4rem; margin-bottom: 4px; }
+        .desc { color: #888; font-size: 0.9em; margin-bottom: 24px; }
+        .run-btn { width: 100%; padding: 14px; background: #4f8cff; color: #fff; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; }
+        .run-btn:hover { background: #2563eb; }
+        .run-btn:disabled { background: #aaa; cursor: not-allowed; }
+        #log { margin-top: 20px; background: #1e1e1e; color: #00e676; font-family: monospace; font-size: 0.85em; padding: 16px; border-radius: 8px; max-height: 400px; overflow-y: auto; white-space: pre-wrap; display: none; }
+        .warn { color: #ff9800; font-size: 0.9em; background: #fff8e1; border-left: 4px solid #ff9800; padding: 10px 14px; border-radius: 4px; margin-bottom: 16px; }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="home-btn">ホームへ</a>
+    <div class="card">
+        <h1>gifts.json → Firestore 移行ツール</h1>
+        <p class="desc">一度だけ実行してください。</p>
+        <div class="warn">⚠️ 実行前に管理者としてログインしていることを確認してください。<br>UID: <span id="uid-display">未ログイン</span></div>
+        <button class="run-btn" id="run-btn" onclick="runMigration()">移行を実行する</button>
+        <div id="log"></div>
+    </div>
+
+    <script type="module">
+        import { db } from './firebase-config.js';
+        import { collection, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
+
+        const uid = localStorage.getItem('iriam_uid');
+        document.getElementById('uid-display').textContent = uid
+            ? `${localStorage.getItem('iriam_name')} (${uid.slice(0,8)}...)` : '未ログイン';
+
+        const log = document.getElementById('log');
+        function addLog(msg) {
+            log.style.display = 'block';
+            log.textContent += msg + '\n';
+            log.scrollTop = log.scrollHeight;
+        }
+
+        window.runMigration = async function() {
+            if (!uid) { alert('ログインしてください'); return; }
+
+            const btn = document.getElementById('run-btn');
+            btn.disabled = true;
+            btn.textContent = '実行中...';
+            log.textContent = '';
+
+            // 既存データ確認
+            addLog('既存のFirestoreデータを確認中...');
+            const sharedSnap = await getDocs(collection(db, 'gifts'));
+            const userSnap = await getDocs(collection(db, 'users', uid, 'gifts'));
+            if (!sharedSnap.empty || !userSnap.empty) {
+                const ok = confirm(`Firestoreにすでにデータがあります（共通: ${sharedSnap.size}件, 専用: ${userSnap.size}件）。\n重複して追加されます。続けますか？`);
+                if (!ok) { btn.disabled = false; btn.textContent = '移行を実行する'; return; }
+            }
+
+            // gifts.json読み込み
+            addLog('gifts.json を読み込み中...');
+            let gifts;
+            try {
+                const res = await fetch('./gifts.json');
+                gifts = await res.json();
+                addLog(`${gifts.length}件 読み込み完了`);
+            } catch(e) {
+                addLog('ERROR: gifts.json の読み込みに失敗しました: ' + e.message);
+                btn.disabled = false; btn.textContent = '移行を実行する';
+                return;
+            }
+
+            let sharedCount = 0, userCount = 0, errorCount = 0;
+
+            for (const g of gifts) {
+                const cats = Array.isArray(g.category) ? g.category
+                    : Array.isArray(g.categories) ? g.categories
+                    : [g.category || g.categories].filter(Boolean);
+
+                const isSenyo = cats.includes('専用');
+                const isWaiwai = g.name === 'わいわい投票';
+
+                // 専用かつわいわい投票以外 → ユーザー専用
+                const isUserOnly = isSenyo && !isWaiwai;
+                const ref = isUserOnly
+                    ? collection(db, 'users', uid, 'gifts')
+                    : collection(db, 'gifts');
+
+                try {
+                    await addDoc(ref, {
+                        name: g.name,
+                        categories: cats,
+                        src: g.src,
+                        createdAt: serverTimestamp()
+                    });
+                    if (isUserOnly) {
+                        userCount++;
+                        addLog(`[専用] ${g.name}`);
+                    } else {
+                        sharedCount++;
+                        addLog(`[共通] ${g.name}`);
+                    }
+                } catch(e) {
+                    errorCount++;
+                    addLog(`ERROR: ${g.name} - ${e.message}`);
+                }
+            }
+
+            addLog(`\n===== 完了 =====`);
+            addLog(`共通: ${sharedCount}件`);
+            addLog(`専用(ユーザー): ${userCount}件`);
+            addLog(`エラー: ${errorCount}件`);
+            btn.textContent = '移行完了';
+        };
+    </script>
+</body>
+</html>
