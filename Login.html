@@ -46,7 +46,7 @@
 
     <script type="module">
         import { db } from './firebase-config.js';
-        import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
+        import { doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
 
         function generateUUID() {
             return crypto.randomUUID ? crypto.randomUUID() : 'uid-' + Date.now() + '-' + Math.random().toString(36).slice(2);
@@ -62,18 +62,42 @@
             const name = document.getElementById('username').value.trim();
             if (!name) return;
 
+            const btn = document.querySelector('.submit-btn');
+            btn.disabled = true;
+            btn.textContent = '登録中...';
+
             const uid = generateUUID();
-            localStorage.setItem('iriam_uid', uid);
-            localStorage.setItem('iriam_name', name);
-
-            // Firestoreへの保存はバックグラウンドで（失敗しても遷移する）
-            setDoc(doc(db, 'users', uid), {
-                displayName: name,
-                createdAt: serverTimestamp()
-            }).catch(err => console.warn('Firestore保存失敗:', err));
-
-            location.href = 'index.html';
+            try {
+                await setDoc(doc(db, 'users', uid), {
+                    displayName: name,
+                    createdAt: serverTimestamp()
+                });
+                localStorage.setItem('iriam_uid', uid);
+                localStorage.setItem('iriam_name', name);
+                location.href = 'index.html';
+            } catch(err) {
+                // Firestore失敗でもlocalStorageには保存して進む
+                localStorage.setItem('iriam_uid', uid);
+                localStorage.setItem('iriam_name', name);
+                console.warn('Firestore保存失敗:', err);
+                location.href = 'index.html';
+            }
         };
+
+        // 既存ユーザーのFirestore同期（登録済みだがFirestoreにない場合）
+        const existingUid = localStorage.getItem('iriam_uid');
+        const existingName = localStorage.getItem('iriam_name');
+        if (existingUid && existingName) {
+            getDoc(doc(db, 'users', existingUid)).then(snap => {
+                if (!snap.exists()) {
+                    setDoc(doc(db, 'users', existingUid), {
+                        displayName: existingName,
+                        createdAt: serverTimestamp()
+                    }).catch(() => {});
+                }
+            }).catch(() => {});
+            location.href = 'index.html';
+        }
     </script>
 </body>
 </html>
