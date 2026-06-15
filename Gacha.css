@@ -1,0 +1,28 @@
+/* Gacha 固有スタイル (共通は shared.css) */
+h1, h2, h3 { text-align: center; color: #333; margin-top: 0; }
+
+/* ガチャエリア */
+.gacha-play-area { text-align: center; background: #fafafa; padding: 20px; border-radius: 8px; border: 1px solid #eee; }
+.btn-draw { background: linear-gradient(135deg, #42a5f5, #1976d2); color: white; padding: 12px 30px; font-size: 1.2em; font-weight: bold; border-radius: 30px; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(25,118,210,0.3); margin: 5px; transition: transform 0.1s; }
+.btn-draw:active { transform: scale(0.98); }
+
+#result-area { margin-top: 20px; max-height: 400px; overflow-y: auto; border: 1px solid #eee; border-radius: 4px; background: #fff; }
+.result-item { display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #f0f0f0; }
+.result-item:last-child { border-bottom: none; }
+
+.rarity-badge { display: inline-block; width: 50px; text-align: center; padding: 2px 0; margin-right: 10px; border-radius: 4px; color: white; font-weight: bold; font-size: 0.85em; }
+
+.btn-add-row { background: #1976d2; color: white; width: 100%; padding: 10px; border: 2px dashed #bbdefb; border-radius: 4px; cursor: pointer; margin-top: 10px; font-weight: bold; }
+.btn-add-row:hover { background: #e3f2fd; color: #1976d2; border-style: solid; }
+
+.result-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; padding: 10px; }
+.result-grid-item { display: flex; flex-direction: column; align-items: center; gap: 4px; background: #fafafa; border: 1px solid #eee; border-radius: 8px; padding: 8px 6px; text-align: center; font-size: 0.85em; }
+
+.name-list-box { max-height: 200px; overflow-y: auto; border: 1px solid #eee; border-radius: 6px; }
+.name-item { display: flex; justify-content: space-between; align-items: center; padding: 7px 12px; border-bottom: 1px solid #f0f0f0; font-size: 0.95em; }
+.name-item:last-child { border-bottom: none; }
+
+/* Gacha 固有のボタン上書き */
+.btn-blue { padding: 10px 18px; }
+
+@media (max-width: 600px) { .main-card { margin-top: 70px; padding: 15px; } }

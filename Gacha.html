@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Gacha</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="shared.css">
+    <link rel="stylesheet" href="Gacha.css">
+</head>
+<body>
+
+    <a href="index.html" class="home-btn">ホームへ</a>
+
+    <div class="main-card">
+        <h1>ガチャ</h1>
+
+        <!-- 基本設定 -->
+        <div class="section-box">
+            <div class="section-header closed" onclick="toggleSection('sec-basic', this)">基本設定・データ管理</div>
+            <div id="sec-basic" class="section-body" style="display:none;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                    <div><label>ガチャ名: <input type="text" id="gacha-title" value="マイガチャ" oninput="saveData()"></label></div>
+                    <button class="btn-red" onclick="resetAll()">全データ削除</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 名前登録 -->
+        <div class="section-box">
+            <div class="section-header closed" onclick="toggleSection('sec-names', this)">参加者名登録</div>
+            <div id="sec-names" class="section-body" style="display:none;">
+                <div style="display:flex; gap:8px; margin-bottom:10px;">
+                    <input type="text" id="new-name-input" placeholder="名前を入力" style="flex:1;" onkeydown="if(event.key==='Enter') addName()">
+                    <button class="btn-blue" onclick="addName()">追加</button>
+                </div>
+                <div id="name-list-container" class="name-list-box"></div>
+                <div style="margin-top:8px; display:flex; gap:8px; justify-content:flex-end;">
+                    <button class="btn-red" style="font-size:0.85em;" onclick="clearAllNames()">全削除</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- レアリティ設定 -->
+        <div class="section-box">
+            <div class="section-header closed" onclick="toggleSection('sec-rarity', this)">レアリティ設定</div>
+            <div id="sec-rarity" class="section-body" style="display:none;">
+                <div style="margin-bottom:10px;">
+                    <label>レアリティ数: <input type="number" id="rarity-count" value="5" min="1" max="10" style="width:60px;" onchange="updateRarityTable()"></label>
+                    <span style="font-size:0.8em; color:#888; margin-left:10px;">※変更すると確率がリセットされます</span>
+                </div>
+                <table>
+                    <thead><tr><th>名称</th><th>出現率 (%)</th><th>色</th></tr></thead>
+                    <tbody id="rarity-tbody"></tbody>
+                </table>
+                <div style="text-align:right; font-size:0.9em;">合計: <span id="total-prob" style="font-weight:bold;">0</span>%</div>
+            </div>
+        </div>
+
+        <!-- 景品設定 -->
+        <div class="section-box">
+            <div class="section-header closed" onclick="toggleSection('sec-prize', this)">景品設定</div>
+            <div id="sec-prize" class="section-body" style="display:none;">
+                <div style="margin-bottom:10px;">現在の景品数: <span id="prize-count-display" style="font-weight:bold;">0</span> 個</div>
+
+                <!-- 一括インポート -->
+                <div style="background:#f0f7ff; padding:12px; border-radius:6px; margin-bottom:14px; border:1px solid #d0e3f0;">
+                    <div style="font-weight:bold; margin-bottom:6px; font-size:0.9em;">一括インポート (1行に1景品)</div>
+                    <textarea id="import-textarea" rows="4" placeholder="景品A&#10;景品B&#10;景品C" style="width:100%; resize:vertical; font-size:0.9em;"></textarea>
+                    <div style="display:flex; gap:8px; align-items:center; margin-top:8px; flex-wrap:wrap;">
+                        <label style="font-size:0.9em;">レアリティ:
+                            <select id="import-rarity-select" style="margin-left:4px;"></select>
+                        </label>
+                        <button class="btn-blue" style="padding:6px 14px;" onclick="importPrizes()">追加</button>
+                    </div>
+                </div>
+
+                <table>
+                    <thead><tr><th style="width:40px;">No</th><th style="width:110px;">レアリティ</th><th style="width:80px;">確率</th><th>景品名</th><th style="width:50px;">操作</th></tr></thead>
+                    <tbody id="prize-tbody"></tbody>
+                </table>
+                <button class="btn-add-row" onclick="addPrize()">＋ 景品を追加</button>
+            </div>
+        </div>
+
+        <!-- ガチャ抽選 -->
+        <div class="gacha-play-area">
+            <h2 style="margin-bottom:16px;">ガチャ抽選</h2>
+            <div style="margin-bottom:14px; display:flex; gap:8px; justify-content:center; align-items:center; flex-wrap:wrap;">
+                <input type="text" id="user-name" placeholder="名前を入力 or 選択" style="width:200px; text-align:center; padding:8px;">
+                <select id="name-select" onchange="selectName(this.value)" style="padding:8px;">
+                    <option value="">-- 登録済みの名前 --</option>
+                </select>
+            </div>
+            <div style="display:flex; justify-content:center; gap:15px; flex-wrap:wrap;">
+                <button class="btn-draw" onclick="drawGacha(1)">1回</button>
+                <button class="btn-draw" onclick="drawGacha(10)">10連</button>
+            </div>
+            <div style="margin-top:16px; display:flex; justify-content:center; align-items:center; gap:10px;">
+                <span style="font-size:0.9em; color:#555;">回数指定:</span>
+                <input type="number" id="custom-draw-count" value="100" style="width:70px; padding:6px; text-align:center;">
+                <button class="btn-blue" style="padding:6px 15px;" onclick="drawCustom()">回す</button>
+            </div>
+        </div>
+
+        <!-- 結果エリア -->
+        <div id="result-area" style="margin-top:16px;">
+            <div style="text-align:center; color:#ccc; padding:20px;">ここに結果が表示されます</div>
+        </div>
+        <div id="copy-area" style="text-align:center; margin-top:12px; display:none;">
+            <button class="btn-green" onclick="copyResult()">📋 結果をコピー</button>
+        </div>
+
+        <!-- 抽選履歴 -->
+        <div class="section-box" style="margin-top:24px;">
+            <div class="section-header closed" onclick="toggleSection('sec-history', this)">抽選履歴</div>
+            <div id="sec-history" class="section-body" style="display:none;">
+                <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
+                    <button class="btn-red" style="font-size:0.85em;" onclick="clearHistory()">履歴全削除</button>
+                </div>
+                <div id="history-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="Gacha.js"></script>
+</body>
+</html>
