@@ -375,12 +375,25 @@ async function init() {
     try {
         const { db } = await import('./firebase-config.js');
         const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js");
-        const snap = await getDocs(collection(db, 'gifts'));
-        snap.forEach(d => {
+
+        // 共通ギフト
+        const sharedSnap = await getDocs(collection(db, 'gifts'));
+        sharedSnap.forEach(d => {
             const g = d.data();
             const cats = Array.isArray(g.categories) ? g.categories : [g.category];
             cats.forEach(cat => gifts.push({ name: g.name, category: cat, src: g.src }));
         });
+
+        // 専用ギフト（ログイン中ユーザー）
+        const uid = localStorage.getItem('iriam_uid');
+        if (uid) {
+            const userSnap = await getDocs(collection(db, 'users', uid, 'gifts'));
+            userSnap.forEach(d => {
+                const g = d.data();
+                const cats = Array.isArray(g.categories) ? g.categories : [g.category];
+                cats.forEach(cat => gifts.push({ name: g.name, category: cat, src: g.src }));
+            });
+        }
     } catch(e) {
         console.warn('Firestoreカスタムギフト読込スキップ:', e);
     }

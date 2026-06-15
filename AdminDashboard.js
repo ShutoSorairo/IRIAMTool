@@ -9,6 +9,7 @@ const folderMap = {
 };
 
 let currentGifts = [];
+const uid = localStorage.getItem('iriam_uid');
 
 window.onload = async function() {
     if (!sessionStorage.getItem('iriam_admin_logged_in')) {
@@ -22,8 +23,17 @@ window.onload = async function() {
 
 async function loadGifts() {
     currentGifts = [];
-    const snap = await getDocs(collection(db, 'gifts'));
-    snap.forEach(d => currentGifts.push({ id: d.id, ...d.data() }));
+
+    // 共通ギフト
+    const sharedSnap = await getDocs(collection(db, 'gifts'));
+    sharedSnap.forEach(d => currentGifts.push({ id: d.id, scope: 'shared', ...d.data() }));
+
+    // 専用ギフト（ログイン中ユーザー）
+    if (uid) {
+        const userSnap = await getDocs(collection(db, 'users', uid, 'gifts'));
+        userSnap.forEach(d => currentGifts.push({ id: d.id, scope: 'user', ...d.data() }));
+    }
+
     document.getElementById('current-count').textContent = currentGifts.length;
     renderGiftList();
 }
@@ -51,22 +61,30 @@ window.addGift = async function() {
     const folder = folderMap[folderKey] || folderKey;
     const fullPath = `ギフト/${folder}/${filebase}_${points}pt.PNG`;
 
+    const isUserOnly = selectedCats.length === 1 && selectedCats[0] === '専用';
+    const ref = isUserOnly && uid
+        ? collection(db, 'users', uid, 'gifts')
+        : collection(db, 'gifts');
+
     try {
-        await addDoc(collection(db, 'gifts'), {
+        await addDoc(ref, {
             name, categories: selectedCats, src: fullPath, createdAt: serverTimestamp()
         });
         await loadGifts();
         clearForm();
-        alert(`「${name}」を追加しました。`);
+        alert(`「${name}」を追加しました。\n保存先: ${isUserOnly ? 'ユーザー専用' : '共通'}`);
     } catch(e) {
         alert('保存に失敗しました: ' + e.message);
     }
 };
 
-window.deleteGift = async function(docId, name) {
+window.deleteGift = async function(docId, scope, name) {
     if (!confirm(`「${name}」を削除しますか？`)) return;
     try {
-        await deleteDoc(doc(db, 'gifts', docId));
+        const ref = scope === 'user' && uid
+            ? doc(db, 'users', uid, 'gifts', docId)
+            : doc(db, 'gifts', docId);
+        await deleteDoc(ref);
         await loadGifts();
     } catch(e) {
         alert('削除に失敗しました: ' + e.message);
@@ -81,14 +99,17 @@ function renderGiftList() {
     currentGifts.forEach(gift => {
         if (!gift.name.toLowerCase().includes(searchText)) return;
         const catDisplay = Array.isArray(gift.categories) ? gift.categories.join(', ') : (gift.category || 'なし');
+        const scopeLabel = gift.scope === 'user'
+            ? '<span style="color:#e65100; font-size:0.8em;">専用</span>'
+            : '<span style="color:#1976d2; font-size:0.8em;">共通</span>';
         const div = document.createElement('div');
         div.className = 'list-item';
         div.innerHTML = `
             <div class="list-info">
-                <b>${gift.name}</b> <span style="color:#1976d2; font-size:0.85em;">[${catDisplay}]</span><br>
-                <small style="color:#888;">${gift.src}</small>
+                <b>${gift.name}</b> ${scopeLabel} <span style="color:#888; font-size:0.85em;">[${catDisplay}]</span><br>
+                <small style="color:#aaa;">${gift.src}</small>
             </div>
-            <button onclick="deleteGift('${gift.id}', '${gift.name}')" class="btn-delete">削除</button>
+            <button onclick="deleteGift('${gift.id}', '${gift.scope}', '${gift.name}')" class="btn-delete">削除</button>
         `;
         container.appendChild(div);
     });
