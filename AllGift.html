@@ -20,7 +20,7 @@
 </head>
 <body>
     <h1>IRIAM 全ギフト一覧</h1>
-    <div style="text-align:center; margin-bottom:8px;">
+    <div style="text-align:center; margin-bottom:8px;" id="senyo-btn-wrap" style="display:none;">
         <button class="btn-senyo" onclick="openSenyoModal()">⚙️ 専用ギフト管理</button>
     </div>
     <div class="tab-container" id="tabContainer"></div>
@@ -52,6 +52,8 @@
         import { collection, getDocs, addDoc, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
 
         const uid = localStorage.getItem('iriam_uid');
+        const isAdmin = !!sessionStorage.getItem('iriam_admin_logged_in');
+        if (isAdmin) document.getElementById('senyo-btn-wrap').style.display = 'block';
 
         // ファイル名プレビュー更新
         ['s-file','s-pt'].forEach(id => {
@@ -63,6 +65,7 @@
         });
 
         window.openSenyoModal = async function() {
+            if (!isAdmin) { alert('管理者のみ操作できます'); return; }
             if (!uid) { alert('ログインしてください'); return; }
             document.getElementById('senyo-modal').style.display = 'flex';
             await loadSenyoList();
