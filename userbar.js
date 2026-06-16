@@ -89,19 +89,13 @@
         const msg = document.createElement('span');
         msg.textContent = 'ログインしていません';
 
-        const registerLink = document.createElement('a');
-        registerLink.className = 'ub-login';
-        registerLink.href = 'Login.html?tab=register';
-        registerLink.textContent = '新規登録';
-
         const loginLink = document.createElement('a');
         loginLink.className = 'ub-login';
-        loginLink.href = 'Login.html?tab=login';
-        loginLink.textContent = 'ログイン';
+        loginLink.href = 'Login.html';
+        loginLink.textContent = 'ログイン / 登録';
 
         bar.appendChild(dot);
         bar.appendChild(msg);
-        bar.appendChild(registerLink);
         bar.appendChild(loginLink);
     }
 
