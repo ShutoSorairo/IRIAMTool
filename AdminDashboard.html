@@ -74,6 +74,28 @@
         <div id="gift-list-container" class="gift-list-box"></div>
     </div>
 
+    <div class="card">
+        <h3>👤 ユーザー別 専用ギフト管理</h3>
+        <div style="margin-bottom:12px;">
+            <select id="user-select" onchange="loadUserGifts()" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px; font-size:1em;">
+                <option value="">ユーザーを選択...</option>
+            </select>
+        </div>
+
+        <div id="user-gift-area" style="display:none;">
+            <div style="background:#f4faff; padding:16px; border-radius:8px; border:1px solid #d0e3f0; margin-bottom:12px;">
+                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end;">
+                    <input type="text" id="ug-name" placeholder="ギフト名" style="flex:2; min-width:120px; padding:8px; border:1px solid #ddd; border-radius:6px;">
+                    <input type="text" id="ug-file" placeholder="ファイル名" oninput="updateUgPreview()" style="flex:2; min-width:120px; padding:8px; border:1px solid #ddd; border-radius:6px;">
+                    <input type="number" id="ug-pt" placeholder="PT" oninput="updateUgPreview()" style="width:80px; padding:8px; border:1px solid #ddd; border-radius:6px;">
+                    <button onclick="addUserGift()" class="btn-add" style="margin-top:0; width:auto; padding:8px 20px;">追加</button>
+                </div>
+                <div style="margin-top:8px; font-size:0.85em; color:#888;">パス: <span id="ug-preview">ギフト/専用/ファイル名_PTpt.PNG</span></div>
+            </div>
+            <div id="user-gift-list" class="gift-list-box"></div>
+        </div>
+    </div>
+
     <script type="module" src="AdminDashboard.js"></script>
 </body>
 </html>

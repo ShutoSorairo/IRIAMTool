@@ -3,6 +3,74 @@ import {
     collection, doc, getDocs, addDoc, deleteDoc, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
 
+// ---- ユーザー別専用ギフト管理 ----
+async function loadUsers() {
+    const snap = await getDocs(collection(db, 'users'));
+    const sel = document.getElementById('user-select');
+    sel.innerHTML = '<option value="">ユーザーを選択...</option>';
+    snap.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d.id;
+        opt.textContent = d.data().displayName || d.id;
+        sel.appendChild(opt);
+    });
+}
+
+window.loadUserGifts = async function() {
+    const uid = document.getElementById('user-select').value;
+    const area = document.getElementById('user-gift-area');
+    if (!uid) { area.style.display = 'none'; return; }
+    area.style.display = 'block';
+    const list = document.getElementById('user-gift-list');
+    list.innerHTML = '<p style="text-align:center;color:#aaa;padding:12px;">読み込み中...</p>';
+
+    const snap = await getDocs(collection(db, 'users', uid, 'gifts'));
+    list.innerHTML = '';
+    if (snap.empty) {
+        list.innerHTML = '<p style="text-align:center;color:#aaa;padding:12px;">専用ギフトはありません</p>';
+        return;
+    }
+    snap.forEach(d => {
+        const g = d.data();
+        const div = document.createElement('div');
+        div.className = 'list-item';
+        div.innerHTML = `
+            <div class="list-info"><b>${g.name}</b><br><small style="color:#aaa;">${g.src}</small></div>
+            <button onclick="deleteUserGift('${uid}','${d.id}',this)" class="btn-delete">削除</button>
+        `;
+        list.appendChild(div);
+    });
+};
+
+window.updateUgPreview = function() {
+    const f = document.getElementById('ug-file').value || 'ファイル名';
+    const p = document.getElementById('ug-pt').value || 'PT';
+    document.getElementById('ug-preview').textContent = `ギフト/専用/${f}_${p}pt.PNG`;
+};
+
+window.addUserGift = async function() {
+    const uid = document.getElementById('user-select').value;
+    const name = document.getElementById('ug-name').value.trim();
+    const file = document.getElementById('ug-file').value.trim();
+    const pt   = document.getElementById('ug-pt').value.trim();
+    if (!uid || !name || !file || !pt) { alert('ユーザーとギフト情報をすべて入力してください'); return; }
+    const src = `ギフト/専用/${file}_${pt}pt.PNG`;
+    await addDoc(collection(db, 'users', uid, 'gifts'), {
+        name, categories: ['専用'], src, createdAt: serverTimestamp()
+    });
+    document.getElementById('ug-name').value = '';
+    document.getElementById('ug-file').value = '';
+    document.getElementById('ug-pt').value = '';
+    window.updateUgPreview();
+    await window.loadUserGifts();
+};
+
+window.deleteUserGift = async function(uid, docId, btn) {
+    if (!confirm('削除しますか？')) return;
+    await deleteDoc(doc(db, 'users', uid, 'gifts', docId));
+    btn.closest('.list-item').remove();
+};
+
 const folderMap = {
     "おもちゃ": "おもちゃ", "ネタ": "ネタ", "笑": "笑", "定番": "定番",
     "専用": "専用", "えらい": "えらい", "挨拶": "挨拶", "ステージ": "ステージ", "LOVE": "Love"
@@ -18,6 +86,7 @@ window.onload = async function() {
         return;
     }
     await loadGifts();
+    await loadUsers();
     updatePreview();
 };
 
