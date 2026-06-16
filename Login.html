@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>ユーザー登録 - IRIAMツール</title>
+    <title>ログイン / 登録 - IRIAMツール</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="shared.css">
     <style>
@@ -16,7 +16,10 @@
             text-align: center;
         }
         h1 { color: #4f8cff; margin: 0 0 8px; font-size: 1.6rem; }
-        .subtitle { color: #888; font-size: 0.9rem; margin-bottom: 32px; }
+        .subtitle { color: #888; font-size: 0.9rem; margin-bottom: 28px; }
+        .tab-btns { display: flex; margin-bottom: 24px; border-radius: 8px; overflow: hidden; border: 1px solid #e0e0e0; }
+        .tab-btn { flex: 1; padding: 10px; background: #f5f5f5; border: none; cursor: pointer; font-size: 1rem; color: #888; transition: background 0.2s, color 0.2s; }
+        .tab-btn.active { background: #4f8cff; color: #fff; font-weight: 600; }
         label { display: block; text-align: left; font-size: 0.9rem; color: #555; margin-bottom: 6px; }
         input[type="text"] {
             width: 100%; padding: 12px 14px; border: 1px solid #ddd; border-radius: 8px;
@@ -29,42 +32,95 @@
             transition: background 0.2s;
         }
         .submit-btn:hover { background: #2563eb; }
-        .error-msg { color: #e53935; font-size: 0.9rem; margin-top: 10px; min-height: 20px; }
+        .submit-btn:disabled { background: #aaa; cursor: not-allowed; }
+        .msg { font-size: 0.9rem; margin-top: 12px; min-height: 20px; }
+        .msg.error { color: #e53935; }
+        .msg.success { color: #2e7d32; }
+        #login-form { display: none; }
     </style>
 </head>
 <body>
     <div class="login-card">
         <h1>IRIAMツール</h1>
-        <p class="subtitle">ユーザー名を入力してください</p>
-        <form onsubmit="doRegister(event)">
+        <p class="subtitle">ログインまたは新規登録</p>
+
+        <div class="tab-btns">
+            <button class="tab-btn active" onclick="switchTab('register')">新規登録</button>
+            <button class="tab-btn" onclick="switchTab('login')">ログイン</button>
+        </div>
+
+        <form id="register-form" onsubmit="doRegister(event)">
             <label>ユーザー名（配信者名など）</label>
-            <input type="text" id="username" required placeholder="例: 空天色しゅーと" maxlength="30" autofocus>
-            <button type="submit" class="submit-btn">始める</button>
+            <input type="text" id="reg-name" required placeholder="例: 空天色しゅーと" maxlength="30" autofocus>
+            <button type="submit" class="submit-btn" id="reg-btn">登録して始める</button>
         </form>
-        <p class="error-msg" id="error-msg"></p>
+
+        <form id="login-form" onsubmit="doLogin(event)">
+            <label>ユーザー名</label>
+            <input type="text" id="login-name" required placeholder="登録時のユーザー名" maxlength="30">
+            <button type="submit" class="submit-btn" id="login-btn">ログイン</button>
+        </form>
+
+        <p class="msg" id="msg"></p>
     </div>
 
     <script type="module">
         import { db } from './firebase-config.js';
-        import { doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
+        import { doc, setDoc, getDoc, collection, getDocs, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
 
         function generateUUID() {
             return crypto.randomUUID ? crypto.randomUUID() : 'uid-' + Date.now() + '-' + Math.random().toString(36).slice(2);
         }
 
-        // すでにユーザー登録済みならトップへ
-        if (localStorage.getItem('iriam_uid')) {
+        function showMsg(text, type) {
+            const el = document.getElementById('msg');
+            el.textContent = text;
+            el.className = 'msg ' + type;
+        }
+
+        // 既存ユーザーはトップへ
+        const existingUid = localStorage.getItem('iriam_uid');
+        if (existingUid) {
+            // Firestoreに同期してからリダイレクト
+            getDoc(doc(db, 'users', existingUid)).then(snap => {
+                if (!snap.exists()) {
+                    setDoc(doc(db, 'users', existingUid), {
+                        displayName: localStorage.getItem('iriam_name') || '',
+                        createdAt: serverTimestamp()
+                    }, { merge: true }).catch(() => {});
+                }
+            }).catch(() => {});
             location.href = 'index.html';
         }
 
+        window.switchTab = function(tab) {
+            document.getElementById('register-form').style.display = tab === 'register' ? '' : 'none';
+            document.getElementById('login-form').style.display = tab === 'login' ? '' : 'none';
+            document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', (i === 0 && tab === 'register') || (i === 1 && tab === 'login'));
+            });
+            document.getElementById('msg').textContent = '';
+        };
+
         window.doRegister = async function(e) {
             e.preventDefault();
-            const name = document.getElementById('username').value.trim();
+            const name = document.getElementById('reg-name').value.trim();
             if (!name) return;
 
-            const btn = document.querySelector('.submit-btn');
+            const btn = document.getElementById('reg-btn');
             btn.disabled = true;
             btn.textContent = '登録中...';
+            showMsg('', '');
+
+            // 同名ユーザーチェック
+            const q = query(collection(db, 'users'), where('displayName', '==', name));
+            const existing = await getDocs(q);
+            if (!existing.empty) {
+                showMsg('このユーザー名はすでに使われています', 'error');
+                btn.disabled = false;
+                btn.textContent = '登録して始める';
+                return;
+            }
 
             const uid = generateUUID();
             try {
@@ -74,30 +130,45 @@
                 });
                 localStorage.setItem('iriam_uid', uid);
                 localStorage.setItem('iriam_name', name);
-                location.href = 'index.html';
+                showMsg('登録完了！', 'success');
+                setTimeout(() => location.href = 'index.html', 800);
             } catch(err) {
-                // Firestore失敗でもlocalStorageには保存して進む
-                localStorage.setItem('iriam_uid', uid);
-                localStorage.setItem('iriam_name', name);
-                console.warn('Firestore保存失敗:', err);
-                location.href = 'index.html';
+                showMsg('登録に失敗しました: ' + err.message, 'error');
+                btn.disabled = false;
+                btn.textContent = '登録して始める';
             }
         };
 
-        // 既存ユーザーのFirestore同期（登録済みだがFirestoreにない場合）
-        const existingUid = localStorage.getItem('iriam_uid');
-        const existingName = localStorage.getItem('iriam_name');
-        if (existingUid && existingName) {
-            getDoc(doc(db, 'users', existingUid)).then(snap => {
-                if (!snap.exists()) {
-                    setDoc(doc(db, 'users', existingUid), {
-                        displayName: existingName,
-                        createdAt: serverTimestamp()
-                    }).catch(() => {});
+        window.doLogin = async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('login-name').value.trim();
+            if (!name) return;
+
+            const btn = document.getElementById('login-btn');
+            btn.disabled = true;
+            btn.textContent = 'ログイン中...';
+            showMsg('', '');
+
+            try {
+                const q = query(collection(db, 'users'), where('displayName', '==', name));
+                const snap = await getDocs(q);
+                if (snap.empty) {
+                    showMsg('ユーザーが見つかりません。新規登録してください', 'error');
+                    btn.disabled = false;
+                    btn.textContent = 'ログイン';
+                    return;
                 }
-            }).catch(() => {});
-            location.href = 'index.html';
-        }
+                const userDoc = snap.docs[0];
+                localStorage.setItem('iriam_uid', userDoc.id);
+                localStorage.setItem('iriam_name', name);
+                showMsg('ログイン成功！', 'success');
+                setTimeout(() => location.href = 'index.html', 800);
+            } catch(err) {
+                showMsg('ログインに失敗しました: ' + err.message, 'error');
+                btn.disabled = false;
+                btn.textContent = 'ログイン';
+            }
+        };
     </script>
 </body>
 </html>
