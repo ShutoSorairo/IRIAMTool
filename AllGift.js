@@ -3,12 +3,10 @@ const categories = [
 ];
 
 let gifts = [];
-let sortMode = 'pt'; // 'pt' | 'add'
+let sortMode = 'pt_asc'; // 'pt_asc' | 'pt_desc' | 'add_asc' | 'add_desc'
 
 window.setSort = function(mode) {
     sortMode = mode;
-    document.getElementById('sort-pt').classList.toggle('active', mode === 'pt');
-    document.getElementById('sort-add').classList.toggle('active', mode === 'add');
     const activeBtn = document.querySelector('.tab-btn.active');
     if (activeBtn) showGifts(activeBtn.textContent);
 };
@@ -131,10 +129,14 @@ function showGifts(category) {
         giftList.innerHTML = '<div style="text-align:center;color:#aaa;grid-column:1/-1;">このカテゴリのギフトはありません。</div>';
         return;
     }
-    if (sortMode === 'pt') {
+    if (sortMode === 'pt_asc') {
         filtered = filtered.slice().sort((a, b) => ptValue(a.src) - ptValue(b.src));
-    } else {
+    } else if (sortMode === 'pt_desc') {
+        filtered = filtered.slice().sort((a, b) => ptValue(b.src) - ptValue(a.src));
+    } else if (sortMode === 'add_asc') {
         filtered = filtered.slice().sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+    } else {
+        filtered = filtered.slice().sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
     }
     filtered.forEach(gift => giftList.appendChild(renderGift(gift)));
 }

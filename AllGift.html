@@ -11,8 +11,12 @@
     <h1>IRIAM 全ギフト一覧</h1>
     <div class="tab-container" id="tabContainer"></div>
     <div style="text-align:right; margin-bottom:6px;">
-        <button class="sort-btn active" id="sort-pt" onclick="setSort('pt')">PT順</button>
-        <button class="sort-btn" id="sort-add" onclick="setSort('add')">追加順</button>
+        <select id="sort-select" onchange="setSort(this.value)" style="padding:6px 12px; border:1px solid #ddd; border-radius:6px; font-size:0.9em; cursor:pointer;">
+            <option value="pt_asc">PT順 (低→高)</option>
+            <option value="pt_desc">PT順 (高→低)</option>
+            <option value="add_asc">追加順 (古→新)</option>
+            <option value="add_desc">追加順 (新→古)</option>
+        </select>
     </div>
     <div class="gift-grid" id="giftList"></div>
     <a href="index.html" class="home-btn">ホームへ</a>
