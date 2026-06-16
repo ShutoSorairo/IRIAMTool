@@ -6,23 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="shared.css">
     <link rel="stylesheet" href="AllGift.css">
-    <style>
-        .btn-senyo { background: #e65100; color: #fff; border: none; border-radius: 7px; padding: 7px 16px; font-size: 0.9rem; font-weight: 600; cursor: pointer; margin-left: 12px; }
-        .btn-senyo:hover { background: #bf360c; }
-        .senyo-form { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; align-items: flex-end; }
-        .senyo-form input { padding: 8px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95em; }
-        .senyo-form input[type="text"] { flex: 1; min-width: 120px; }
-        .senyo-form input[type="number"] { width: 80px; }
-        .senyo-add-btn { padding: 8px 18px; background: #4f8cff; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
-        .senyo-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
-        .senyo-item:last-child { border-bottom: none; }
-    </style>
 </head>
 <body>
     <h1>IRIAM 全ギフト一覧</h1>
-    <div id="senyo-btn-wrap" style="text-align:center; margin-bottom:8px; display:none;">
-        <button class="btn-senyo" onclick="openSenyoModal()">⚙️ 専用ギフト管理</button>
-    </div>
     <div class="tab-container" id="tabContainer"></div>
     <div style="text-align:right; margin-bottom:6px;">
         <button class="sort-btn active" id="sort-pt" onclick="setSort('pt')">PT順</button>
@@ -30,106 +16,6 @@
     </div>
     <div class="gift-grid" id="giftList"></div>
     <a href="index.html" class="home-btn">ホームへ</a>
-
-    <!-- 専用ギフト管理モーダル -->
-    <div id="senyo-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; display:none; align-items:center; justify-content:center;">
-        <div style="background:#fff; border-radius:14px; padding:28px; max-width:500px; width:90%; max-height:80vh; overflow-y:auto; position:relative;">
-            <h3 style="margin:0 0 16px; color:#e65100;">⚙️ 専用ギフト管理</h3>
-            <div class="senyo-form">
-                <input type="text" id="s-name" placeholder="ギフト名">
-                <input type="text" id="s-file" placeholder="ファイル名（拡張子なし）">
-                <input type="number" id="s-pt" placeholder="PT">
-                <button class="senyo-add-btn" onclick="senyoAdd()">追加</button>
-            </div>
-            <div style="font-size:0.8em; color:#aaa; margin-bottom:12px;">
-                ※ 画像パス: ギフト/専用/<b id="s-preview">ファイル名_PTpt.PNG</b>
-            </div>
-            <div id="senyo-list" style="border:1px solid #eee; border-radius:8px; min-height:60px;"></div>
-            <p id="senyo-msg" style="text-align:center; font-size:0.9em; color:#4caf50; min-height:20px; margin-top:8px;"></p>
-            <button onclick="closeSenyoModal()" style="margin-top:12px; width:100%; padding:10px; background:#f5f5f5; border:none; border-radius:8px; cursor:pointer;">閉じる</button>
-        </div>
-    </div>
-
     <script type="module" src="AllGift.js"></script>
-    <script type="module">
-        import { db } from './firebase-config.js';
-        import { collection, getDocs, addDoc, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
-
-        const uid = localStorage.getItem('iriam_uid');
-        const isAdmin = !!sessionStorage.getItem('iriam_admin_logged_in');
-        if (isAdmin) document.getElementById('senyo-btn-wrap').style.display = 'block';
-
-        // ファイル名プレビュー更新
-        ['s-file','s-pt'].forEach(id => {
-            document.getElementById(id).addEventListener('input', () => {
-                const f = document.getElementById('s-file').value || 'ファイル名';
-                const p = document.getElementById('s-pt').value || 'PT';
-                document.getElementById('s-preview').textContent = `${f}_${p}pt.PNG`;
-            });
-        });
-
-        window.openSenyoModal = async function() {
-            if (!isAdmin) { alert('管理者のみ操作できます'); return; }
-            if (!uid) { alert('ログインしてください'); return; }
-            document.getElementById('senyo-modal').style.display = 'flex';
-            await loadSenyoList();
-        };
-
-        window.closeSenyoModal = function() {
-            document.getElementById('senyo-modal').style.display = 'none';
-        };
-
-        async function loadSenyoList() {
-            const list = document.getElementById('senyo-list');
-            list.innerHTML = '<p style="text-align:center;color:#aaa;padding:12px;">読み込み中...</p>';
-            const snap = await getDocs(collection(db, 'users', uid, 'gifts'));
-            list.innerHTML = '';
-            if (snap.empty) {
-                list.innerHTML = '<p style="text-align:center;color:#aaa;padding:12px;">登録済みの専用ギフトはありません</p>';
-                return;
-            }
-            snap.forEach(d => {
-                const g = d.data();
-                const div = document.createElement('div');
-                div.className = 'senyo-item';
-                div.innerHTML = `
-                    <span><b>${g.name}</b> <span style="color:#aaa;font-size:0.85em;">${g.src}</span></span>
-                    <button onclick="senyoDelete('${d.id}', this)" style="background:#ef5350;color:#fff;border:none;border-radius:5px;padding:4px 10px;cursor:pointer;font-size:0.85em;">削除</button>
-                `;
-                list.appendChild(div);
-            });
-        }
-
-        window.senyoAdd = async function() {
-            const name = document.getElementById('s-name').value.trim();
-            const file = document.getElementById('s-file').value.trim();
-            const pt   = document.getElementById('s-pt').value.trim();
-            if (!name || !file || !pt) { alert('すべて入力してください'); return; }
-            const src = `ギフト/専用/${file}_${pt}pt.PNG`;
-            const msg = document.getElementById('senyo-msg');
-            try {
-                await addDoc(collection(db, 'users', uid, 'gifts'), {
-                    name, categories: ['専用'], src, createdAt: serverTimestamp()
-                });
-                document.getElementById('s-name').value = '';
-                document.getElementById('s-file').value = '';
-                document.getElementById('s-pt').value = '';
-                msg.textContent = `✓ 「${name}」を追加しました`;
-                setTimeout(() => msg.textContent = '', 2000);
-                await loadSenyoList();
-                // AllGift表示も更新
-                if (window.reloadGifts) window.reloadGifts();
-            } catch(e) {
-                alert('追加失敗: ' + e.message);
-            }
-        };
-
-        window.senyoDelete = async function(docId, btn) {
-            if (!confirm('削除しますか？')) return;
-            await deleteDoc(doc(db, 'users', uid, 'gifts', docId));
-            btn.closest('.senyo-item').remove();
-            if (window.reloadGifts) window.reloadGifts();
-        };
-    </script>
 </body>
 </html>
