@@ -94,8 +94,8 @@
         }
 
         window.switchTab = function(tab) {
-            document.getElementById('register-form').style.display = tab === 'register' ? '' : 'none';
-            document.getElementById('login-form').style.display = tab === 'login' ? '' : 'none';
+            document.getElementById('register-form').style.display = tab === 'register' ? 'block' : 'none';
+            document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
             document.querySelectorAll('.tab-btn').forEach((btn, i) => {
                 btn.classList.toggle('active', (i === 0 && tab === 'register') || (i === 1 && tab === 'login'));
             });
