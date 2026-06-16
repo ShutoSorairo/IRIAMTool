@@ -18,6 +18,7 @@ let ix = null; // インタラクション状態
 
 window.onload = () => {
     document.getElementById('psd-upload').addEventListener('change', handlePSDInput);
+    document.getElementById('img-upload').addEventListener('change', handleImageInput);
 
     const svg = document.getElementById('panel-svg');
     svg.addEventListener('mousedown', onMD);
@@ -540,6 +541,33 @@ function deleteSelectedPanel() {
     hidePanelEditor();
     renderCanvas();
     savePanelState();
+}
+
+// ---- 画像読み込み ----
+function handleImageInput(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = ev => {
+        const tempImg = new Image();
+        tempImg.onload = () => {
+            boardW = tempImg.naturalWidth;
+            boardH = tempImg.naturalHeight;
+
+            const img = document.getElementById('hidden-image');
+            img.src = ev.target.result;
+            img.style.display = 'block';
+
+            document.getElementById('no-image-text').style.display = 'none';
+            document.getElementById('panel-svg').setAttribute('viewBox', `0 0 ${boardW} ${boardH}`);
+            renderCanvas();
+            showNotif('✅ 画像を読み込みました', '#2e7d32', 2000);
+        };
+        tempImg.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
 }
 
 // ---- PSD読み込み ----
