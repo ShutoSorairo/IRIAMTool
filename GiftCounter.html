@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ギフトカウンター</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="shared.css">
+    <link rel="stylesheet" href="GiftCounter.css">
+</head>
+<body>
+    <a href="index.html" class="home-btn">ホームへ</a>
+    <div class="gc-wrap">
+        <h1 class="gc-title">ギフトカウンター</h1>
+
+        <div class="gc-toolbar">
+            <button class="gc-btn-add" id="btn-add-gift" onclick="openGiftPopup()">＋ ギフト追加</button>
+            <button class="gc-btn-add gc-btn-custom" id="btn-add-custom" onclick="openCustomPopup()">＋ カスタム追加</button>
+            <button class="gc-btn-edit" id="btn-edit" onclick="toggleEditMode()">編集</button>
+        </div>
+
+        <div class="gc-grid" id="counterGrid"></div>
+
+        <div class="gc-total" id="gcTotal" style="display:none;">
+            <span>ギフト合計 PT</span>
+            <span id="totalPt">0pt</span>
+        </div>
+    </div>
+
+    <!-- ギフト選択ポップアップ -->
+    <div class="gc-overlay" id="giftOverlay" style="display:none;" onclick="closeGiftPopup(event)">
+        <div class="gc-sheet" id="giftSheet">
+            <div class="gc-sheet-header">
+                <span>ギフトを選択</span>
+                <button class="gc-sheet-close" onclick="closeGiftPopup()">✕</button>
+            </div>
+            <div class="gc-tab-row" id="giftTabRow"></div>
+            <div class="gc-gift-grid" id="giftPickerGrid"></div>
+            <div class="gc-sheet-footer">
+                <div class="gc-selected-info" id="selectedInfo">ギフトを選んでください</div>
+                <div class="gc-goal-row">
+                    <label>目標回数</label>
+                    <input type="number" id="giftGoalInput" min="1" placeholder="なし" style="width:70px;">
+                    <span>回</span>
+                </div>
+                <button class="gc-btn-confirm" onclick="confirmAddGift()">追加する</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- カスタム追加ポップアップ -->
+    <div class="gc-overlay" id="customOverlay" style="display:none;" onclick="closeCustomPopup(event)">
+        <div class="gc-sheet" id="customSheet">
+            <div class="gc-sheet-header">
+                <span>カスタムカウンターを追加</span>
+                <button class="gc-sheet-close" onclick="closeCustomPopup()">✕</button>
+            </div>
+            <div style="padding:16px; display:flex; flex-direction:column; gap:14px;">
+                <div class="gc-presets">
+                    <p class="gc-label">よく使う項目</p>
+                    <div class="gc-preset-btns" id="presetBtns"></div>
+                </div>
+                <div>
+                    <p class="gc-label">名前</p>
+                    <input type="text" id="customName" placeholder="例: 入室人数" class="gc-input">
+                </div>
+                <div>
+                    <p class="gc-label">目標数（任意）</p>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <input type="number" id="customGoal" min="1" placeholder="なし" class="gc-input" style="width:100px;">
+                        <span style="color:#666; font-size:0.9em;">回 / 人 / 個</span>
+                    </div>
+                </div>
+                <button class="gc-btn-confirm" onclick="confirmAddCustom()">追加する</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 目標編集ポップアップ -->
+    <div class="gc-overlay" id="goalEditOverlay" style="display:none;" onclick="closeGoalEdit(event)">
+        <div class="gc-sheet" id="goalEditSheet" style="max-height:260px;">
+            <div class="gc-sheet-header">
+                <span id="goalEditTitle">目標を編集</span>
+                <button class="gc-sheet-close" onclick="closeGoalEdit()">✕</button>
+            </div>
+            <div style="padding:20px; display:flex; flex-direction:column; gap:16px;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <input type="number" id="goalEditInput" min="1" placeholder="なし（未設定）" class="gc-input" style="flex:1;">
+                    <span style="color:#666; font-size:0.9em;">回</span>
+                </div>
+                <button class="gc-btn-confirm" onclick="confirmGoalEdit()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="GiftCounter.js"></script>
+</body>
+</html>
