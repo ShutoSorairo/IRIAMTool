@@ -3,6 +3,15 @@ const categories = [
 ];
 
 let gifts = [];
+let sortMode = 'pt'; // 'pt' | 'add'
+
+window.setSort = function(mode) {
+    sortMode = mode;
+    document.getElementById('sort-pt').classList.toggle('active', mode === 'pt');
+    document.getElementById('sort-add').classList.toggle('active', mode === 'add');
+    const activeBtn = document.querySelector('.tab-btn.active');
+    if (activeBtn) showGifts(activeBtn.textContent);
+};
 
 async function loadGiftsFromFirestore() {
     gifts = [];
@@ -15,7 +24,8 @@ async function loadGiftsFromFirestore() {
         sharedSnap.forEach(d => {
             const g = d.data();
             const cats = Array.isArray(g.categories) ? g.categories : [g.category];
-            cats.forEach(cat => gifts.push({ name: g.name, category: cat, src: g.src }));
+            const createdAt = g.createdAt?.toMillis?.() ?? 0;
+            cats.forEach(cat => gifts.push({ name: g.name, category: cat, src: g.src, createdAt }));
         });
 
         // 専用ギフト（ログイン中ユーザー）
@@ -25,7 +35,8 @@ async function loadGiftsFromFirestore() {
             userSnap.forEach(d => {
                 const g = d.data();
                 const cats = Array.isArray(g.categories) ? g.categories : [g.category];
-                cats.forEach(cat => gifts.push({ name: g.name, category: cat, src: g.src }));
+                const createdAt = g.createdAt?.toMillis?.() ?? 0;
+                cats.forEach(cat => gifts.push({ name: g.name, category: cat, src: g.src, createdAt }));
             });
         }
     } catch(e) {
@@ -115,10 +126,15 @@ function showGifts(category) {
         return;
     }
 
-    const filtered = gifts.filter(g => g.category === category);
+    let filtered = gifts.filter(g => g.category === category);
     if (filtered.length === 0) {
         giftList.innerHTML = '<div style="text-align:center;color:#aaa;grid-column:1/-1;">このカテゴリのギフトはありません。</div>';
         return;
+    }
+    if (sortMode === 'pt') {
+        filtered = filtered.slice().sort((a, b) => ptValue(a.src) - ptValue(b.src));
+    } else {
+        filtered = filtered.slice().sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
     }
     filtered.forEach(gift => giftList.appendChild(renderGift(gift)));
 }
