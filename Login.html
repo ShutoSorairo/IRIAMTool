@@ -36,7 +36,6 @@
         .msg { font-size: 0.9rem; margin-top: 12px; min-height: 20px; }
         .msg.error { color: #e53935; }
         .msg.success { color: #2e7d32; }
-        #login-form { display: none; }
     </style>
 </head>
 <body>
@@ -45,20 +44,20 @@
         <p class="subtitle">ログインまたは新規登録</p>
 
         <div class="tab-btns">
-            <button class="tab-btn active" onclick="switchTab('register')">新規登録</button>
-            <button class="tab-btn" onclick="switchTab('login')">ログイン</button>
+            <button class="tab-btn active" onclick="switchTab('login')">ログイン</button>
+            <button class="tab-btn" onclick="switchTab('register')">新規登録</button>
         </div>
-
-        <form id="register-form" onsubmit="doRegister(event)">
-            <label>ユーザー名（配信者名など）</label>
-            <input type="text" id="reg-name" required placeholder="例: 空天色しゅーと" maxlength="30" autofocus>
-            <button type="submit" class="submit-btn" id="reg-btn">登録して始める</button>
-        </form>
 
         <form id="login-form" onsubmit="doLogin(event)">
             <label>ユーザー名</label>
-            <input type="text" id="login-name" required placeholder="登録時のユーザー名" maxlength="30">
+            <input type="text" id="login-name" required placeholder="登録時のユーザー名" maxlength="30" autofocus>
             <button type="submit" class="submit-btn" id="login-btn">ログイン</button>
+        </form>
+
+        <form id="register-form" onsubmit="doRegister(event)" style="display:none;">
+            <label>ユーザー名（配信者名など）</label>
+            <input type="text" id="reg-name" required placeholder="例: 空天色しゅーと" maxlength="30">
+            <button type="submit" class="submit-btn" id="reg-btn">登録して始める</button>
         </form>
 
         <p class="msg" id="msg"></p>
@@ -97,7 +96,7 @@
             document.getElementById('register-form').style.display = tab === 'register' ? 'block' : 'none';
             document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
             document.querySelectorAll('.tab-btn').forEach((btn, i) => {
-                btn.classList.toggle('active', (i === 0 && tab === 'register') || (i === 1 && tab === 'login'));
+                btn.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'register'));
             });
             document.getElementById('msg').textContent = '';
         };
