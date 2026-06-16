@@ -91,10 +91,6 @@
             location.href = 'index.html';
         }
 
-        // URLパラメータでタブを初期選択
-        const tab = new URLSearchParams(location.search).get('tab');
-        if (tab === 'login') switchTab('login');
-
         window.switchTab = function(tab) {
             document.getElementById('register-form').style.display = tab === 'register' ? 'block' : 'none';
             document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
@@ -102,6 +98,10 @@
             document.getElementById('tab-login').classList.toggle('active', tab === 'login');
             document.getElementById('msg').textContent = '';
         };
+
+        // URLパラメータでタブを初期選択
+        const initTab = new URLSearchParams(location.search).get('tab');
+        if (initTab === 'login') switchTab('login');
 
         window.doRegister = async function(e) {
             e.preventDefault();
