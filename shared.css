@@ -12,9 +12,9 @@ body {
 
 /* ホームボタン */
 .home-btn {
-    position: absolute;
-    top: 24px;
-    left: 24px;
+    position: fixed;
+    top: 48px;
+    left: 16px;
     display: inline-block;
     color: #fff;
     text-decoration: none;
