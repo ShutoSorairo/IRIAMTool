@@ -1,5 +1,5 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js';
-import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js';
+import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs } from 'https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js';
 
 const firebaseConfig = {
     apiKey: "AIzaSyC2bGfFLjMa80BklV0dpAT__9p8PUj4Q9E",
@@ -14,18 +14,142 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const FACES = [
-    { key: 'あまい',   cls: 'sweet'  },
-    { key: 'からい',   cls: 'spicy'  },
-    { key: 'すっぱい', cls: 'sour'   },
-    { key: 'うまい',   cls: 'tasty'  },
-    { key: 'にがい',   cls: 'bitter' },
-    { key: 'しょっぱい', cls: 'salty' },
+    { key: 'あまい',     cls: 'sweet'  },
+    { key: 'からい',     cls: 'spicy'  },
+    { key: 'すっぱい',   cls: 'sour'   },
+    { key: 'うまい',     cls: 'tasty'  },
+    { key: 'にがい',     cls: 'bitter' },
+    { key: 'しょっぱい', cls: 'salty'  },
 ];
 
-let persons = [];   // [{ id, name, counts: { あまい:0, ... } }]
-let consumed = {};  // { あまい:0, ... }
-
+let persons = [];
+let consumed = {};
 FACES.forEach(f => { consumed[f.key] = 0; });
+
+// セッション管理
+let currentSessionId = 'default';
+let currentSessionLabel = 'デフォルト';
+let sessions = []; // [{ id, label, updatedAt }]
+
+const uid = localStorage.getItem('iriam_uid');
+
+// ---- セッション操作 ----
+
+async function loadSessionList() {
+    sessions = [];
+    if (uid) {
+        try {
+            const col = collection(db, 'users', uid, 'diceTally');
+            const snap = await getDocs(col);
+            snap.forEach(d => {
+                const data = d.data();
+                sessions.push({ id: d.id, label: data.label || d.id, updatedAt: data.updatedAt || 0 });
+            });
+            sessions.sort((a, b) => b.updatedAt - a.updatedAt);
+        } catch (e) { console.warn('session list load failed', e); }
+    }
+    if (sessions.length === 0) {
+        sessions = [{ id: 'default', label: 'デフォルト', updatedAt: 0 }];
+    }
+}
+
+async function loadSession(sessionId) {
+    currentSessionId = sessionId;
+    const sess = sessions.find(s => s.id === sessionId);
+    currentSessionLabel = sess ? sess.label : sessionId;
+    document.getElementById('sessionName').textContent = currentSessionLabel;
+
+    persons = [];
+    FACES.forEach(f => { consumed[f.key] = 0; });
+
+    let data = null;
+    if (uid) {
+        try {
+            const snap = await getDoc(doc(db, 'users', uid, 'diceTally', sessionId));
+            if (snap.exists()) data = snap.data();
+        } catch (e) { console.warn('Firestore load failed', e); }
+    }
+    if (!data) {
+        const local = localStorage.getItem('diceTally_' + sessionId);
+        if (local) data = JSON.parse(local);
+    }
+    if (data) {
+        persons = data.persons || [];
+        consumed = data.consumed || {};
+        FACES.forEach(f => { if (!consumed[f.key]) consumed[f.key] = 0; });
+    }
+    renderPersons();
+    renderTotal();
+}
+
+window.openSessionModal = async function() {
+    await loadSessionList();
+    renderSessionList();
+    document.getElementById('sessionModal').classList.add('open');
+};
+
+window.closeSessionModal = function(e) {
+    if (e && e.target !== document.getElementById('sessionModal')) return;
+    document.getElementById('sessionModal').classList.remove('open');
+};
+
+function renderSessionList() {
+    const list = document.getElementById('sessionList');
+    if (sessions.length === 0) {
+        list.innerHTML = '<div class="dt-session-empty">企画がありません</div>';
+        return;
+    }
+    list.innerHTML = sessions.map(s => {
+        const dateStr = s.updatedAt ? new Date(s.updatedAt).toLocaleString('ja-JP', { month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' }) + ' 更新' : '';
+        const isActive = s.id === currentSessionId;
+        return `
+            <div class="dt-session-item ${isActive ? 'active' : ''}" onclick="selectSession('${s.id}')">
+                <div class="dt-session-item-info">
+                    <div class="dt-session-item-name">${s.label}${isActive ? ' ✓' : ''}</div>
+                    ${dateStr ? `<div class="dt-session-item-date">${dateStr}</div>` : ''}
+                </div>
+                ${!isActive ? `<button class="dt-session-item-del" onclick="deleteSession(event,'${s.id}')">×</button>` : ''}
+            </div>
+        `;
+    }).join('');
+}
+
+window.selectSession = async function(id) {
+    document.getElementById('sessionModal').classList.remove('open');
+    await loadSession(id);
+};
+
+window.createSession = async function() {
+    const inp = document.getElementById('newSessionName');
+    const label = inp.value.trim();
+    if (!label) return;
+    const id = 'session_' + Date.now();
+    const newSess = { id, label, updatedAt: Date.now() };
+    // 空データで即保存
+    const emptyData = { label, persons: [], consumed: {}, updatedAt: newSess.updatedAt };
+    FACES.forEach(f => { emptyData.consumed[f.key] = 0; });
+    if (uid) {
+        try { await setDoc(doc(db, 'users', uid, 'diceTally', id), emptyData); } catch(e) {}
+    }
+    localStorage.setItem('diceTally_' + id, JSON.stringify(emptyData));
+    sessions.unshift(newSess);
+    inp.value = '';
+    document.getElementById('sessionModal').classList.remove('open');
+    await loadSession(id);
+};
+
+window.deleteSession = async function(e, id) {
+    e.stopPropagation();
+    if (!confirm('この企画を削除しますか？')) return;
+    if (uid) {
+        try { await deleteDoc(doc(db, 'users', uid, 'diceTally', id)); } catch(e) {}
+    }
+    localStorage.removeItem('diceTally_' + id);
+    sessions = sessions.filter(s => s.id !== id);
+    renderSessionList();
+};
+
+// ---- データ操作 ----
 
 function getTotals() {
     const t = {};
@@ -132,12 +256,11 @@ window.switchTab = function(tab) {
 };
 
 window.saveData = async function() {
-    const uid = localStorage.getItem('iriam_uid');
-    const data = { persons, consumed, updatedAt: Date.now() };
-    localStorage.setItem('diceTally', JSON.stringify(data));
+    const data = { label: currentSessionLabel, persons, consumed, updatedAt: Date.now() };
+    localStorage.setItem('diceTally_' + currentSessionId, JSON.stringify(data));
     if (uid) {
         try {
-            await setDoc(doc(db, 'users', uid, 'diceTally', 'default'), data);
+            await setDoc(doc(db, 'users', uid, 'diceTally', currentSessionId), data);
         } catch (e) { console.warn('Firestore save failed', e); }
     }
     showToast('💾 保存しました');
@@ -165,26 +288,15 @@ function showToast(msg) {
     el._t = setTimeout(() => { el.style.opacity = '0'; }, 2000);
 }
 
-async function loadData() {
-    const uid = localStorage.getItem('iriam_uid');
-    let data = null;
-    if (uid) {
-        try {
-            const snap = await getDoc(doc(db, 'users', uid, 'diceTally', 'default'));
-            if (snap.exists()) data = snap.data();
-        } catch (e) { console.warn('Firestore load failed', e); }
-    }
-    if (!data) {
-        const local = localStorage.getItem('diceTally');
-        if (local) data = JSON.parse(local);
-    }
-    if (data) {
-        persons = data.persons || [];
-        consumed = data.consumed || {};
-        FACES.forEach(f => { if (!consumed[f.key]) consumed[f.key] = 0; });
-    }
-    renderPersons();
-    renderTotal();
-}
-
-loadData();
+// 初期化
+(async function init() {
+    await loadSessionList();
+    const lastId = localStorage.getItem('diceTally_lastSession') || (sessions[0] && sessions[0].id) || 'default';
+    await loadSession(lastId);
+    // 最後のセッションを記憶
+    const origSave = window.saveData;
+    window.saveData = async function() {
+        localStorage.setItem('diceTally_lastSession', currentSessionId);
+        await origSave();
+    };
+})();
