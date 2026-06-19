@@ -1,0 +1,65 @@
+body { background: #f5f7fa; font-family: 'Segoe UI', sans-serif; margin: 0; }
+
+.dt-wrap { max-width: 480px; margin: 0 auto; padding: 60px 16px 40px; }
+
+.dt-header { text-align: center; margin-bottom: 20px; }
+.dt-label { margin: 0; font-size: 0.8em; color: #999; letter-spacing: 0.1em; text-transform: uppercase; }
+.dt-title { margin: 4px 0 0; font-size: 1.6em; color: #333; }
+
+.dt-tabs { display: flex; gap: 8px; margin-bottom: 20px; background: #e8eaf0; border-radius: 12px; padding: 4px; }
+.dt-tab { flex: 1; padding: 10px; border: none; background: transparent; border-radius: 10px; font-size: 0.9em; cursor: pointer; color: #666; transition: all 0.2s; }
+.dt-tab.active { background: #fff; color: #4f8cff; font-weight: 700; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+
+/* 累計・消費サマリー */
+.dt-summary { display: flex; align-items: center; background: #fff; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); padding: 16px 12px; margin-bottom: 16px; }
+.dt-summary-item { flex: 1; text-align: center; }
+.dt-summary-label { display: block; font-size: 0.75em; color: #999; margin-bottom: 4px; }
+.dt-summary-val { display: block; font-size: 1.3em; font-weight: 700; color: #333; }
+.dt-summary-sep { width: 1px; height: 36px; background: #eee; }
+
+/* ダイスグリッド */
+.dt-dice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.dt-dice-card { background: #fff; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); padding: 14px 16px; }
+.dt-dice-card.sweet  { border-top: 3px solid #f472b6; }
+.dt-dice-card.spicy  { border-top: 3px solid #f87171; }
+.dt-dice-card.sour   { border-top: 3px solid #facc15; }
+.dt-dice-card.tasty  { border-top: 3px solid #4ade80; }
+.dt-dice-card.bitter { border-top: 3px solid #818cf8; }
+.dt-dice-card.salty  { border-top: 3px solid #60a5fa; }
+
+.dt-dice-face { font-size: 0.85em; font-weight: 700; color: #555; margin-bottom: 8px; }
+.dt-dice-counts { display: flex; gap: 8px; align-items: center; font-size: 0.8em; color: #888; margin-bottom: 10px; }
+.dt-dice-counts span { color: #333; font-weight: 600; }
+.dt-consume-btn { width: 100%; padding: 7px; border: none; border-radius: 8px; background: #4f8cff; color: #fff; font-size: 0.85em; cursor: pointer; transition: background 0.2s; }
+.dt-consume-btn:hover { background: #3b7cf0; }
+.dt-consume-btn:disabled { background: #ddd; color: #aaa; cursor: not-allowed; }
+
+/* 人別タブ */
+.dt-add-person { display: flex; gap: 8px; margin-bottom: 16px; }
+.dt-input { flex: 1; padding: 10px 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 1em; outline: none; }
+.dt-input:focus { border-color: #4f8cff; }
+
+.dt-person-card { background: #fff; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-bottom: 12px; overflow: hidden; }
+.dt-person-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid #f0f0f0; }
+.dt-person-name { font-weight: 700; font-size: 1em; color: #333; }
+.dt-person-total { font-size: 0.8em; color: #888; }
+.dt-person-del { background: none; border: none; color: #ccc; font-size: 1.1em; cursor: pointer; padding: 0 4px; }
+.dt-person-del:hover { color: #ef4444; }
+
+.dt-person-faces { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+.dt-face-cell { display: flex; flex-direction: column; align-items: center; padding: 10px 6px; border-right: 1px solid #f5f5f5; border-bottom: 1px solid #f5f5f5; }
+.dt-face-cell:nth-child(3n) { border-right: none; }
+.dt-face-cell:nth-child(n+4) { border-bottom: none; }
+.dt-face-label { font-size: 0.7em; color: #888; margin-bottom: 6px; }
+.dt-face-ctrl { display: flex; align-items: center; gap: 6px; }
+.dt-face-btn { width: 26px; height: 26px; border: 1px solid #e5e7eb; border-radius: 50%; background: #fff; cursor: pointer; font-size: 1em; line-height: 1; display: flex; align-items: center; justify-content: center; color: #555; transition: all 0.15s; }
+.dt-face-btn:hover { background: #4f8cff; color: #fff; border-color: #4f8cff; }
+.dt-face-count { font-size: 1em; font-weight: 700; min-width: 20px; text-align: center; color: #333; }
+
+/* フッター */
+.dt-footer { display: flex; gap: 10px; margin-top: 20px; }
+.dt-btn-reset { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 10px; background: #fff; color: #666; font-size: 0.95em; cursor: pointer; }
+.dt-btn-reset:hover { background: #f5f5f5; }
+.dt-btn-save { flex: 2; padding: 12px; border: none; border-radius: 10px; background: #4f8cff; color: #fff; font-size: 0.95em; font-weight: 700; cursor: pointer; }
+.dt-btn-save:hover { background: #3b7cf0; }
