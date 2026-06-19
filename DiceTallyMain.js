@@ -28,6 +28,12 @@ const sessionId = params.get('id') || 'default';
 
 let sessionLabel = '';
 let persons = [];
+let autoSaveTimer = null;
+
+function autoSave() {
+    clearTimeout(autoSaveTimer);
+    autoSaveTimer = setTimeout(saveData, 1500);
+}
 let consumed = {};
 FACES.forEach(f => { consumed[f.key] = 0; });
 
@@ -75,6 +81,7 @@ window._consume = function(key) {
     if ((consumed[key] || 0) >= (totals[key] || 0)) return;
     consumed[key] = (consumed[key] || 0) + 1;
     renderTotal();
+    autoSave();
 };
 
 function renderPersons() {
@@ -113,12 +120,14 @@ window._changeFace = function(id, key, delta) {
     p.counts[key] = Math.max(0, (p.counts[key] || 0) + delta);
     renderPersons();
     renderTotal();
+    autoSave();
 };
 
 window._deletePerson = function(id) {
     persons = persons.filter(x => x.id !== id);
     renderPersons();
     renderTotal();
+    autoSave();
 };
 
 window.addPerson = function() {
@@ -131,6 +140,7 @@ window.addPerson = function() {
     inp.value = '';
     renderPersons();
     renderTotal();
+    autoSave();
 };
 
 window.switchTab = function(tab) {
