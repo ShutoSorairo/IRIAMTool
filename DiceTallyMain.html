@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>味見ダイス集計</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="shared.css">
+    <link rel="stylesheet" href="DiceTally.css">
+</head>
+<body>
+    <a href="DiceTally.html" class="home-btn">← 企画一覧</a>
+    <div class="dt-wrap">
+        <div class="dt-session-bar">
+            <div class="dt-session-name" id="sessionName">読み込み中...</div>
+            <a href="DiceTally.html" class="dt-session-btn">切り替え</a>
+        </div>
+
+        <div class="dt-tabs">
+            <button class="dt-tab active" id="tab-total" onclick="switchTab('total')">📊 累計・消費</button>
+            <button class="dt-tab" id="tab-person" onclick="switchTab('person')">👤 人別カウント</button>
+        </div>
+
+        <!-- 累計・消費タブ -->
+        <div id="view-total">
+            <div class="dt-summary">
+                <div class="dt-summary-item">
+                    <span class="dt-summary-label">合計</span>
+                    <span class="dt-summary-val" id="s-total">0回</span>
+                </div>
+                <div class="dt-summary-sep"></div>
+                <div class="dt-summary-item">
+                    <span class="dt-summary-label">消費済み</span>
+                    <span class="dt-summary-val" id="s-consumed" style="color:#2e7d32;">0回</span>
+                </div>
+                <div class="dt-summary-sep"></div>
+                <div class="dt-summary-item">
+                    <span class="dt-summary-label">未消費</span>
+                    <span class="dt-summary-val" id="s-remaining" style="color:#e53935;">0回</span>
+                </div>
+            </div>
+            <div class="dt-dice-grid" id="totalGrid"></div>
+            <div class="dt-footer">
+                <button class="dt-btn-reset" onclick="confirmReset()">🔄 リセット</button>
+                <button class="dt-btn-save" onclick="saveData()">💾 保存</button>
+            </div>
+        </div>
+
+        <!-- 人別タブ -->
+        <div id="view-person" style="display:none;">
+            <div class="dt-add-person">
+                <input type="text" id="personName" placeholder="名前を入力して追加" class="dt-input">
+                <button onclick="addPerson()" class="dt-btn-save" style="white-space:nowrap;">追加</button>
+            </div>
+            <div id="personList"></div>
+        </div>
+    </div>
+
+    <script type="module" src="DiceTallyMain.js"></script>
+    <script src="userbar.js"></script>
+</body>
+</html>

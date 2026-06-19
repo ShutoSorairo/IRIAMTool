@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>味見ダイス集計</title>
+    <title>味見ダイス</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="shared.css">
     <link rel="stylesheet" href="DiceTally.css">
@@ -15,65 +15,24 @@
             <h1 class="dt-title">味見ダイス</h1>
         </div>
 
-        <!-- セッションバー -->
-        <div class="dt-session-bar">
-            <div class="dt-session-name" id="sessionName">読み込み中...</div>
-            <button class="dt-session-btn" onclick="openSessionModal()">📂 企画を切り替え</button>
-        </div>
+        <button class="dt-btn-new" onclick="openCreateModal()">
+            <span style="font-size:1.2em;">＋</span> 新しい企画を作成
+        </button>
 
-        <div class="dt-tabs">
-            <button class="dt-tab active" id="tab-total" onclick="switchTab('total')">📊 累計・消費</button>
-            <button class="dt-tab" id="tab-person" onclick="switchTab('person')">👤 人別カウント</button>
-        </div>
-
-        <!-- 累計・消費タブ -->
-        <div id="view-total">
-            <div class="dt-summary">
-                <div class="dt-summary-item">
-                    <span class="dt-summary-label">合計</span>
-                    <span class="dt-summary-val" id="s-total">0回</span>
-                </div>
-                <div class="dt-summary-sep"></div>
-                <div class="dt-summary-item">
-                    <span class="dt-summary-label">消費済み</span>
-                    <span class="dt-summary-val" id="s-consumed" style="color:#2e7d32;">0回</span>
-                </div>
-                <div class="dt-summary-sep"></div>
-                <div class="dt-summary-item">
-                    <span class="dt-summary-label">未消費</span>
-                    <span class="dt-summary-val" id="s-remaining" style="color:#e53935;">0回</span>
-                </div>
-            </div>
-            <div class="dt-dice-grid" id="totalGrid"></div>
-            <div class="dt-footer">
-                <button class="dt-btn-reset" onclick="confirmReset()">🔄 リセット</button>
-                <button class="dt-btn-save" onclick="saveData()">💾 保存</button>
-            </div>
-        </div>
-
-        <!-- 人別タブ -->
-        <div id="view-person" style="display:none;">
-            <div class="dt-add-person">
-                <input type="text" id="personName" placeholder="名前を入力して追加" class="dt-input">
-                <button onclick="addPerson()" class="dt-btn-save" style="white-space:nowrap;">追加</button>
-            </div>
-            <div id="personList"></div>
-        </div>
+        <div class="dt-section-label">過去の企画</div>
+        <div id="sessionList"><div class="dt-loading">読み込み中...</div></div>
     </div>
 
-    <!-- セッション管理モーダル -->
-    <div class="dt-modal-overlay" id="sessionModal" onclick="closeSessionModal(event)">
+    <!-- 新規作成モーダル -->
+    <div class="dt-modal-overlay" id="createModal" onclick="closeCreateModal(event)">
         <div class="dt-modal">
             <div class="dt-modal-header">
-                <h3>📂 企画を選択</h3>
-                <button class="dt-modal-close" onclick="closeSessionModal()">×</button>
+                <h3>新しい企画を作成</h3>
+                <button class="dt-modal-close" onclick="closeCreateModal()">×</button>
             </div>
             <div class="dt-modal-body">
-                <div class="dt-new-session">
-                    <input type="text" id="newSessionName" class="dt-input" placeholder="例: 6月19日の企画">
-                    <button class="dt-btn-save" onclick="createSession()" style="white-space:nowrap;">新規作成</button>
-                </div>
-                <div id="sessionList" class="dt-session-list"></div>
+                <input type="text" id="newSessionName" class="dt-input" placeholder="例: 6月19日の配信">
+                <button class="dt-btn-save" style="width:100%; margin-top:10px;" onclick="createSession()">作成して開く</button>
             </div>
         </div>
     </div>
