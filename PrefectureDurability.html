@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>47都道府県耐久</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="shared.css">
+    <link rel="stylesheet" href="PrefectureDurability.css">
+</head>
+<body>
+    <a href="index.html" class="home-btn">ホームへ</a>
+    <div class="pd-wrap">
+        <h1 class="pd-title">47都道府県耐久</h1>
+        <p class="pd-desc">コメントやギフトをくれたリスナーさんの都道府県をタップしてチェック！</p>
+        <div class="pd-progress" id="pdProgress">0 / 47</div>
+
+        <div class="pd-map-wrap">
+            <div class="pd-map-inner">
+                <svg id="pdMap" xmlns="http://www.w3.org/2000/svg"></svg>
+                <div class="pd-okinawa-inset">
+                    <div class="pd-okinawa-label">沖縄</div>
+                    <svg id="pdOkinawaMap" xmlns="http://www.w3.org/2000/svg"></svg>
+                </div>
+            </div>
+        </div>
+        <div class="pd-map-actions">
+            <button class="btn-blue pd-copy-btn" id="pdCopyBtn">📋 進捗画像をコピー</button>
+            <span class="pd-copy-msg" id="pdCopyMsg"></span>
+        </div>
+
+        <div id="pdList"></div>
+        <button class="btn-red pd-reset-btn" id="pdResetBtn">全リセット</button>
+
+        <p class="pd-credit">地図データ: 国土地理院「地球地図日本」(<a href="https://github.com/dataofjapan/land" target="_blank" rel="noopener">出典: dataofjapan/land</a>)</p>
+    </div>
+    <script src="PrefectureDurability-map.js"></script>
+    <script src="PrefectureDurability.js"></script>
+    <script type="module" src="PrefectureDurability-firebase.js"></script>
+    <script src="userbar.js"></script>
+</body>
+</html>

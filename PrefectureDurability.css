@@ -1,0 +1,139 @@
+.pd-wrap {
+    max-width: 640px;
+    margin: 50px auto 30px;
+}
+.pd-title {
+    text-align: center;
+    font-size: 1.3em;
+    color: #333;
+    margin: 0 0 6px;
+}
+.pd-desc {
+    text-align: center;
+    color: #888;
+    font-size: 0.85em;
+    margin: 0 0 16px;
+}
+.pd-progress {
+    text-align: center;
+    font-size: 1.8em;
+    font-weight: 700;
+    color: #1976d2;
+    margin-bottom: 20px;
+}
+.pd-region { margin-bottom: 18px; }
+.pd-region-title {
+    font-size: 0.95em;
+    color: #333;
+    margin: 0 0 8px;
+    border-left: 4px solid #1976d2;
+    padding-left: 8px;
+}
+.pd-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+    gap: 8px;
+}
+.pd-btn {
+    padding: 9px 4px;
+    border-radius: 20px;
+    border: 1.5px solid #1976d2;
+    background: #fff;
+    color: #1976d2;
+    font-size: 0.85em;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+.pd-btn:hover { background: #f0f6ff; }
+.pd-btn.pd-checked {
+    background: #1976d2;
+    color: #fff;
+}
+.pd-reset-btn {
+    display: block;
+    margin: 20px auto 0;
+    padding: 10px 30px;
+}
+
+.pd-map-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+.pd-map-inner {
+    position: relative;
+    width: 100%;
+    max-width: 360px;
+}
+#pdMap {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+.pd-map-pref {
+    cursor: pointer;
+    transition: fill 0.2s;
+}
+.pd-map-pref:hover {
+    stroke: #1976d2 !important;
+    stroke-width: 1.2 !important;
+}
+
+.pd-okinawa-inset {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 76px;
+    background: #fff;
+    border: 1.5px solid #5b6472;
+    border-radius: 6px;
+    padding: 4px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+.pd-okinawa-label {
+    font-size: 0.65em;
+    color: #555;
+    text-align: center;
+    margin-bottom: 2px;
+}
+#pdOkinawaMap {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.pd-map-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 24px;
+}
+.pd-copy-btn {
+    padding: 9px 20px;
+    font-size: 0.9em;
+}
+.pd-copy-msg {
+    font-size: 0.85em;
+    color: #2e7d32;
+    min-height: 1.2em;
+}
+.pd-copy-msg.pd-copy-msg-error {
+    color: #c62828;
+}
+
+.pd-credit {
+    text-align: center;
+    font-size: 0.75em;
+    color: #aaa;
+    margin-top: 24px;
+}
+.pd-credit a {
+    color: #999;
+}
+
+@media (max-width: 480px) {
+    .pd-wrap { margin-top: 60px; }
+    .pd-grid { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); }
+    .pd-btn { font-size: 0.8em; padding: 8px 2px; }
+}
