@@ -27,12 +27,23 @@ label { font-weight: bold; display: block; margin-top: 15px; margin-bottom: 8px;
 .btn-dl:hover { background: #d32f2f; }
 
 .gift-list-box { margin-top: 15px; max-height: 400px; overflow-y: auto; border: 1px solid #eee; border-radius: 4px; background: #fafafa; }
-.list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eee; background: #fff; transition: background 0.2s; }
+.list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eee; background: #fff; transition: background 0.2s; gap: 10px; }
 .list-item:hover { background: #f1f8e9; }
 .list-item:nth-child(even) { background: #f9f9f9; }
-.list-info { font-size: 0.95em; line-height: 1.4; }
+.list-info { font-size: 0.95em; line-height: 1.4; flex: 1; min-width: 0; }
+.btn-group { display: flex; gap: 6px; flex-shrink: 0; }
 .btn-delete { background: #ff5252; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85em; transition: background 0.2s; }
 .btn-delete:hover { background: #d32f2f; }
+.btn-edit { background: #1976d2; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85em; transition: background 0.2s; }
+.btn-edit:hover { background: #125aa0; }
+.btn-save { background: #43a047; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85em; transition: background 0.2s; }
+.btn-save:hover { background: #2e7d32; }
+.btn-cancel { background: #9e9e9e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85em; transition: background 0.2s; }
+.btn-cancel:hover { background: #757575; }
+
+.list-info.edit-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.list-info.edit-row .edit-name { flex: 2; min-width: 120px; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9em; }
+.list-info.edit-row .edit-pts { width: 90px; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9em; }
 
 @media (max-width: 600px) {
     .card { margin-top: 70px; padding: 15px; }
