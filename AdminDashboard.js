@@ -1,7 +1,10 @@
-import { db } from './firebase-config.js';
+import { db, auth, ADMIN_UID } from './firebase-config.js';
 import {
     collection, doc, getDocs, addDoc, updateDoc, deleteDoc, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
+import {
+    onAuthStateChanged, signOut
+} from "https://www.gstatic.com/firebasejs/11.9.0/firebase-auth.js";
 
 function ptValueFromSrc(src) {
     const m = (src || '').match(/_(\d+(?:,\d+)*)pt/i);
@@ -229,15 +232,23 @@ let currentGifts = [];
 let editingGiftId = null;
 const uid = localStorage.getItem('iriam_uid');
 
-window.onload = async function() {
-    if (!sessionStorage.getItem('iriam_admin_logged_in')) {
-        alert("ログインしてください");
+let dashboardStarted = false;
+
+onAuthStateChanged(auth, async (user) => {
+    if (!user || user.uid !== ADMIN_UID) {
         window.location.href = "AdminLogin.html";
         return;
     }
+    if (dashboardStarted) return;
+    dashboardStarted = true;
     await loadGifts();
     await loadUsers();
     updatePreview();
+});
+
+window.adminLogout = async function() {
+    await signOut(auth);
+    window.location.href = "AdminLogin.html";
 };
 
 async function loadGifts() {

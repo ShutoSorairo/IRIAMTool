@@ -1,0 +1,47 @@
+rules_version = '2';
+
+// IRIAMTool Firestore セキュリティルール
+// 方針：ギフト関連の「書き込み」だけ管理者に限定し、
+//       それ以外（名前ログインのユーザー登録・各ツールの保存データ）は現状どおり開放する。
+// ※ 新しい Firestore パスを追加したら、このファイルにも match を足すこと
+//    （v2 は「明示的に許可されていないパス＝拒否」なので、書き忘れると保存が失敗する）
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Firebase Authentication UID が管理者と一致するか
+    function isAdmin() {
+      return request.auth != null
+             && request.auth.uid == 'd05uyXXhBNMoTjwnA9qzwjC5R0R2';
+    }
+
+    // ===== 共有ギフト（全ギフト一覧）=====
+    // 閲覧：全員 / 追加・編集・削除：管理者のみ
+    match /gifts/{giftId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ===== ユーザードキュメント =====
+    match /users/{userId} {
+      // 名前ログインの登録・ログイン時更新（現状どおり）
+      allow read, write: if true;
+
+      // ユーザー専用ギフト：閲覧は全員 / 変更は管理者のみ
+      match /gifts/{giftId} {
+        allow read: if true;
+        allow write: if isAdmin();
+      }
+
+      // 各ツールの保存データ（現状どおり誰でも読み書き可）
+      match /diceTally/{docId}            { allow read, write: if true; }
+      match /panels/{docId}               { allow read, write: if true; }
+      match /counters/{docId}             { allow read, write: if true; }
+      match /gacha/{docId}                { allow read, write: if true; }
+      match /music/{docId}                { allow read, write: if true; }
+      match /panelState/{docId}           { allow read, write: if true; }
+      match /prefectureDurability/{docId} { allow read, write: if true; }
+      match /roulette/{docId}             { allow read, write: if true; }
+    }
+  }
+}
