@@ -44,6 +44,9 @@ label { font-weight: bold; display: block; margin-top: 15px; margin-bottom: 8px;
 .list-info.edit-row { display: flex; gap: 8px; flex-wrap: wrap; }
 .list-info.edit-row .edit-name { flex: 2; min-width: 120px; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9em; }
 .list-info.edit-row .edit-pts { width: 90px; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9em; }
+.list-info.edit-row .edit-cats { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 4px; }
+.list-info.edit-row .edit-cats label { font-weight: normal; display: inline-flex; align-items: center; gap: 4px; margin: 0; color: #555; font-size: 0.85em; }
+.list-info.edit-row .edit-cats input { padding: 0; }
 
 @media (max-width: 600px) {
     .card { margin-top: 70px; padding: 15px; }

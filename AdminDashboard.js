@@ -15,7 +15,7 @@ function replacePointsInSrc(src, newPoints) {
     return src;
 }
 
-function buildListItem({ name, metaHtml, isEditing, pts, onEdit, onDelete, onSave, onCancel }) {
+function buildListItem({ name, metaHtml, isEditing, pts, cats = [], catOptions = null, onEdit, onDelete, onSave, onCancel }) {
     const div = document.createElement('div');
     div.className = 'list-item';
 
@@ -37,6 +37,26 @@ function buildListItem({ name, metaHtml, isEditing, pts, onEdit, onDelete, onSav
 
         info.appendChild(nameInput);
         info.appendChild(ptsInput);
+
+        // カテゴリ（複数選択可）— 追加フォームと同じチェックボックス方式
+        const catBoxes = [];
+        if (Array.isArray(catOptions) && catOptions.length) {
+            const catWrap = document.createElement('div');
+            catWrap.className = 'edit-cats';
+            catOptions.forEach(c => {
+                const lbl = document.createElement('label');
+                const cb = document.createElement('input');
+                cb.type = 'checkbox';
+                cb.value = c;
+                cb.checked = cats.includes(c);
+                lbl.appendChild(cb);
+                lbl.appendChild(document.createTextNode(' ' + c));
+                catWrap.appendChild(lbl);
+                catBoxes.push(cb);
+            });
+            info.appendChild(catWrap);
+        }
+
         div.appendChild(info);
 
         const btnGroup = document.createElement('div');
@@ -45,7 +65,11 @@ function buildListItem({ name, metaHtml, isEditing, pts, onEdit, onDelete, onSav
         const saveBtn = document.createElement('button');
         saveBtn.className = 'btn-save';
         saveBtn.textContent = '保存';
-        saveBtn.onclick = () => onSave(nameInput.value.trim(), ptsInput.value.trim());
+        saveBtn.onclick = () => onSave(
+            nameInput.value.trim(),
+            ptsInput.value.trim(),
+            catBoxes.length ? catBoxes.filter(cb => cb.checked).map(cb => cb.value) : null
+        );
         btnGroup.appendChild(saveBtn);
 
         const cancelBtn = document.createElement('button');
@@ -196,6 +220,11 @@ const folderMap = {
     "専用": "専用", "えらい": "えらい", "挨拶": "挨拶", "ステージ": "ステージ", "LOVE": "Love"
 };
 
+// 追加フォームのチェックボックス（AdminDashboard.html）と揃えたカテゴリ一覧
+const ALL_CATEGORIES = [
+    "おもちゃ", "ネタ", "笑", "定番", "専用", "えらい", "挨拶", "ステージ", "LOVE"
+];
+
 let currentGifts = [];
 let editingGiftId = null;
 const uid = localStorage.getItem('iriam_uid');
@@ -282,8 +311,9 @@ async function deleteGift(docId, scope, name) {
     }
 }
 
-async function saveGiftEdit(id, scope, name, points) {
+async function saveGiftEdit(id, scope, name, points, cats) {
     if (!name || !points) { alert('名前とポイントを入力してください'); return; }
+    if (cats && cats.length === 0) { alert('カテゴリを最低1つ選択してください'); return; }
     const gift = currentGifts.find(g => g.id === id);
     if (!gift) return;
     const newSrc = replacePointsInSrc(gift.src, points);
@@ -291,7 +321,9 @@ async function saveGiftEdit(id, scope, name, points) {
         ? doc(db, 'users', uid, 'gifts', id)
         : doc(db, 'gifts', id);
     try {
-        await updateDoc(ref, { name, src: newSrc });
+        const payload = { name, src: newSrc };
+        if (cats && cats.length) payload.categories = cats;
+        await updateDoc(ref, payload);
         editingGiftId = null;
         await loadGifts();
     } catch(e) {
@@ -315,6 +347,8 @@ function renderGiftList() {
             name: gift.name,
             pts: ptValueFromSrc(gift.src),
             isEditing: editingGiftId === gift.id,
+            cats: Array.isArray(gift.categories) ? gift.categories : (gift.category ? [gift.category] : []),
+            catOptions: gift.scope === 'user' ? null : ALL_CATEGORIES,
             metaHtml: `
                 <b>${escapeHtml(gift.name)}</b> ${scopeLabel} <span style="color:#888; font-size:0.85em;">[${escapeHtml(catDisplay)}]</span><br>
                 <small style="color:#aaa;">${escapeHtml(gift.src)}</small>
@@ -322,7 +356,7 @@ function renderGiftList() {
             onEdit: () => { editingGiftId = gift.id; renderGiftList(); },
             onCancel: () => { editingGiftId = null; renderGiftList(); },
             onDelete: () => deleteGift(gift.id, gift.scope, gift.name),
-            onSave: (name, points) => saveGiftEdit(gift.id, gift.scope, name, points)
+            onSave: (name, points, cats) => saveGiftEdit(gift.id, gift.scope, name, points, cats)
         });
         container.appendChild(item);
     });
