@@ -1,6 +1,7 @@
 // --- 変数・初期化 ---
 let lastResults = [];
 let lastDrawCount = 0;
+let lastUserName = '';
 
 const STORAGE_KEY = 'iriam_gacha_v3';
 const OLD_STORAGE_KEY = 'iriam_gacha_v2';
@@ -454,7 +455,8 @@ function drawGacha(times) {
     lastResults = results;
     lastDrawCount = times;
 
-    const userName = document.getElementById('user-name').value || "名無し";
+    lastUserName = document.getElementById('user-name').value.trim();
+    const userName = lastUserName || "名無し";
     const date = new Date().toLocaleString();
 
     // 結果表示（グリッド）
@@ -544,7 +546,6 @@ function clearHistory() {
 // --- コピー機能 ---
 function copyResult() {
     if (lastResults.length === 0) return;
-    const userName = document.getElementById('user-name').value || lastResults._user || "名無し";
     const title = config.title;
     const summary = new Map();
     lastResults.forEach(r => {
@@ -552,7 +553,8 @@ function copyResult() {
         else summary.set(r.name, { ...r, count: 1 });
     });
     const sortedItems = Array.from(summary.values()).sort((a, b) => b.rIdx - a.rIdx);
-    let text = `【${title}】${lastDrawCount}回\n`;
+    const nameStr = lastUserName ? `${lastUserName}さん ` : '';
+    let text = `【${title}】${nameStr}${lastDrawCount}回\n`;
     sortedItems.forEach(item => {
         const countStr = item.count > 1 ? ` x${item.count}` : "";
         text += `[${item.rName}] ${item.name}${countStr}\n`;
