@@ -27,14 +27,17 @@ export async function dbLoad(path) {
  * ユーザードキュメントを保存する
  * @param {string} path - 'gacha/default' など
  * @param {object} data
+ * @returns {Promise<boolean>} 保存できたら true
  */
 export async function dbSave(path, data) {
-    if (!uid()) return;
+    if (!uid()) return false;
     try {
         const ref = doc(db, 'users', uid(), path);
         await setDoc(ref, { ...data, updatedAt: serverTimestamp() });
+        return true;
     } catch(e) {
         console.warn(`dbSave(${path}) 失敗:`, e);
+        return false;
     }
 }
 

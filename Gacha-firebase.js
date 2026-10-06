@@ -14,7 +14,9 @@ let saveTimer = null;
 
 async function flush(all = false) {
     const store = window.getGachaStore?.();
-    if (!store) return;
+    if (!store) return false;
+    clearTimeout(saveTimer);
+    window.setSaveStatus?.('saving');
     const ids = all ? store.gachas.map(g => g.id) : [...dirtyIds];
     dirtyIds.clear();
     const tasks = store.gachas
@@ -26,8 +28,14 @@ async function flush(all = false) {
         names: store.names,
         gachaIds: store.gachas.map(g => g.id)
     }));
-    await Promise.all(tasks);
+    const ok = (await Promise.all(tasks)).every(Boolean);
+    if (!ok) ids.forEach(id => dirtyIds.add(id)); // 失敗分は次回また送る
+    window.setSaveStatus?.(ok ? 'cloud' : 'error');
+    return ok;
 }
+
+// 保存ボタンから呼ぶ：待たずに今すぐクラウドへ保存
+window.flushGachaSave = () => flush();
 
 // 既存の saveData を Firestore 対応に上書き（入力のたびに書き込まないよう少し待ってまとめて保存）
 const _origSave = window.saveData;
@@ -36,6 +44,7 @@ window.saveData = function() {
     if (!loggedIn()) return;
     const store = window.getGachaStore?.();
     if (store) dirtyIds.add(store.activeId);
+    window.setSaveStatus?.('pending');
     clearTimeout(saveTimer);
     saveTimer = setTimeout(flush, SAVE_DELAY);
 };
@@ -47,7 +56,7 @@ window.onGachaDeleted = function(id) {
 
 // ページを閉じる直前に未保存分を送る
 window.addEventListener('pagehide', () => {
-    if (dirtyIds.size > 0) { clearTimeout(saveTimer); flush(); }
+    if (dirtyIds.size > 0) flush();
 });
 
 window.addEventListener('load', async () => {

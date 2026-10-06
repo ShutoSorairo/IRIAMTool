@@ -133,6 +133,13 @@
         </div>
     </div>
 
+    <!-- 保存ボタン（画面右下に固定） -->
+    <div class="save-dock">
+        <span id="save-status" class="save-status"></span>
+        <button id="save-btn" class="save-btn" onclick="manualSave()" title="Ctrl+S でも保存できます">💾 保存</button>
+    </div>
+    <div id="save-toast" class="save-toast"></div>
+
     <script src="Gacha.js"></script>
     <script type="module" src="Gacha-firebase.js"></script>
     <script src="userbar.js"></script>

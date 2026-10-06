@@ -104,6 +104,7 @@ function loadData(data) {
     config = store.gachas.find(g => g.id === store.activeId);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
     renderAll();
+    setSaveStatus(localStorage.getItem('iriam_uid') ? 'cloud' : 'local');
 }
 
 function renderAll() {
@@ -122,8 +123,54 @@ function saveData() {
     if (!store) return;
     config.title = document.getElementById('gacha-title').value;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+    if (!localStorage.getItem('iriam_uid')) setSaveStatus('local');
     renderGachaSelect();
 }
+
+// --- 保存ボタン・保存状態の表示 ---
+const SAVE_STATUS = {
+    local:   { text: '✔ この端末に保存済み', cls: 'saved' },
+    pending: { text: '● 未保存の変更があります', cls: 'pending' },
+    saving:  { text: '⟳ 保存中…', cls: 'pending' },
+    cloud:   { text: '✔ クラウドに保存済み', cls: 'saved' },
+    error:   { text: '⚠ 保存に失敗しました（もう一度押してください）', cls: 'error' }
+};
+
+function setSaveStatus(state) {
+    const st = SAVE_STATUS[state];
+    const el = document.getElementById('save-status');
+    if (!st || !el) return;
+    const time = (state === 'local' || state === 'cloud')
+        ? ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+    el.textContent = st.text + time;
+    el.className = 'save-status ' + st.cls;
+}
+
+async function manualSave() {
+    if (!store) return;
+    const btn = document.getElementById('save-btn');
+    btn.disabled = true;
+    saveData();
+    let ok = true;
+    if (window.flushGachaSave && localStorage.getItem('iriam_uid')) ok = await window.flushGachaSave();
+    btn.disabled = false;
+    showToast(ok ? '💾 保存しました' : '⚠ 保存に失敗しました', !ok);
+}
+
+function showToast(text, isError) {
+    const t = document.getElementById('save-toast');
+    t.textContent = text;
+    t.className = 'save-toast show' + (isError ? ' error' : '');
+    clearTimeout(showToast.timer);
+    showToast.timer = setTimeout(() => { t.className = 'save-toast'; }, 1800);
+}
+
+document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        manualSave();
+    }
+});
 
 // --- ガチャ切り替え・作成・削除 ---
 function renderGachaSelect() {
