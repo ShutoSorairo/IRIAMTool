@@ -2,19 +2,71 @@
 let lastResults = [];
 let lastDrawCount = 0;
 
-let config = {
-    title: "マイガチャ",
-    rarities: [
-        { name: "N",   rate: 50, color: "#9e9e9e" },
-        { name: "R",   rate: 30, color: "#4caf50" },
-        { name: "SR",  rate: 15, color: "#03a9f4" },
-        { name: "SSR", rate: 4,  color: "#ff9800" },
-        { name: "UR",  rate: 1,  color: "#e91e63" }
-    ],
-    prizes: [],
-    names: [],
-    history: []
-};
+const STORAGE_KEY = 'iriam_gacha_v3';
+const OLD_STORAGE_KEY = 'iriam_gacha_v2';
+const DEFAULT_COLORS = ["#9e9e9e","#4caf50","#03a9f4","#ff9800","#e91e63"];
+
+// store: 全ガチャ + 共通の参加者名
+// config: 現在選択中のガチャ（store.gachas の要素への参照）
+let store = null;
+let config = null;
+
+function newGachaId() {
+    return 'g' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+}
+
+function createGacha(title) {
+    const g = {
+        id: newGachaId(),
+        title: title || "マイガチャ",
+        rarities: [
+            { name: "N",   rate: 50, color: DEFAULT_COLORS[0] },
+            { name: "R",   rate: 30, color: DEFAULT_COLORS[1] },
+            { name: "SR",  rate: 15, color: DEFAULT_COLORS[2] },
+            { name: "SSR", rate: 4,  color: DEFAULT_COLORS[3] },
+            { name: "UR",  rate: 1,  color: DEFAULT_COLORS[4] }
+        ],
+        prizes: [],
+        history: []
+    };
+    for (let i = 0; i < 10; i++) g.prizes.push({ name: "景品 " + (i + 1), rarityIndex: 0 });
+    return g;
+}
+
+// 旧形式（ガチャ1種類）や欠けたデータを現在の形式に揃える
+function normalizeGacha(g) {
+    g = Object.assign({ title: "マイガチャ", rarities: [], prizes: [], history: [] }, g);
+    if (!g.id) g.id = newGachaId();
+    if (!Array.isArray(g.rarities) || g.rarities.length === 0) g.rarities = createGacha().rarities;
+    g.rarities.forEach((r, i) => { if (!r.color) r.color = DEFAULT_COLORS[i % 5]; });
+    if (!Array.isArray(g.prizes) || g.prizes.length === 0) g.prizes = createGacha().prizes;
+    if (!Array.isArray(g.history)) g.history = [];
+    delete g.names;
+    delete g.updatedAt;
+    return g;
+}
+
+function normalizeStore(data) {
+    if (data && Array.isArray(data.gachas) && data.gachas.length > 0) {
+        const s = {
+            names: Array.isArray(data.names) ? data.names : [],
+            gachas: data.gachas.map(normalizeGacha),
+            activeId: data.activeId
+        };
+        if (!s.gachas.some(g => g.id === s.activeId)) s.activeId = s.gachas[0].id;
+        return s;
+    }
+    if (data && Array.isArray(data.rarities)) {
+        // v2（ガチャ1種類）からの移行
+        const g = normalizeGacha(data);
+        return { names: Array.isArray(data.names) ? data.names : [], gachas: [g], activeId: g.id };
+    }
+    const g = createGacha();
+    return { names: [], gachas: [g], activeId: g.id };
+}
+
+// Gacha-firebase.js から参照する（let 変数は window に載らないため関数経由で渡す）
+function getGachaStore() { return store; }
 
 window.onload = function() {
     if (!localStorage.getItem('iriam_uid')) loadData();
@@ -34,39 +86,97 @@ function toggleSection(id, headerEl) {
 }
 
 // --- データ保存・読み込み ---
-function loadData() {
-    const stored = localStorage.getItem('iriam_gacha_v2');
-    if (stored) {
-        const parsed = JSON.parse(stored);
-        config = Object.assign({ names: [], history: [] }, parsed);
-        // 旧データに color がない場合の補完
-        config.rarities.forEach((r, i) => {
-            if (!r.color) r.color = ["#9e9e9e","#4caf50","#03a9f4","#ff9800","#e91e63"][i % 5];
-        });
-        document.getElementById('gacha-title').value = config.title;
-        document.getElementById('rarity-count').value = config.rarities.length;
-        if (config.prizes.length === 0) initPrizes(10);
-    } else {
-        initPrizes(10);
+function readLocal() {
+    try {
+        const v3 = localStorage.getItem(STORAGE_KEY);
+        if (v3) return JSON.parse(v3);
+        const v2 = localStorage.getItem(OLD_STORAGE_KEY);
+        if (v2) return JSON.parse(v2);
+    } catch (e) {
+        console.warn('ガチャデータの読み込みに失敗:', e);
     }
+    return null;
+}
+
+// data を渡すとそれを採用（Firestoreからの読み込み用）、省略時は localStorage から
+function loadData(data) {
+    store = normalizeStore(data !== undefined ? data : readLocal());
+    config = store.gachas.find(g => g.id === store.activeId);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+    renderAll();
+}
+
+function renderAll() {
+    document.getElementById('gacha-title').value = config.title;
+    document.getElementById('rarity-count').value = config.rarities.length;
+    renderGachaSelect();
     renderRarityTable();
     renderPrizeTable();
     renderNameList();
     renderNameSelect();
     renderHistory();
+    clearResult();
 }
 
 function saveData() {
+    if (!store) return;
     config.title = document.getElementById('gacha-title').value;
-    localStorage.setItem('iriam_gacha_v2', JSON.stringify(config));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+    renderGachaSelect();
 }
 
-function initPrizes(count) {
-    config.prizes = [];
-    for (let i = 0; i < count; i++) {
-        config.prizes.push({ name: "景品 " + (i + 1), rarityIndex: 0 });
-    }
+// --- ガチャ切り替え・作成・削除 ---
+function renderGachaSelect() {
+    const sel = document.getElementById('gacha-select');
+    sel.innerHTML = '';
+    store.gachas.forEach(g => {
+        const opt = document.createElement('option');
+        opt.value = g.id;
+        opt.textContent = g.title || '(名称未設定)';
+        if (g.id === store.activeId) opt.selected = true;
+        sel.appendChild(opt);
+    });
+    document.getElementById('gacha-count').textContent = store.gachas.length;
+}
+
+function switchGacha(id) {
+    const g = store.gachas.find(x => x.id === id);
+    if (!g) return;
+    store.activeId = id;
+    config = g;
+    renderAll();
     saveData();
+}
+
+function addGacha() {
+    const fallback = "ガチャ" + (store.gachas.length + 1);
+    const title = prompt("新しいガチャの名前", fallback);
+    if (title === null) return;
+    const g = createGacha(title.trim() || fallback);
+    store.gachas.push(g);
+    switchGacha(g.id);
+}
+
+function duplicateGacha() {
+    const fallback = config.title + " のコピー";
+    const title = prompt("複製したガチャの名前", fallback);
+    if (title === null) return;
+    const g = JSON.parse(JSON.stringify(config));
+    g.id = newGachaId();
+    g.title = title.trim() || fallback;
+    g.history = [];
+    store.gachas.push(g);
+    switchGacha(g.id);
+}
+
+function deleteGacha() {
+    if (store.gachas.length <= 1) { alert("ガチャは最低1つ必要です"); return; }
+    if (!confirm(`「${config.title}」を削除しますか？\n（景品・履歴もすべて消えます）`)) return;
+    const id = config.id;
+    const idx = store.gachas.findIndex(g => g.id === id);
+    store.gachas.splice(idx, 1);
+    window.onGachaDeleted?.(id);
+    switchGacha(store.gachas[Math.max(0, idx - 1)].id);
 }
 
 // --- 名前登録 ---
@@ -74,8 +184,8 @@ function addName() {
     const input = document.getElementById('new-name-input');
     const name = input.value.trim();
     if (!name) return;
-    if (config.names.includes(name)) { alert("すでに登録されています"); return; }
-    config.names.push(name);
+    if (store.names.includes(name)) { alert("すでに登録されています"); return; }
+    store.names.push(name);
     input.value = '';
     saveData();
     renderNameList();
@@ -83,7 +193,7 @@ function addName() {
 }
 
 function deleteName(index) {
-    config.names.splice(index, 1);
+    store.names.splice(index, 1);
     saveData();
     renderNameList();
     renderNameSelect();
@@ -91,7 +201,7 @@ function deleteName(index) {
 
 function clearAllNames() {
     if (!confirm("登録済みの名前をすべて削除しますか？")) return;
-    config.names = [];
+    store.names = [];
     saveData();
     renderNameList();
     renderNameSelect();
@@ -100,11 +210,11 @@ function clearAllNames() {
 function renderNameList() {
     const container = document.getElementById('name-list-container');
     container.innerHTML = '';
-    if (config.names.length === 0) {
+    if (store.names.length === 0) {
         container.innerHTML = '<div style="color:#aaa; text-align:center; padding:10px;">登録された名前はありません</div>';
         return;
     }
-    config.names.forEach((name, i) => {
+    store.names.forEach((name, i) => {
         const div = document.createElement('div');
         div.className = 'name-item';
         div.innerHTML = `<span>${name}</span><button class="btn-red" style="font-size:0.8em; padding:3px 8px;" onclick="deleteName(${i})">削除</button>`;
@@ -115,7 +225,7 @@ function renderNameList() {
 function renderNameSelect() {
     const sel = document.getElementById('name-select');
     sel.innerHTML = '<option value="">-- 登録済みの名前 --</option>';
-    config.names.forEach(name => {
+    store.names.forEach(name => {
         const opt = document.createElement('option');
         opt.value = name;
         opt.textContent = name;
@@ -132,10 +242,9 @@ function updateRarityTable() {
     const count = parseInt(document.getElementById('rarity-count').value);
     if (count < 1) return;
     const currentLen = config.rarities.length;
-    const defaultColors = ["#9e9e9e","#4caf50","#03a9f4","#ff9800","#e91e63"];
     if (count > currentLen) {
         for (let i = currentLen; i < count; i++) {
-            config.rarities.push({ name: "Rank" + (i + 1), rate: 0, color: defaultColors[i % 5] });
+            config.rarities.push({ name: "Rank" + (i + 1), rate: 0, color: DEFAULT_COLORS[i % 5] });
         }
     } else {
         config.rarities.splice(count);
@@ -172,6 +281,12 @@ function updateRarityData(index, field, value) {
     saveData();
     if (field === 'rate') renderRarityTable();
     if (field === 'name') { renderPrizeTable(); renderImportRaritySelect(); }
+}
+
+function clearResult() {
+    lastResults = [];
+    document.getElementById('result-area').innerHTML = '<div style="text-align:center; color:#ccc; padding:20px;">ここに結果が表示されます</div>';
+    document.getElementById('copy-area').style.display = 'none';
 }
 
 // --- 景品処理 ---
@@ -404,8 +519,12 @@ function copyResult() {
 
 // --- リセット ---
 function resetAll() {
-    if (confirm("全データを削除して初期化しますか？")) {
-        localStorage.removeItem('iriam_gacha_v2');
-        location.reload();
-    }
+    if (!confirm("すべてのガチャと参加者名を削除して初期化しますか？")) return;
+    store.gachas.forEach(g => window.onGachaDeleted?.(g.id));
+    localStorage.removeItem(OLD_STORAGE_KEY);
+    const g = createGacha();
+    store = { names: [], gachas: [g], activeId: g.id };
+    config = g;
+    renderAll();
+    saveData();
 }

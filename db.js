@@ -3,7 +3,7 @@
  * 各ページからimportして使う
  */
 import { db } from './firebase-config.js';
-import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
+import { doc, getDoc, setDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
 
 const uid = () => localStorage.getItem('iriam_uid');
 
@@ -35,5 +35,18 @@ export async function dbSave(path, data) {
         await setDoc(ref, { ...data, updatedAt: serverTimestamp() });
     } catch(e) {
         console.warn(`dbSave(${path}) 失敗:`, e);
+    }
+}
+
+/**
+ * ユーザードキュメントを削除する
+ * @param {string} path - 'gacha/xxxx' など
+ */
+export async function dbDelete(path) {
+    if (!uid()) return;
+    try {
+        await deleteDoc(doc(db, 'users', uid(), path));
+    } catch(e) {
+        console.warn(`dbDelete(${path}) 失敗:`, e);
     }
 }

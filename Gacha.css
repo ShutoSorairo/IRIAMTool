@@ -1,6 +1,17 @@
 /* Gacha 固有スタイル (共通は shared.css) */
 h1, h2, h3 { text-align: center; color: #333; margin-top: 0; }
 
+/* ガチャ切り替え */
+.gacha-switcher {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px;
+    background: #f0f7ff; border: 1px solid #d0e3f0; border-radius: 8px;
+    padding: 12px 14px; margin-bottom: 20px;
+}
+.gacha-switcher-label { font-weight: bold; font-size: 0.9em; color: #555; }
+.gacha-switcher select { flex: 1; min-width: 160px; padding: 8px; font-size: 1em; border-radius: 6px; border: 1px solid #bcd; }
+.gacha-switcher-btns { display: flex; gap: 6px; }
+.gacha-switcher-btns button { padding: 7px 12px; font-size: 0.9em; }
+
 /* ガチャエリア */
 .gacha-play-area { text-align: center; background: #fafafa; padding: 20px; border-radius: 8px; border: 1px solid #eee; }
 .btn-draw { background: linear-gradient(135deg, #42a5f5, #1976d2); color: white; padding: 12px 30px; font-size: 1.2em; font-weight: bold; border-radius: 30px; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(25,118,210,0.3); margin: 5px; transition: transform 0.1s; }

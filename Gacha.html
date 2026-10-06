@@ -14,13 +14,24 @@
     <div class="main-card">
         <h1>ガチャ</h1>
 
+        <!-- ガチャ切り替え -->
+        <div class="gacha-switcher">
+            <label for="gacha-select" class="gacha-switcher-label">使うガチャ（<span id="gacha-count">1</span>種類）</label>
+            <select id="gacha-select" onchange="switchGacha(this.value)"></select>
+            <div class="gacha-switcher-btns">
+                <button class="btn-blue" onclick="addGacha()">＋ 新規作成</button>
+                <button class="btn-green" onclick="duplicateGacha()">複製</button>
+                <button class="btn-red" onclick="deleteGacha()">削除</button>
+            </div>
+        </div>
+
         <!-- 基本設定 -->
         <div class="section-box">
             <div class="section-header closed" onclick="toggleSection('sec-basic', this)">基本設定・データ管理</div>
             <div id="sec-basic" class="section-body" style="display:none;">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                     <div><label>ガチャ名: <input type="text" id="gacha-title" value="マイガチャ" oninput="saveData()"></label></div>
-                    <button class="btn-red" onclick="resetAll()">全データ削除</button>
+                    <button class="btn-red" onclick="resetAll()">全ガチャ削除</button>
                 </div>
             </div>
         </div>
