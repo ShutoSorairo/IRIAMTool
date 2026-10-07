@@ -1,18 +1,14 @@
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js';
-import { getFirestore, doc, setDoc, deleteDoc, collection, getDocs } from 'https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js';
+import { db } from './firebase-config.js';
+import { doc, setDoc, deleteDoc, collection, getDocs } from 'https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js';
 
-const firebaseConfig = {
-    apiKey: "AIzaSyC2bGfFLjMa80BklV0dpAT__9p8PUj4Q9E",
-    authDomain: "iriamtool.firebaseapp.com",
-    projectId: "iriamtool",
-    storageBucket: "iriamtool.appspot.com",
-    messagingSenderId: "826475624020",
-    appId: "1:826475624020:web:fc80b62f4b7cd3da45cfce"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 const uid = localStorage.getItem('iriam_uid');
+
+// 名前などをHTMLに埋め込むときのエスケープ
+function esc(str) {
+    return String(str ?? '').replace(/[&<>"']/g, ch => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[ch]));
+}
 
 const FACES = ['あまい','からい','すっぱい','うまい','にがい','しょっぱい'];
 
@@ -84,7 +80,7 @@ function render() {
             <div class="dt-session-card" onclick="openSession('${s.id}')">
                 <div class="dt-sc-row">
                     <div class="dt-sc-info">
-                        <div class="dt-sc-name">${s.label}</div>
+                        <div class="dt-sc-name">${esc(s.label)}</div>
                         ${dateStr ? `<div class="dt-sc-date">${dateStr}</div>` : ''}
                     </div>
                     <button class="dt-sc-del" onclick="deleteSession(event,'${s.id}')">×</button>

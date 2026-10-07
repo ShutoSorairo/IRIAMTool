@@ -1,17 +1,6 @@
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js';
-import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js';
+import { db } from './firebase-config.js';
+import { doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js';
 
-const firebaseConfig = {
-    apiKey: "AIzaSyC2bGfFLjMa80BklV0dpAT__9p8PUj4Q9E",
-    authDomain: "iriamtool.firebaseapp.com",
-    projectId: "iriamtool",
-    storageBucket: "iriamtool.appspot.com",
-    messagingSenderId: "826475624020",
-    appId: "1:826475624020:web:fc80b62f4b7cd3da45cfce"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 const uid = localStorage.getItem('iriam_uid');
 
 const FACES = [
@@ -22,6 +11,13 @@ const FACES = [
     { key: 'にがい',     cls: 'bitter' },
     { key: 'しょっぱい', cls: 'salty'  },
 ];
+
+// 名前などをHTMLに埋め込むときのエスケープ
+function esc(str) {
+    return String(str ?? '').replace(/[&<>"']/g, ch => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[ch]));
+}
 
 const params = new URLSearchParams(location.search);
 const sessionId = params.get('id') || 'default';
@@ -93,7 +89,7 @@ function renderPersons() {
         card.className = 'dt-person-card';
         card.innerHTML = `
             <div class="dt-person-header">
-                <span class="dt-person-name">${p.name}</span>
+                <span class="dt-person-name">${esc(p.name)}</span>
                 <span class="dt-person-total">合計 ${total}回</span>
                 <button class="dt-person-del" onclick="window._deletePerson('${p.id}')">×</button>
             </div>
@@ -124,6 +120,8 @@ window._changeFace = function(id, key, delta) {
 };
 
 window._deletePerson = function(id) {
+    const p = persons.find(x => x.id === id);
+    if (!p || !confirm(`「${p.name}」さんを削除しますか？`)) return;
     persons = persons.filter(x => x.id !== id);
     renderPersons();
     renderTotal();
@@ -151,6 +149,8 @@ window.switchTab = function(tab) {
 };
 
 window.saveData = async function() {
+    clearTimeout(autoSaveTimer);
+    autoSaveTimer = null;
     const summary = computeSummary();
     const data = { label: sessionLabel, persons, consumed, updatedAt: Date.now(), summary };
     localStorage.setItem('diceTally_' + sessionId, JSON.stringify(data));
@@ -168,6 +168,7 @@ window.confirmReset = function() {
     FACES.forEach(f => { consumed[f.key] = 0; });
     renderPersons();
     renderTotal();
+    window.saveData(); // リセット内容をすぐ保存（しないと再読み込みで元に戻る）
 };
 
 function showToast(msg) {
@@ -217,6 +218,11 @@ async function init() {
     renderPersons();
     renderTotal();
 }
+
+// 自動保存の待ち時間中にページを離れても、変更を失わないようにする
+window.addEventListener('pagehide', () => {
+    if (autoSaveTimer) window.saveData();
+});
 
 document.getElementById('personName').addEventListener('keydown', e => {
     if (e.key === 'Enter') window.addPerson();
