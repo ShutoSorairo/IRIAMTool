@@ -171,9 +171,11 @@ function addRoulette() {
     saveRouletteCache();
 }
 
-// 初期化
-window.onload = () => {
+// rouletteItemsMap の内容から画面を作り直す（Roulette-firebase.js からも使う）
+function rebuildRoulettes() {
     const list = document.getElementById('roulette-list');
+    list.innerHTML = '';
+    rouletteCount = 1;
     // キャッシュがあれば復元、なければ1つ作成
     const ids = Object.keys(rouletteItemsMap);
     if (ids.length > 0) {
@@ -184,5 +186,13 @@ window.onload = () => {
     } else {
         list.appendChild(createRouletteBlock(1));
     }
+}
+
+// Roulette-firebase.js から参照する（const は window に載らないため明示的に渡す）
+function getRouletteItemsMap() { return rouletteItemsMap; }
+
+// 初期化
+window.onload = () => {
+    rebuildRoulettes();
     document.getElementById('add-roulette-btn').onclick = addRoulette;
 };

@@ -750,6 +750,23 @@ function loadSamplePanels() {
 }
 
 // ---- 保存・復元 ----
+// PanelReveal-autosave.js / PanelReveal-firebase.js から使う
+// （panels・boardW・boardH は let 変数で window に載らないため、関数経由で受け渡す）
+function getPanelState() {
+    return { panels, boardW, boardH };
+}
+
+function applyPanelState(state) {
+    panels = state.panels || [];
+    boardW = state.boardW || 800;
+    boardH = state.boardH || 600;
+    selectedId = null; ix = null;
+    hidePanelEditor();
+    document.getElementById('panel-svg').setAttribute('viewBox', `0 0 ${boardW} ${boardH}`);
+    document.getElementById('no-image-text').style.display = panels.length > 0 ? 'none' : 'block';
+    renderCanvas();
+}
+
 function savePanelState() {
     try {
         const light = panels.map(p => ({

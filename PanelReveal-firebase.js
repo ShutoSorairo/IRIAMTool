@@ -1,7 +1,8 @@
 import { db } from './firebase-config.js';
 import {
-    collection, doc, getDocs, addDoc, deleteDoc, serverTimestamp, orderBy, query
+    collection, doc, getDoc, getDocs, addDoc, deleteDoc, serverTimestamp, orderBy, query
 } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
+import { lightPanels } from './PanelReveal-autosave.js';
 
 const uid = localStorage.getItem('iriam_uid');
 
@@ -42,7 +43,7 @@ window.openCloudLoadModal = async function() {
             row.innerHTML = `
                 <div>
                     <div style="font-weight:bold;">${data.name}</div>
-                    <div style="font-size:0.8em; color:#aaa;">${date} &nbsp; ${(data.panels||[]).length}パネル</div>
+                    <div style="font-size:0.8em; color:#aaa;">${date} &nbsp; ${(data.panels||[]).length ? (data.panels.length + 'パネル') : '<span style="color:#e53935;">空（読込不可）</span>'}</div>
                 </div>
                 <div style="display:flex; gap:6px;">
                     <button onclick="cloudLoadPanel('${d.id}')" style="padding:6px 12px; background:#4f8cff; color:#fff; border:none; border-radius:6px; cursor:pointer;">読込</button>
@@ -66,18 +67,18 @@ window.cloudSavePanel = async function() {
     msg.textContent = '保存中...';
 
     try {
-        const light = (window.panels || []).map(p => ({
-            id: p.id, name: p.name, giftValue: p.giftValue,
-            currentTarget: p.currentTarget, currentCount: p.currentCount,
-            x: p.x, y: p.y, width: p.width, height: p.height,
-            shape: p.shape, color: p.color, isRevealed: p.isRevealed
-        }));
+        const state = window.getPanelState();
+        if (state.panels.length === 0) {
+            msg.style.color = '#e53935';
+            msg.textContent = '保存するパネルがありません';
+            return;
+        }
 
         await addDoc(getPanelsCollection(), {
             name,
-            panels: light,
-            boardW: window.boardW || 800,
-            boardH: window.boardH || 600,
+            panels: lightPanels(state.panels),
+            boardW: state.boardW || 800,
+            boardH: state.boardH || 600,
             updatedAt: serverTimestamp()
         });
 
@@ -93,21 +94,14 @@ window.cloudSavePanel = async function() {
 window.cloudLoadPanel = async function(docId) {
     if (!confirm('現在のパネルを上書きして読み込みますか？')) return;
     try {
-        const col = getPanelsCollection();
-        const snap = await getDocs(col);
-        let data = null;
-        snap.forEach(d => { if (d.id === docId) data = d.data(); });
-        if (!data) { alert('データが見つかりません'); return; }
+        const snap = await getDoc(doc(db, 'users', uid, 'panels', docId));
+        if (!snap.exists()) { alert('データが見つかりません'); return; }
+        const data = snap.data();
+        if (!data.panels?.length) { alert('このデータにはパネルが入っていません（以前の不具合で空のまま保存されたデータです）'); return; }
 
-        window.panels = data.panels || [];
-        window.boardW = data.boardW || 800;
-        window.boardH = data.boardH || 600;
-
-        const svg = document.getElementById('panel-svg');
-        svg.setAttribute('viewBox', `0 0 ${window.boardW} ${window.boardH}`);
-        document.getElementById('no-image-text').style.display = 'none';
+        window.applyPanelState(data);
+        window.savePanelState(); // 読み込んだ内容を現在の状態として保存
         document.getElementById('lastSavedTime').textContent = '読込: ' + data.name;
-        window.renderCanvas();
 
         document.getElementById('cloud-load-modal').style.display = 'none';
     } catch(e) {
